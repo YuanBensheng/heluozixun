@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 🔔 安全改字区1：浏览器标签栏上显示的标题 -->
     <title>河洛咨询前置对齐系统</title> 
     <style>
         /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
@@ -101,11 +100,8 @@
 
 <div class="container">
 
-    <!-- 🔮 第一层：399 认知过滤 -->
     <div id="layer-pay-399" class="layer active">
-        <!-- 🔔 安全改字区2：第一层大网页主标题 -->
         <h2>认知过滤 · 破局契约</h2> 
-        <!-- 🔔 安全改字区3：副标题 -->
         <div class="sub-title">河洛智慧 · 高维咨询</div> 
 
         <div class="holo-card-panel">
@@ -144,7 +140,6 @@
         </div>
     </div>
 
-    <!-- 🔮 第二层：视频与大额支付筛选 -->
     <div id="layer-video" class="layer">
         <h2>认知对齐 · 超维接引</h2>
         <div class="sub-title">河洛智慧 · 高维咨询</div>
@@ -187,7 +182,6 @@
         </div>
     </div>
 
-    <!-- 🔮 第三层：AI 交互收集背景 -->
     <div id="layer-ai" class="layer">
         <h2>前置接引 · 全维拓扑</h2>
         <div class="sub-title">河洛智慧 · 高维咨询</div>
@@ -213,7 +207,6 @@
         </div>
     </div>
 
-    <!-- 🔮 第四层：日历及订单防撞车机制 -->
     <div id="layer-schedule" class="layer">
         <h2>时空锁定 · 双向确认</h2>
         <div class="sub-title">河洛智慧 · 高维咨询</div>
@@ -267,7 +260,6 @@
         </div>
     </div>
 
-    <!-- 🔮 第五层：终末能量封存页 -->
     <div id="layer-thankyou" class="layer">
         <div class="final-thank-card">
             <div class="stamp-icon">✓</div>
@@ -286,7 +278,6 @@
 
 </div>
 
-<!-- 弹窗全景遮罩体 -->
 <div class="modal-overlay" id="custom-modal">
     <div class="modal-card">
         <div class="modal-title">✓【时空锁定成功】</div>
@@ -302,8 +293,8 @@
 </div>
 
 <script>
-    // ⚡ 终极定盘星：彻底恢复最精准的 kvdb 直连格式（去除了我上一轮误加的 /b/ 路径）
-    const CLOUD_API_URL = "https://kvdb.io/S5vY7mH9pW2k6Q4xN1bC3z/heluo_independent_funnel_v26";
+    // ⚡ 终极定盘星：彻底恢复最精准的官方标准 kvdb 直连格式（精准补齐了官方规定的 /b/ 路由）
+    const CLOUD_API_URL = "https://kvdb.io/b/S5vY7mH9pW2k6Q4xN1bC3z/heluo_independent_funnel_v26";
     let globalBookedSlots = {}; 
 
     async function syncSlotsFromCloud() {
@@ -330,6 +321,9 @@
             localStorage.setItem('heluo_backup_slots', JSON.stringify(updatedSlots));
             const response = await fetch(CLOUD_API_URL, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain' // ⚡ 显式声明文本类型，完美兼容各大生产环境浏览器的严格预检
+                },
                 body: JSON.stringify(updatedSlots)
             });
             return response.ok;
