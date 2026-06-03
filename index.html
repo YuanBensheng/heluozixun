@@ -302,7 +302,7 @@
 </div>
 
 <script>
-    // ⚡ 终极定盘星：重新恢复您在公网上真实申请成功的原始正位大仓，并保留合法的 /b/ 路径护照
+    // ⚡ 终极定盘星：正位大仓与合法护照路由
     const CLOUD_API_URL = "https://kvdb.io/b/S5vY7mH9pW2k6Q4xN1bC3z/heluo_independent_funnel_v26";
     let globalBookedSlots = {}; 
 
@@ -335,8 +335,15 @@
                 },
                 body: JSON.stringify(updatedSlots)
             });
+            
+            // ⚡【核心诊断系统】：如果服务器拒绝写入，直接弹出最真实的底层状态码，拒绝含糊！
+            if (!response.ok) {
+                alert(`【诊断信息】数据无法写入公网大仓！\n服务器状态码: ${response.status}\n\n💡 释义提示:\n若为 404：说明大仓过期或已被服务器清除；\n若为 429/403：说明当前测试频次过高触发了服务器防刷锁。`);
+            }
             return response.ok;
         } catch (error) {
+            // ⚡【核心诊断系统】：如果发生浏览器级别的彻底拦截（如跨域或网络断开），抛出具体报错信息
+            alert(`【诊断信息】网络通道请求被本地阻断！\n底层报错原因: ${error.message}\n\n💡 释义提示:\n通常代表网络彻底断开，或浏览器执行了极为严格的跨域安全拦截。`);
             return false;
         }
     }
@@ -476,7 +483,7 @@
         const success = await saveSlotsToCloud(tempSlots);
         
         if (!success) {
-            alert("❌ 线上公网授时写入发生闪烁，请检查您的公网连接状态并重新点击。");
+            // ⚡【核心诊断系统】：直接交由 saveSlotsToCloud 内置的精准弹窗诊断，这里仅利落退出，避免产生二次弹窗干扰
             submitBtn.disabled = false; submitBtn.innerText = originalBtnText; return; 
         }
         
