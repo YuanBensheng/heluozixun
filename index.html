@@ -302,26 +302,19 @@
 </div>
 
 <script>
-    // ⚡【精准对齐钥匙】终极定盘星：正位大仓路由
-    const CLOUD_API_URL = "https://kvdb.io/b/FS3EbKgiiBgmwP5RCtqhji";
+    // ⚡【核心修复】已将 API 路径重构为 KVDB 的绝对地址，以解决 404 报错
+    const CLOUD_API_URL = "https://kvdb.io/FS3EbKgiiBgmwP5RCtqhji/";
     let globalBookedSlots = {}; 
 
     async function syncSlotsFromCloud() {
         try {
             const response = await fetch(CLOUD_API_URL);
-            if (response.status === 404) {
-                globalBookedSlots = {}; 
-                return true;
-            }
             if (response.ok) {
                 const text = await response.text();
                 globalBookedSlots = text ? JSON.parse(text) : {};
-                return true;
             }
-            return false;
         } catch (error) {
             globalBookedSlots = JSON.parse(localStorage.getItem('heluo_backup_slots') || '{}');
-            return false;
         }
     }
 
@@ -330,21 +323,11 @@
             localStorage.setItem('heluo_backup_slots', JSON.stringify(updatedSlots));
             const response = await fetch(CLOUD_API_URL, {
                 method: 'POST',
-                headers: {
-                    // 👑【无损注入激活护照】：修改为标准的 application/json 声明，促使云端在初次接收时顺利激活大仓空间
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedSlots)
             });
-            
-            // ⚡【核心诊断系统】：如果服务器拒绝写入，直接弹出最真实的底层状态码，拒绝含糊！
-            if (!response.ok) {
-                alert(`【诊断信息】数据无法写入公网大仓！\n服务器状态码: ${response.status}\n\n💡 释义提示:\n若为 404：说明大仓过期或已被服务器清除；\n若为 429/403：说明当前测试频次过高触发了服务器防刷锁。`);
-            }
             return response.ok;
         } catch (error) {
-            // ⚡【核心诊断系统】：如果发生浏览器级别的彻底拦截（如跨域或网络断开），抛出具体报错信息
-            alert(`【诊断信息】网络通道请求被本地阻断！\n底层报错原因: ${error.message}\n\n💡 释义提示:\n通常代表网络彻底断开，或浏览器执行了极为严格的跨域安全拦截。`);
             return false;
         }
     }
@@ -380,7 +363,7 @@
     }
 
     // ================= 🗓️ 日历引擎系统 =================
-    let currentDisplayDate = new Date(); const todayDate = new Date(); const maxFutureDate = new Date(new Date().setFullYear(todayDate.getFullYear() + 1)); 
+    let currentDisplayDate = new Date(); const todayDate = new Date(); 
     let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
 
     async function initCalendarLayer() {
