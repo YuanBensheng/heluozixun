@@ -510,39 +510,29 @@
 </div>
 
 <script>
-    // ⚡ 终极定盘星：无服务器分布式Serverless存储链
-    // 此接口已为您永久固化、全球公网多点同频、加密防破。明天上线即直接进入实战状态！
-    const CLOUD_API_URL = "https://kvdb.io/S5vY7mH9pW2k6Q4xN1bC3z/heluo_independent_ funnel_v26";
+    // ⚡ 终极定盘星：Vercel Serverless + Redis 全自动垄断存储链
+    // 此接口已直接连接您部署在新加坡的云端大脑，实现真正的全网防冲突、秒级同步。
+    
     let globalBookedSlots = {}; 
 
+    // 1. 读取逻辑：从真实的云端大脑获取最新锁定状态
     async function syncSlotsFromCloud() {
         try {
-            const response = await fetch(CLOUD_API_URL);
-            if (response.status === 404) {
-                globalBookedSlots = {}; 
-                return true;
-            }
+            const response = await fetch('/api/booking'); // 调用 Vercel 真实接口
             if (response.ok) {
-                const text = await response.text();
-                globalBookedSlots = text ? JSON.parse(text) : {};
+                const data = await response.json();
+                globalBookedSlots = {}; 
+                // 将后端返回的数组转换为前端需要的对象格式
+                if (data.bookedSlots && Array.isArray(data.bookedSlots)) {
+                    data.bookedSlots.forEach(slot => {
+                        globalBookedSlots[slot] = true;
+                    });
+                }
                 return true;
             }
             return false;
         } catch (error) {
-            globalBookedSlots = JSON.parse(localStorage.getItem('heluo_backup_slots') || '{}');
-            return false;
-        }
-    }
-
-    async function saveSlotsToCloud(updatedSlots) {
-        try {
-            localStorage.setItem('heluo_backup_slots', JSON.stringify(updatedSlots));
-            const response = await fetch(CLOUD_API_URL, {
-                method: 'POST',
-                body: JSON.stringify(updatedSlots)
-            });
-            return response.ok;
-        } catch (error) {
+            console.error("云端数据同步闪烁:", error);
             return false;
         }
     }
@@ -660,7 +650,7 @@
         document.body.removeChild(textarea); return success;
     }
 
-    // ⚡ 线上正式版原子锁单：使用影子数据提交，确保安全不污染，彻底免疫局域网死锁
+    // ⚡ 2. 锁定逻辑：线上正式版原子锁单，向 Vercel 接口发起霸占请求
     async function submitAppointment() {
         const name = document.getElementById('user-name').value.trim(); const wechat = document.getElementById('user-wechat').value.trim();
         if(!name || !wechat) { alert("请完整填写您的尊称与微信号，以便完成最终因果对齐。"); return; }
@@ -669,40 +659,54 @@
         if (!wechatRegex.test(wechat)) { alert("【微信格式错误】\n微信号只能由英文字母、数字、下划线(_)或减号(-)组成。"); return; }
 
         const submitBtn = document.querySelector('#appoint-form .btn'); const originalBtnText = submitBtn.innerText;
-        submitBtn.disabled = true; submitBtn.innerText = "正在进行全局时空因果锁定核对...";
+        submitBtn.disabled = true; submitBtn.innerText = "正在向云端发起全网垄断锁定...";
 
-        await syncSlotsFromCloud();
-        if (globalBookedSlots[`${chosenDateKey}_${chosenPeriod}`]) {
-            alert("【时空场次锁定提示】\n该时空已被全局锁定了，系统已同步更新。");
-            submitBtn.disabled = false; submitBtn.innerText = originalBtnText; renderCalendar();
-            document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
-            return;
-        }
-        
-        let tempSlots = { ...globalBookedSlots }; tempSlots[`${chosenDateKey}_${chosenPeriod}`] = "FUSED";
-        const success = await saveSlotsToCloud(tempSlots);
-        
-        if (!success) {
-            alert("❌ 线上公网授时写入发生闪烁，请检查您的公网连接状态并重新点击。");
-            submitBtn.disabled = false; submitBtn.innerText = originalBtnText; return; 
-        }
-        
-        globalBookedSlots = tempSlots; localStorage.setItem('heluo_backup_slots', JSON.stringify(globalBookedSlots));
-        finalTimeStrGlobal = chosenDate + " " + chosenTime;
-        const credentialText = `老师您好，我已通过四层筛选并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
-        
-        const proceedToModal = () => {
+        const slotKey = `${chosenDateKey}_${chosenPeriod}`; // 例如：2026-06-03_AM
+
+        try {
+            // 直接呼叫我们刚才创建的后端接口
+            const response = await fetch('/api/booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slot: slotKey })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // 锁定成功！
+                globalBookedSlots[slotKey] = true;
+                finalTimeStrGlobal = chosenDate + " " + chosenTime;
+                const credentialText = `老师您好，我已通过四层筛选并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
+                
+                const proceedToModal = () => {
+                    submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
+                    document.getElementById('modal-user-name').innerText = name; document.getElementById('custom-modal').style.display = "flex";
+                };
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(credentialText).then(() => { proceedToModal(); }).catch(err => { fallbackCopyText(credentialText); proceedToModal(); });
+                } else { fallbackCopyText(credentialText); proceedToModal(); }
+
+            } else {
+                // 被别人抢先一步锁定了
+                alert("【时空场次锁定失败】\n" + (result.message || "该时空已被全局锁定，请选择其他时段。"));
+                submitBtn.disabled = false; submitBtn.innerText = originalBtnText; 
+                
+                // 刷新日历状态
+                await syncSlotsFromCloud(); renderCalendar();
+                document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
+            }
+
+        } catch (error) {
+            alert("❌ 线上公网连接出现异常，请检查网络后重新点击。");
             submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
-            document.getElementById('modal-user-name').innerText = name; document.getElementById('custom-modal').style.display = "flex";
-        };
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(credentialText).then(() => { proceedToModal(); }).catch(err => { fallbackCopyText(credentialText); proceedToModal(); });
-        } else { fallbackCopyText(credentialText); proceedToModal(); }
+        }
     }
 
     function closeModalAndProceed() { document.getElementById('custom-modal').style.display = "none"; document.getElementById('thank-time-text').innerText = finalTimeStrGlobal; switchLayer('layer-schedule', 'layer-thankyou'); }
     function switchLayer(fromId, toId) { document.getElementById(fromId).style.display = 'none'; document.getElementById(toId).style.display = 'block'; window.scrollTo(0, 0); }
 </script>
+
 </body>
 </html>
