@@ -53,7 +53,7 @@
         @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.2; } 100% { transform: scale(1.2); opacity: 0.6; } }
         .layer { display: none; }
         .layer.active { display: block; }
-        .ai-container { width: 100%; height: 620px; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; overflow: hidden; margin-top: 20px; background: #000; box-shadow: 0 0 25px rgba(0,255,204,0.15); }
+        .ai-container { width: 100%; height: 620px; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; overflow: hidden; margin-top: 20px; background: #00; box-shadow: 0 0 25px rgba(0,255,204,0.15); }
         .calendar-box { background: rgba(1, 5, 18, 0.7); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 25px; margin-top: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); will-change: box-shadow; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; box-sizing: border-box;}
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; font-size: 16px; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; color: #00ffcc; }
         .cal-nav-btn { background: #010614; border: 1px solid #10b981; color: #00ffcc; padding: 6px 14px; font-size: 13px; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
@@ -293,8 +293,8 @@
 </div>
 
 <script>
-    // ⚡ 终极定盘星：彻底恢复最精准的官方标准 kvdb 直连格式（精准补齐了官方规定的 /b/ 路由）
-    const CLOUD_API_URL = "https://kvdb.io/b/S5vY7mH9pW2k6Q4xN1bC3z/heluo_independent_funnel_v26";
+    // ⚡ 终极定盘星：开辟绝对干净、无污染的专属公网大仓 ID (已替换为 H8vN3mQ9pW2k7Q4xL1bC5z)
+    const CLOUD_API_URL = "https://kvdb.io/b/H8vN3mQ9pW2k7Q4xL1bC5z/heluo_independent_funnel_v26";
     let globalBookedSlots = {}; 
 
     async function syncSlotsFromCloud() {
@@ -322,7 +322,7 @@
             const response = await fetch(CLOUD_API_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'text/plain' // ⚡ 显式声明文本类型，完美兼容各大生产环境浏览器的严格预检
+                    'Content-Type': 'text/plain'
                 },
                 body: JSON.stringify(updatedSlots)
             });
