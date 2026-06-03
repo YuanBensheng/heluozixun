@@ -511,8 +511,6 @@
 
 <script>
     // ⚡ 终极定盘星：Vercel Serverless + Redis 全自动垄断存储链
-    // 此接口已直接连接您部署在新加坡的云端大脑，实现真正的全网防冲突、秒级同步。
-    
     let globalBookedSlots = {}; 
 
     // 1. 读取逻辑：从真实的云端大脑获取最新锁定状态
@@ -522,7 +520,6 @@
             if (response.ok) {
                 const data = await response.json();
                 globalBookedSlots = {}; 
-                // 将后端返回的数组转换为前端需要的对象格式
                 if (data.bookedSlots && Array.isArray(data.bookedSlots)) {
                     data.bookedSlots.forEach(slot => {
                         globalBookedSlots[slot] = true;
@@ -542,9 +539,18 @@
     // ================= 🔑 密钥防线 =================
     const P_A_S_S = "2468"; const P_A_S_S_ADV = "1357"; 
 
+    // 【已升级】：第一重密码验证（触发 30 分钟倒计时）
     function verifyPublicPassword() {
         if (document.getElementById('password-input').value === P_A_S_S) {
-            document.getElementById('err-msg').style.display = 'none'; switchLayer('layer-pay-399', 'layer-video');
+            document.getElementById('err-msg').style.display = 'none'; 
+            
+            // 写入 30 分钟记忆
+            const videoExpiry = Date.now() + (30 * 60 * 1000);
+            localStorage.setItem('videoExpiry', videoExpiry);
+            localStorage.setItem('currentLayer', 'layer-video');
+            
+            switchLayer('layer-pay-399', 'layer-video');
+            startGlobalTimer(videoExpiry, 'video'); // 启动倒计时UI
         } else { document.getElementById('err-msg').style.display = 'block'; }
     }
 
@@ -558,21 +564,41 @@
         }
     }
 
+    // 【已升级】：第二重密码同步动画（触发 60 分钟倒计时）
     function triggerEnergySync() {
         const btn = document.getElementById('active-ai-btn'); const loaderBox = document.getElementById('loader-box'); const statusText = document.getElementById('sync-status-text');
         btn.disabled = true; loaderBox.style.display = "block";
         statusText.innerHTML = "正在链接高维数据节点，校验当前时空资金链对齐状态...";
         setTimeout(() => { statusText.innerHTML = "<span style='color: #10b981;'>资金链迹息已捕捉，正在通过河洛算法锁定状态...</span>"; }, 400);
         setTimeout(() => { statusText.innerHTML = "<span style='color: #00ffcc;'>因果磁场高度同频，正在全自动点亮前置采集通道...</span>"; }, 800);
-        setTimeout(() => { loaderBox.style.display = "none"; switchLayer('layer-video', 'layer-ai'); }, 1200);
+        setTimeout(() => { 
+            loaderBox.style.display = "none"; 
+            
+            // 废除视频计时，写入 60 分钟 AI 互动记忆
+            localStorage.removeItem('videoExpiry'); 
+            const aiExpiry = Date.now() + (60 * 60 * 1000);
+            localStorage.setItem('aiExpiry', aiExpiry);
+            localStorage.setItem('currentLayer', 'layer-ai');
+            
+            switchLayer('layer-video', 'layer-ai'); 
+            startGlobalTimer(aiExpiry, 'ai'); // 启动倒计时UI
+        }, 1200);
     }
 
     // ================= 🗓️ 日历引擎系统 =================
     let currentDisplayDate = new Date(); const todayDate = new Date(); const maxFutureDate = new Date(new Date().setFullYear(todayDate.getFullYear() + 1)); 
     let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
 
+    // 【已升级】：进入日历排期（解除计时，允许无限刷新停留）
     async function initCalendarLayer() {
-        switchLayer('layer-ai', 'layer-schedule'); currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); 
+        // 进入排期，时间限制解除，只记录层级
+        localStorage.removeItem('aiExpiry');
+        localStorage.setItem('currentLayer', 'layer-schedule');
+        hideTimerBar();
+        clearInterval(globalTimerInterval);
+        
+        switchLayer('layer-ai', 'layer-schedule'); 
+        currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); 
         await syncSlotsFromCloud(); renderCalendar();
     }
 
@@ -664,7 +690,6 @@
         const slotKey = `${chosenDateKey}_${chosenPeriod}`; // 例如：2026-06-03_AM
 
         try {
-            // 直接呼叫我们刚才创建的后端接口
             const response = await fetch('/api/booking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -674,7 +699,6 @@
             const result = await response.json();
 
             if (response.ok && result.success) {
-                // 锁定成功！
                 globalBookedSlots[slotKey] = true;
                 finalTimeStrGlobal = chosenDate + " " + chosenTime;
                 const credentialText = `老师您好，我已通过四层筛选并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
@@ -689,11 +713,8 @@
                 } else { fallbackCopyText(credentialText); proceedToModal(); }
 
             } else {
-                // 被别人抢先一步锁定了
                 alert("【时空场次锁定失败】\n" + (result.message || "该时空已被全局锁定，请选择其他时段。"));
                 submitBtn.disabled = false; submitBtn.innerText = originalBtnText; 
-                
-                // 刷新日历状态
                 await syncSlotsFromCloud(); renderCalendar();
                 document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
             }
@@ -704,8 +725,121 @@
         }
     }
 
-    function closeModalAndProceed() { document.getElementById('custom-modal').style.display = "none"; document.getElementById('thank-time-text').innerText = finalTimeStrGlobal; switchLayer('layer-schedule', 'layer-thankyou'); }
+    // 【已升级】：最终确认完成弹窗（记录到达终极页面）
+    function closeModalAndProceed() { 
+        document.getElementById('custom-modal').style.display = "none"; 
+        document.getElementById('thank-time-text').innerText = finalTimeStrGlobal; 
+        
+        // 记录终极感谢页层级
+        localStorage.setItem('currentLayer', 'layer-thankyou');
+        
+        switchLayer('layer-schedule', 'layer-thankyou'); 
+    }
+    
     function switchLayer(fromId, toId) { document.getElementById(fromId).style.display = 'none'; document.getElementById(toId).style.display = 'block'; window.scrollTo(0, 0); }
+</script>
+
+<!-- ========================================== -->
+<!-- 补丁一：全局门禁与倒计时引擎 (定制版) -->
+<!-- ========================================== -->
+<div id="global-timer-bar" style="display: none; background: #ffcc00; color: #000; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
+    高维时空剩余停留时间: <span id="global-time-left">00:00</span>
+</div>
+
+<script>
+// 1. 真实门牌号已自动匹配
+const PAGE_INDEX_ID = 'layer-pay-399'; 
+const PAGE_VIDEO_ID = 'layer-video';   
+const PAGE_AI_ID    = 'layer-ai';      
+const PAGE_SCHEDULE_ID = 'layer-schedule'; 
+const PAGE_THANKYOU_ID = 'layer-thankyou'; 
+
+let globalTimerInterval = null;
+
+// 2. 核心路由：只要一刷新，立刻执行，恢复当前页面状态
+function checkStateAndRestore() {
+    const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
+    const now = Date.now();
+
+    if (currentLayer === PAGE_VIDEO_ID) {
+        const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
+        if (videoExpiry && now < videoExpiry) {
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            startGlobalTimer(videoExpiry, 'video');
+        } else { forceKickOut(); } // 超时踢出
+
+    } else if (currentLayer === PAGE_AI_ID) {
+        const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
+        if (aiExpiry && now < aiExpiry) {
+            showTargetLayerOnly(PAGE_AI_ID);
+            startGlobalTimer(aiExpiry, 'ai');
+        } else { forceKickOut(); } // 超时踢出
+
+    } else if (currentLayer === PAGE_SCHEDULE_ID || currentLayer === PAGE_THANKYOU_ID) {
+        // 允许在排期页或感谢页刷新停留，此时无需倒计时
+        showTargetLayerOnly(currentLayer);
+        hideTimerBar();
+    } else {
+        // 默认显示首页
+        showTargetLayerOnly(PAGE_INDEX_ID);
+        hideTimerBar();
+    }
+}
+
+// 3. 倒计时主函数
+function startGlobalTimer(expiry, type) {
+    clearInterval(globalTimerInterval); 
+    const timerBar = document.getElementById('global-timer-bar');
+    const timeLeftSpan = document.getElementById('global-time-left');
+    
+    // 视觉匹配您的赛博风格
+    timerBar.style.background = type === 'video' ? '#010614' : '#010614';
+    timerBar.style.borderBottom = type === 'video' ? '1px solid #ffcc00' : '1px solid #10B981';
+    timerBar.style.color = type === 'video' ? '#ffcc00' : '#10B981';
+    timerBar.style.display = 'block';
+
+    globalTimerInterval = setInterval(function() {
+        const distance = expiry - Date.now();
+        if (distance <= 0) {
+            forceKickOut(); 
+            return;
+        }
+        const minutes = Math.floor(distance / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        timeLeftSpan.innerHTML = minutes + "分 " + seconds + "秒";
+    }, 1000);
+}
+
+// 4. 接管原本的隐藏/显示逻辑
+function showTargetLayerOnly(targetId) {
+    document.querySelectorAll('.layer').forEach(layer => {
+        layer.style.display = 'none';
+        layer.classList.remove('active');
+    });
+    const targetElem = document.getElementById(targetId);
+    if(targetElem) {
+        targetElem.style.display = 'block';
+        targetElem.classList.add('active');
+    }
+}
+
+// 5. 违规踢出函数：彻底清场
+function forceKickOut() {
+    clearInterval(globalTimerInterval);
+    localStorage.removeItem('currentLayer');
+    localStorage.removeItem('videoExpiry');
+    localStorage.removeItem('aiExpiry');
+    hideTimerBar();
+    showTargetLayerOnly(PAGE_INDEX_ID);
+}
+
+function hideTimerBar() {
+    const timerBar = document.getElementById('global-timer-bar');
+    if(timerBar) timerBar.style.display = 'none';
+}
+
+// 给页面挂上门禁：在原来的 DOMContentLoaded 事件中追加
+window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
 
 </body>
