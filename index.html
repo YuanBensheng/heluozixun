@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -747,305 +748,99 @@
 </div>
 
 <script>
-    // 1. 全局配置与单向门禁系统
-    const PAGE_INDEX_ID = 'layer-pay-399'; 
-    const PAGE_VIDEO_ID = 'layer-video';   
-    const PAGE_AI_ID    = 'layer-ai';      
-    const PAGE_SCHEDULE_ID = 'layer-schedule'; 
-    const PAGE_THANKYOU_ID = 'layer-thankyou'; 
+// 1. 真实门牌号已自动匹配
+const PAGE_INDEX_ID = 'layer-pay-399'; 
+const PAGE_VIDEO_ID = 'layer-video';   
+const PAGE_AI_ID    = 'layer-ai';      
+const PAGE_SCHEDULE_ID = 'layer-schedule'; 
+const PAGE_THANKYOU_ID = 'layer-thankyou'; 
 
-    let globalTimerInterval = null;
-    let globalBookedSlots = {}; 
+let globalTimerInterval = null;
 
-    function checkStateAndRestore() {
-        const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
-        const now = Date.now();
-        const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
+// 2. 核心路由：只要一刷新，立刻执行，恢复当前页面状态
+function checkStateAndRestore() {
+    const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
+    const now = Date.now();
+
+    if (currentLayer === PAGE_VIDEO_ID) {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
+        if (videoExpiry && now < videoExpiry) {
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            startGlobalTimer(videoExpiry, 'video');
+        } else { forceKickOut(); } // 超时踢出
 
-        if (currentLayer === PAGE_VIDEO_ID) {
-            if (videoExpiry && now < videoExpiry) {
-                showTargetLayerOnly(PAGE_VIDEO_ID);
-                startGlobalTimer(videoExpiry, 'video');
-            } else { forceKickOut(); }
+    } else if (currentLayer === PAGE_AI_ID) {
+        const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
+        if (aiExpiry && now < aiExpiry) {
+            showTargetLayerOnly(PAGE_AI_ID);
+            startGlobalTimer(aiExpiry, 'ai');
+        } else { forceKickOut(); } // 超时踢出
 
-        } else if (currentLayer === PAGE_AI_ID) {
-            if (aiExpiry && now < aiExpiry) {
-                showTargetLayerOnly(PAGE_AI_ID);
-                startGlobalTimer(aiExpiry, 'ai');
-            } else { forceKickOut(); }
-
-        } else if (currentLayer === PAGE_SCHEDULE_ID || currentLayer === PAGE_THANKYOU_ID) {
-            showTargetLayerOnly(currentLayer);
-            hideTimerBar();
-            
-            // 【时间烙印修复】
-            if (currentLayer === PAGE_THANKYOU_ID) {
-                const savedTime = localStorage.getItem('finalTimeStr');
-                if (savedTime) {
-                    document.getElementById('thank-time-text').innerText = savedTime;
-                }
-            }
-        } else {
-            showTargetLayerOnly(PAGE_INDEX_ID);
-            hideTimerBar();
-        }
-    }
-
-    function startGlobalTimer(expiry, type) {
-        clearInterval(globalTimerInterval); 
-        const timerBar = document.getElementById('global-timer-bar');
-        const timeLeftSpan = document.getElementById('global-time-left');
-        
-        timerBar.style.background = '#010614';
-        timerBar.style.borderBottom = type === 'video' ? '1px solid #ffcc00' : '1px solid #10B981';
-        timerBar.style.color = type === 'video' ? '#ffcc00' : '#10B981';
-        timerBar.style.display = 'block';
-
-        globalTimerInterval = setInterval(function() {
-            const distance = expiry - Date.now();
-            if (distance <= 0) { forceKickOut(); return; }
-            const minutes = Math.floor(distance / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            timeLeftSpan.innerHTML = minutes + "分 " + seconds + "秒";
-        }, 1000);
-    }
-
-    function showTargetLayerOnly(targetId) {
-        document.querySelectorAll('.layer').forEach(layer => {
-            layer.style.display = 'none';
-            layer.classList.remove('active');
-        });
-        const targetElem = document.getElementById(targetId);
-        if(targetElem) {
-            targetElem.style.display = 'block';
-            targetElem.classList.add('active');
-        }
-    }
-
-    function switchLayer(fromId, toId) { 
-        showTargetLayerOnly(toId);
-        localStorage.setItem('currentLayer', toId);
-        window.scrollTo(0, 0); 
-    }
-
-    function forceKickOut() {
-        clearInterval(globalTimerInterval);
-        localStorage.removeItem('currentLayer');
-        localStorage.removeItem('videoExpiry');
-        localStorage.removeItem('aiExpiry');
+    } else if (currentLayer === PAGE_SCHEDULE_ID || currentLayer === PAGE_THANKYOU_ID) {
+        // 允许在排期页或感谢页刷新停留，此时无需倒计时
+        showTargetLayerOnly(currentLayer);
         hideTimerBar();
-        switchLayer('', PAGE_INDEX_ID); 
+    } else {
+        // 默认显示首页
+        showTargetLayerOnly(PAGE_INDEX_ID);
+        hideTimerBar();
     }
+}
 
-    function hideTimerBar() {
-        const timerBar = document.getElementById('global-timer-bar');
-        if(timerBar) timerBar.style.display = 'none';
-    }
+// 3. 倒计时主函数
+function startGlobalTimer(expiry, type) {
+    clearInterval(globalTimerInterval); 
+    const timerBar = document.getElementById('global-timer-bar');
+    const timeLeftSpan = document.getElementById('global-time-left');
+    
+    // 视觉匹配您的赛博风格
+    timerBar.style.background = type === 'video' ? '#010614' : '#010614';
+    timerBar.style.borderBottom = type === 'video' ? '1px solid #ffcc00' : '1px solid #10B981';
+    timerBar.style.color = type === 'video' ? '#ffcc00' : '#10B981';
+    timerBar.style.display = 'block';
 
-    // 2. 核心业务逻辑
-    async function syncSlotsFromCloud() {
-        try {
-            const response = await fetch('/api/booking'); 
-            if (response.ok) {
-                const data = await response.json();
-                globalBookedSlots = {}; 
-                if (data.bookedSlots && Array.isArray(data.bookedSlots)) {
-                    data.bookedSlots.forEach(slot => { globalBookedSlots[slot] = true; });
-                }
-                return true;
-            }
-            return false;
-        } catch (error) { return false; }
-    }
+    globalTimerInterval = setInterval(function() {
+        const distance = expiry - Date.now();
+        if (distance <= 0) {
+            forceKickOut(); 
+            return;
+        }
+        const minutes = Math.floor(distance / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        timeLeftSpan.innerHTML = minutes + "分 " + seconds + "秒";
+    }, 1000);
+}
 
-    window.addEventListener('DOMContentLoaded', () => { 
-        syncSlotsFromCloud(); 
-        checkStateAndRestore(); 
+// 4. 接管原本的隐藏/显示逻辑
+function showTargetLayerOnly(targetId) {
+    document.querySelectorAll('.layer').forEach(layer => {
+        layer.style.display = 'none';
+        layer.classList.remove('active');
     });
-
-    const P_A_S_S = "2468"; const P_A_S_S_ADV = "1357"; 
-
-    function verifyPublicPassword() {
-        if (document.getElementById('password-input').value === P_A_S_S) {
-            document.getElementById('err-msg').style.display = 'none'; 
-            const videoExpiry = Date.now() + (30 * 60 * 1000);
-            localStorage.setItem('videoExpiry', videoExpiry);
-            switchLayer(PAGE_INDEX_ID, PAGE_VIDEO_ID);
-            startGlobalTimer(videoExpiry, 'video'); 
-        } else { document.getElementById('err-msg').style.display = 'block'; }
+    const targetElem = document.getElementById(targetId);
+    if(targetElem) {
+        targetElem.style.display = 'block';
+        targetElem.classList.add('active');
     }
+}
 
-    function verifyAdvancedPassword() {
-        if (document.getElementById('advanced-password-input').value === P_A_S_S_ADV) {
-            document.getElementById('adv-err-msg').style.display = 'none'; triggerEnergySync(); 
-        } else {
-            document.getElementById('adv-err-msg').style.display = 'block';
-            document.getElementById('loader-box').style.display = "none";
-            document.getElementById('sync-status-text').innerHTML = "";
-        }
-    }
+// 5. 违规踢出函数：彻底清场
+function forceKickOut() {
+    clearInterval(globalTimerInterval);
+    localStorage.removeItem('currentLayer');
+    localStorage.removeItem('videoExpiry');
+    localStorage.removeItem('aiExpiry');
+    hideTimerBar();
+    showTargetLayerOnly(PAGE_INDEX_ID);
+}
 
-    function triggerEnergySync() {
-        const btn = document.getElementById('active-ai-btn'); const loaderBox = document.getElementById('loader-box'); const statusText = document.getElementById('sync-status-text');
-        btn.disabled = true; loaderBox.style.display = "block";
-        statusText.innerHTML = "正在链接高维数据节点，校验当前时空资金链对齐状态...";
-        setTimeout(() => { statusText.innerHTML = "<span style='color: #10b981;'>资金链迹息已捕捉，正在通过河洛算法锁定状态...</span>"; }, 400);
-        setTimeout(() => { statusText.innerHTML = "<span style='color: #00ffcc;'>因果磁场高度同频，正在全自动点亮前置采集通道...</span>"; }, 800);
-        setTimeout(() => { 
-            loaderBox.style.display = "none"; 
-            localStorage.removeItem('videoExpiry'); 
-            const aiExpiry = Date.now() + (60 * 60 * 1000);
-            localStorage.setItem('aiExpiry', aiExpiry);
-            switchLayer(PAGE_VIDEO_ID, PAGE_AI_ID); 
-            startGlobalTimer(aiExpiry, 'ai'); 
-        }, 1200);
-    }
+function hideTimerBar() {
+    const timerBar = document.getElementById('global-timer-bar');
+    if(timerBar) timerBar.style.display = 'none';
+}
 
-    let currentDisplayDate = new Date(); const todayDate = new Date(); 
-    let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
-
-    async function initCalendarLayer() {
-        localStorage.removeItem('aiExpiry'); 
-        hideTimerBar();
-        clearInterval(globalTimerInterval);
-        switchLayer(PAGE_AI_ID, PAGE_SCHEDULE_ID); 
-        currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); 
-        await syncSlotsFromCloud(); renderCalendar();
-    }
-
-    function navigateMonth(direction) {
-        currentDisplayDate.setMonth(currentDisplayDate.getMonth() + direction); renderCalendar();
-        document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
-    }
-
-    function renderCalendar() {
-        const grid = document.getElementById('calendar-grid-dom'); const title = document.getElementById('calendar-month-title');
-        const year = currentDisplayDate.getFullYear(); const month = currentDisplayDate.getMonth();
-        title.innerText = `${year}年 ${month + 1}月`;
-        grid.innerHTML = '<div class="weekday-label">日</div><div class="weekday-label">一</div><div class="weekday-label">二</div><div class="weekday-label">三</div><div class="weekday-label">四</div><div class="weekday-label">五</div><div class="weekday-label">六</div>';
-        
-        const firstDayIndex = new Date(year, month, 1).getDay(); const totalDaysInMonth = new Date(year, month + 1, 0).getDate(); 
-        for (let i = 0; i < firstDayIndex; i++) { const blank = document.createElement('div'); blank.className = "day-cell disabled"; grid.appendChild(blank); }
-        
-        const dayNames = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-        for (let day = 1; day <= totalDaysInMonth; day++) {
-            const dateStorageKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const cell = document.createElement('div'); cell.innerText = day;
-            const compareCell = new Date(year, month, day).setHours(0,0,0,0);
-            const compareToday = new Date(todayDate).setHours(0,0,0,0);
-
-            if (compareCell < compareToday) { cell.className = "day-cell disabled"; } else {
-                if (globalBookedSlots[`${dateStorageKey}_AM`] && globalBookedSlots[`${dateStorageKey}_PM`]) {
-                    cell.className = "day-cell full"; cell.innerText = `${day} (满)`;
-                } else {
-                    cell.className = "day-cell";
-                    cell.onclick = function() { 
-                        document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected-day')); this.classList.add('selected-day');
-                        const weekdayName = dayNames[new Date(year, month, day).getDay()];
-                        selectDate(dateStorageKey, `${month + 1}月${day}日 (${weekdayName})`); 
-                    };
-                }
-            }
-            grid.appendChild(cell);
-        }
-    }
-
-    function selectDate(storageKey, displayText) {
-        chosenDate = displayText; chosenDateKey = storageKey;
-        document.getElementById('selected-date-text').innerText = "已选日期：" + displayText + "，请选专属时段：";
-        document.getElementById('time-panel').style.display = 'block'; clearPrivacyInputs(); resetSlots();
-        if (globalBookedSlots[`${storageKey}_AM`]) {
-            setSlotFused('slot-am1', '第一场：08:00 - 10:00 (上午场能量已满)'); setSlotFused('slot-am2', '第二场：10:00 - 12:00 (上午场能量已满)');
-        }
-        if (globalBookedSlots[`${storageKey}_PM`]) {
-            setSlotFused('slot-pm1', '第三场：14:00 - 16:00 (下午场能量已满)'); setSlotFused('slot-pm2', '第四场：16:00 - 18:00 (下午场能量已满)');
-        }
-    }
-
-    function setSlotFused(id, text) { const el = document.getElementById(id); el.className = "time-slot fused"; el.innerText = text; }
-    function resetSlots() {
-        document.getElementById('slot-am1').className = "time-slot"; document.getElementById('slot-am1').innerText = "第一场：08:00 - 10:00 (可约)";
-        document.getElementById('slot-am2').className = "time-slot"; document.getElementById('slot-am2').innerText = "第二场：10:00 - 12:00 (可约)";
-        document.getElementById('slot-pm1').className = "time-slot"; document.getElementById('slot-pm1').innerText = "第三场：14:00 - 16:00 (可约)";
-        document.getElementById('slot-pm2').className = "time-slot"; document.getElementById('slot-pm2').innerText = "第四场：16:00 - 18:00 (可约)";
-    }
-
-    function selectTime(timeStr, period) {
-        if (globalBookedSlots[`${chosenDateKey}_${period}`]) return;
-        chosenTime = timeStr; chosenPeriod = period; clearPrivacyInputs();
-        document.querySelectorAll('.time-slot').forEach(s => { if(s.innerText.includes(timeStr)) s.classList.add('selected'); else s.classList.remove('selected'); });
-        document.getElementById('final-time-string').innerText = chosenDate + " " + chosenTime; document.getElementById('appoint-form').style.display = 'block';
-    }
-
-    function clearPrivacyInputs() { document.getElementById('appoint-form').style.display = 'none'; document.getElementById('user-name').value = ""; document.getElementById('user-wechat').value = ""; }
-
-    function fallbackCopyText(text) {
-        const textarea = document.createElement('textarea'); textarea.value = text;
-        textarea.style.position = 'fixed'; textarea.style.top = '0'; textarea.style.left = '0'; textarea.style.width = '2em'; textarea.style.height = '2em'; textarea.style.padding = '0'; textarea.style.border = 'none'; textarea.style.outline = 'none'; textarea.style.boxShadow = 'none'; textarea.style.background = 'transparent'; document.body.appendChild(textarea);
-        textarea.select(); textarea.setSelectionRange(0, 99999); 
-        let success = false; try { success = document.execCommand('copy'); } catch (err) { success = false; }
-        document.body.removeChild(textarea); return success;
-    }
-
-    async function submitAppointment() {
-        const name = document.getElementById('user-name').value.trim(); const wechat = document.getElementById('user-wechat').value.trim();
-        if(!name || !wechat) { alert("请完整填写您的尊称与微信号，以便完成最终因果对齐。"); return; }
-        
-        const wechatRegex = /^[a-zA-Z0-9_-]+$/;
-        if (!wechatRegex.test(wechat)) { alert("【微信格式错误】\n微信号只能由英文字母、数字、下划线(_)或减号(-)组成。"); return; }
-
-        const submitBtn = document.querySelector('#appoint-form .btn'); const originalBtnText = submitBtn.innerText;
-        submitBtn.disabled = true; submitBtn.innerText = "正在向云端发起全网垄断锁定...";
-
-        const slotKey = `${chosenDateKey}_${chosenPeriod}`; 
-
-        try {
-            const response = await fetch('/api/booking', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ slot: slotKey })
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.success) {
-                globalBookedSlots[slotKey] = true;
-                finalTimeStrGlobal = chosenDate + " " + chosenTime;
-                
-                // 【时间写入死记忆】
-                localStorage.setItem('finalTimeStr', finalTimeStrGlobal);
-                
-                const credentialText = `老师您好，我已通过四层筛选并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
-                
-                const proceedToModal = () => {
-                    submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
-                    document.getElementById('modal-user-name').innerText = name; document.getElementById('custom-modal').style.display = "flex";
-                };
-
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(credentialText).then(() => { proceedToModal(); }).catch(err => { fallbackCopyText(credentialText); proceedToModal(); });
-                } else { fallbackCopyText(credentialText); proceedToModal(); }
-
-            } else {
-                alert("【时空场次锁定失败】\n" + (result.message || "该时空已被全局锁定，请选择其他时段。"));
-                submitBtn.disabled = false; submitBtn.innerText = originalBtnText; 
-                await syncSlotsFromCloud(); renderCalendar();
-                document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
-            }
-
-        } catch (error) {
-            alert("❌ 线上公网连接出现异常，请检查网络后重新点击。");
-            submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
-        }
-    }
-
-    function closeModalAndProceed() { 
-        document.getElementById('custom-modal').style.display = "none"; 
-        // 从记忆中调取时间显示
-        document.getElementById('thank-time-text').innerText = localStorage.getItem('finalTimeStr') || finalTimeStrGlobal; 
-        switchLayer(PAGE_SCHEDULE_ID, PAGE_THANKYOU_ID); 
-    }
+// 给页面挂上门禁：在原来的 DOMContentLoaded 事件中追加
+window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
 
 </body>
