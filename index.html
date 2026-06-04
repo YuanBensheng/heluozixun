@@ -810,8 +810,8 @@ function sha256(ascii) {
     return result;
 }
 
-// 核心契约鉴权引擎替换（完美继承分流架构）
-function verifyAndRouting(inputPassword) {
+// ⚡【全网同步熔断版】核心契约鉴权引擎（完美继承分流架构，并接入云端 Redis 原子锁）
+async function verifyAndRouting(inputPassword) {
     if (!inputPassword) {
         alert("请输入时空契约密钥！");
         return;
@@ -819,25 +819,23 @@ function verifyAndRouting(inputPassword) {
 
     const pwd = inputPassword.trim().toUpperCase();
 
+    // 1. 本地一级防线：防止同台手机频繁刷新恶意撞门
     if (localStorage.getItem('burnt_' + pwd)) {
         alert("⚠️ 该时空契约密钥已被激活使用，无法二次冒领！");
         return;
     }
 
-    // --------------------------------======================--------------------------------
-    // ⚔️ 【量子防御内核对齐】严格执行 1位维度 + 4位特征 + 1位指纹 的 6位严格验证
-    // --------------------------------======================--------------------------------
-    const type = pwd.charAt(0); // 截取第 1 位时空维度情况（E/F/W/P/V）
+    // 2. 本地二级防线：数理指纹对齐（不对齐的垃圾请求直接在这里拦截，绝不消耗云端 Redis 算力）
+    const type = pwd.charAt(0); 
     let isMatch = false;
     
     if (pwd.length === 6) {
-        let client = pwd.substring(1, 5);       // 提取中间 4 位特征码
-        let providedCheckDigit = pwd.charAt(5); // 提取最后 1 位防伪指纹
+        let client = pwd.substring(1, 5);       
+        let providedCheckDigit = pwd.charAt(5); 
 
-        // 还原运算原料：维度 + 4位核心特征 + 只有两端知道的私密暗号
         const stringToCheck = type + client + SECRET_SALT;
         const fullHash = sha256(stringToCheck).toUpperCase();
-        let expectedCheckDigit = fullHash.charAt(0); // 死锁在第 0 位切片，完成跨设备咬合
+        let expectedCheckDigit = fullHash.charAt(0); 
 
         if (providedCheckDigit === expectedCheckDigit) {
             isMatch = true;
@@ -849,49 +847,79 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // ======================================================================================
-    // 👑 基础承载逻辑 100% 保留：熔断密钥，种下身份牌，执行原有轨道切换和倒计时机制
-    // ======================================================================================
+    // ====================================================================
+    // 🌐【核心升级：云端全网熔断防线】
+    // 本地算法通过后，立刻跨越时空，去公网 Redis 数据库抢占唯一“未烧毁”名额
+    // ====================================================================
+    
+    // 暂时锁定两重关卡的按钮，防止网络延迟期间客户重复点击
+    const firstBtn = document.querySelector('#layer-pay-399 .btn');
+    const secondBtn = document.getElementById('active-ai-btn');
+    if(firstBtn) firstBtn.disabled = true;
+    if(secondBtn) secondBtn.disabled = true;
+
+    try {
+        // 向 Vercel 后端发起全网唯一性验证与销毁请求
+        const cloudResponse = await fetch('/api/verify-key', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: pwd })
+        });
+        const cloudResult = await cloudResponse.json();
+
+        // 如果后端返回失败，说明该密钥已经在云端被别人（或换浏览器）烧毁过了
+        if (!cloudResponse.ok || !cloudResult.success) {
+            alert("❌ " + (cloudResult.message || "该时空契约密钥已被全球其他因果节点熔断，无法二次冒领！"));
+            if(firstBtn) firstBtn.disabled = false;
+            if(secondBtn) secondBtn.disabled = false;
+            return;
+        }
+    } catch (error) {
+        alert("❌ 无法连接全网数据大脑，请检查网络后重新对齐！");
+        if(firstBtn) firstBtn.disabled = false;
+        if(secondBtn) secondBtn.disabled = false;
+        return;
+    }
+
+    // 释放按钮状态
+    if(firstBtn) firstBtn.disabled = false;
+    if(secondBtn) secondBtn.disabled = false;
+
+    // ====================================================================
+    // 👑 云端熔断成功！以下原有轨道切换和倒计时机制 100% 留存放行
+    // ====================================================================
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
 
-    // 轨道一：私域 VIP 熟人通道（直达信息采集，开启 60 分钟倒计时）
+    // 轨道一：私域 VIP 熟人通道
     if (type === 'V') {
         alert("尊贵的 VIP 阁下，身份互信已对齐，已为您跳过公域考核，直达深度背景采集通道！");
         const expiryTime = Date.now() + (60 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
-        
         showTargetLayerOnly(PAGE_AI_ID);
         startGlobalTimer(expiryTime, 'ai');
         return;
     }
 
-    // 轨道二：普通人付完 3000 元进入（开启 60 分钟倒计时）
+    // 轨道二：普通人付完 3000 元进入
     if (type === 'P') {
         alert("3000元基础对价核对成功！深度背景采集系统已解锁。");
         const expiryTime = Date.now() + (60 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
-        
         showTargetLayerOnly(PAGE_AI_ID);
         startGlobalTimer(expiryTime, 'ai');
         return;
     }
 
-    // 轨道三：公域 399 元多面向视频分流（开启 30 分钟紧凑倒计时）
+    // 轨道三：公域 399 元视频分流
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
+        if (type === 'E') videoUrl = "https://your-platform.com/education-video.mp4"; 
+        else if (type === 'F') videoUrl = "https://your-platform.com/family-video.mp4";      
+        else if (type === 'W') videoUrl = "https://your-platform.com/work-video.mp4";        
 
-        if (type === 'E') {
-            videoUrl = "https://your-platform.com/education-video.mp4"; 
-        } else if (type === 'F') {
-            videoUrl = "https://your-platform.com/family-video.mp4";      
-        } else if (type === 'W') {
-            videoUrl = "https://your-platform.com/work-video.mp4";        
-        }
-
-        // 仅动态切换视频内核，绝不修改上方的高维大标题
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
             videoElement.src = videoUrl;
@@ -901,12 +929,12 @@ function verifyAndRouting(inputPassword) {
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
-        
         showTargetLayerOnly(PAGE_VIDEO_ID);
         startGlobalTimer(expiryTime, 'video');
         alert("第一重认知契约已达成。高维时空门槛已开启，停留时间：30分钟。");
     }
 }
+
 
 // ====================================================================
 // 👁️ 以下原有环境记忆维持与定时器逻辑 100% 留存，确保前置刷新不丢失
