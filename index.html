@@ -767,7 +767,6 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 自动清理空格并转大写，包容客户的输入习惯
     const pwd = inputPassword.trim().toUpperCase();
 
     if (localStorage.getItem('burnt_' + pwd)) {
@@ -778,7 +777,6 @@ function verifyAndRouting(inputPassword) {
     const type = pwd.charAt(0);
     let isMatch = false;
     
-    // 严格的高维哈希解码器（匹配您手里的发生盘）
     if (pwd.length >= 5) {
         let charSum = 0;
         for (let i = 1; i < pwd.length - 1; i++) {
@@ -795,26 +793,35 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 验证成功：烧毁密码，种下身份令牌
+    // 验证成功：熔断密钥，种下身份牌
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
 
+    // 轨道一：私域 VIP 熟人通道（直达信息采集，开启 60 分钟倒计时）
     if (type === 'V') {
-        alert("尊贵的 VIP 阁下，身份互信已对齐，已为您跳过公域考核，直达时空通道！");
+        alert("尊贵的 VIP 阁下，身份互信已对齐，已为您跳过公域考核，直达深度背景采集通道！");
+        const expiryTime = Date.now() + (60 * 60 * 1000); // ⏱️ 精准设定 60 分钟
+        localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
+        
         showTargetLayerOnly(PAGE_AI_ID);
-        hideTimerBar();
+        startGlobalTimer(expiryTime, 'ai');
         return;
     }
 
+    // 轨道二：普通人付完 3000 元进入（开启 60 分钟倒计时）
     if (type === 'P') {
         alert("3000元基础对价核对成功！深度背景采集系统已解锁。");
+        const expiryTime = Date.now() + (60 * 60 * 1000); // ⏱️ 精准设定 60 分钟
+        localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
+        
         showTargetLayerOnly(PAGE_AI_ID);
-        hideTimerBar();
+        startGlobalTimer(expiryTime, 'ai');
         return;
     }
 
+    // 轨道三：公域 399 元多面向视频分流（开启 30 分钟紧凑倒计时）
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
         let videoTitle = "";
@@ -839,13 +846,13 @@ function verifyAndRouting(inputPassword) {
         const titleElement = document.querySelector('#layer-video h2');
         if (titleElement) titleElement.innerText = videoTitle;
 
-        const expiryTime = Date.now() + (2 * 60 * 60 * 1000); 
+        const expiryTime = Date.now() + (30 * 60 * 1000); // ⏱️ 精准设定 30 分钟控制决策结界
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
         
         showTargetLayerOnly(PAGE_VIDEO_ID);
         startGlobalTimer(expiryTime, 'video');
-        alert("第一重认知契约已达成。高维时空门槛已开启，停留时间：2小时。");
+        alert("第一重认知契约已达成。高维时空门槛已开启，停留时间：30分钟。");
     }
 }
 
@@ -854,6 +861,7 @@ function checkStateAndRestore() {
     const authType = localStorage.getItem('user_token_auth'); 
     const now = Date.now();
 
+    // 视频页状态恢复：严格继承 30 分钟残余时间
     if (currentLayer === PAGE_VIDEO_ID) {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
@@ -861,9 +869,14 @@ function checkStateAndRestore() {
             startGlobalTimer(videoExpiry, 'video');
         } else { forceKickOut(); }
 
+    // 信息采集页状态恢复：严格继承 60 分钟残余时间，防误触关网页
     } else if (currentLayer === PAGE_AI_ID) {
-        showTargetLayerOnly(PAGE_AI_ID);
-        hideTimerBar();
+        const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
+        if (aiExpiry && now < aiExpiry) {
+            showTargetLayerOnly(PAGE_AI_ID);
+            startGlobalTimer(aiExpiry, 'ai');
+        } else { forceKickOut(); }
+        
         if (authType === 'V') {
             const aiTitle = document.querySelector('#layer-ai h2');
             if (aiTitle) aiTitle.innerText = "尊贵的 VIP 阁下，请补充前置背景拓扑";
@@ -930,6 +943,7 @@ function forceKickOut() {
     clearInterval(globalTimerInterval);
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
+    localStorage.removeItem('aiExpiry');
     localStorage.removeItem('user_token_auth');
     localStorage.removeItem('savedBookedTime'); 
     hideTimerBar();
@@ -946,6 +960,7 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 
 </body>
 </html>
+
 
 
 
