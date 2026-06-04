@@ -307,47 +307,6 @@
             .final-thank-card { padding: 35px 15px !important; }
         }
     </style>
-    <script>
-        if (window.location.search.toLowerCase().includes('type=vip')) {
-            const antiFlashStyle = document.createElement('style');
-            antiFlashStyle.innerHTML = `
-                /* 1. 瞬间隐藏第一层(公域)，神仙也看不到 */
-                #layer-pay-399 { display: none !important; }
-                
-                /* 2. 瞬间显示第二层(VIP)，注意：这里不加 !important，确保后面输完密码能正常跳转消失 */
-                #layer-video { display: block; }
-                
-                /* 3. 瞬间隐藏第二层里的视频(3)和收款码(4) */
-                #layer-video .holo-card-panel:nth-child(3),
-                #layer-video .holo-card-panel:nth-child(4) { display: none !important; }
-            `;
-            document.head.appendChild(antiFlashStyle);
-        }
-    </script>
-    <style>
-    #weixin-mask {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.85); z-index: 99999; color: #fff;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        display: none;
-    }
-    .mask-content { position: absolute; top: 8%; right: 5%; text-align: right; padding-right: 15px; }
-    .mask-content p { font-size: 18px; margin: 12px 0; line-height: 1.6; letter-spacing: 1px; }
-    .dots { font-weight: bold; background: #333; padding: 2px 8px; border-radius: 4px; margin: 0 4px; }
-    .highlight { color: #07C160; font-weight: bold; }
-    .arrow { font-size: 50px; color: #07C160; margin-top: 5px; padding-right: 15px; display: inline-block; animation: bounce 1.5s infinite; }
-    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-    </style>
-   
-    <div id="weixin-mask">
-        <div class="mask-content">
-            <div class="arrow">↗</div>
-            <p>请点击右上角 <span class="dots">···</span></p>
-            <p>选择 <span class="highlight">在浏览器中打开</span></p>
-            <p style="font-size: 14px; color: #aaa; margin-top: 20px;">即可正常访问预约咨询系统</p>
-        </div>
-    </div>
-  
 
 </head>
 <body>
