@@ -345,11 +345,12 @@
 
         <div class="holo-card-panel">
             <div class="article-title">－ 专属密钥 －</div>
-            <div class="auth-section">
-                <input type="password" id="password-input" class="crypto-input" placeholder="••••" maxlength="4">
-                <button class="btn" style="margin-top: 25px;" onclick="verifyPublicPassword()">输入密钥 · 开启破局</button>
-                <p id="err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
-            </div>
+          <div class="auth-section">
+    <input type="text" id="password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
+    <button class="btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('password-input').value)">输入密钥 · 开启破局</button>
+    <p id="err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
+</div>
+
         </div>
     </div>
 
@@ -383,16 +384,17 @@
 
         <div class="holo-card-panel">
             <div class="article-title">－ 专属密钥 －</div>
-            <div class="auth-section">
-                <input type="password" id="advanced-password-input" class="crypto-input" placeholder="••••" maxlength="4">
-                <div id="sync-status-text" style="font-size: 14px; color: #00ffcc; min-height: 24px; font-weight: 500; margin-top: 15px; margin-bottom: 5px;"></div>
-                <div class="sync-container" id="loader-box" style="margin: 10px auto;">
-                    <div class="sync-ring"></div>
-                    <div class="sync-pulse"></div>
-                </div>
-                <button class="btn" id="active-ai-btn" style="margin-top: 25px;" onclick="verifyAdvancedPassword()">输入密钥 · 深度破局</button>
-                <p id="adv-err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
-            </div>
+           <div class="auth-section">
+    <input type="text" id="advanced-password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
+    <div id="sync-status-text" style="font-size: 14px; color: #00ffcc; min-height: 24px; font-weight: 500; margin-top: 15px; margin-bottom: 5px;"></div>
+    <div class="sync-container" id="loader-box" style="margin: 10px auto;">
+        <div class="sync-ring"></div>
+        <div class="sync-pulse"></div>
+    </div>
+    <button class="btn" id="active-ai-btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('advanced-password-input').value)">输入密钥 · 深度破局</button>
+    <p id="adv-err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
+</div>
+
         </div>
     </div>
 
