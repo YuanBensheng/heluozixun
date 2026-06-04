@@ -753,64 +753,6 @@
 </div>
 
 <script>
-const PAGE_INDEX_ID = 'layer-pay-399'; 
-const PAGE_VIDEO_ID = 'layer-video';   
-const PAGE_AI_ID    = 'layer-ai';      
-const PAGE_SCHEDULE_ID = 'layer-schedule'; 
-const PAGE_THANKYOU_ID = 'layer-thankyou'; 
-
-let globalTimerInterval = null;
-
-// 核心路由：恢复页面状态
-function checkStateAndRestore() {
-    const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
-    const now = Date.now();
-
-    if (currentLayer === PAGE_VIDEO_ID) {
-        const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
-        if (videoExpiry && now < videoExpiry) {
-            showTargetLayerOnly(PAGE_VIDEO_ID);
-            startGlobalTimer(videoExpiry, 'video');
-        } else { forceKickOut(); }
-
-    } else if (currentLayer === PAGE_AI_ID) {
-        const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
-        if (aiExpiry && now < aiExpiry) {
-            showTargetLayerOnly(PAGE_AI_ID);
-            startGlobalTimer(aiExpiry, 'ai');
-        } else { forceKickOut(); }
-
-    } else if (currentLayer === PAGE_THANKYOU_ID) {
-        // 如果刷新时处于最后一页，立刻把缓存的时间提取出来重新渲染！
-        showTargetLayerOnly(PAGE_THANKYOU_ID);
-        hideTimerBar();
-        const savedTime = localStorage.getItem('savedBookedTime');
-        if (savedTime) {
-            document.getElementById('thank-time-text').innerText = savedTime;
-        }
-    } else if (currentLayer === PAGE_SCHEDULE_ID) {
-        // 【🔥超级修复点】：如果刷新时在排期页，强制将日历时间校正为当前真实月份，并重新渲染！
-        showTargetLayerOnly(PAGE_SCHEDULE_ID);
-        hideTimerBar();
-        
-        // 重新同步并校正到当前真实月份
-        currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
-        renderCalendar(); 
-    } else {
-        showTargetLayerOnly(PAGE_INDEX_ID);
-        hideTimerBar();
-    }
-}
-
-<!-- ========================================== -->
-<!-- 补丁二：高维五维动态密码与全自动门禁总引擎 -->
-<!-- ========================================== -->
-<div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
-    高维时空剩余停留时间: <span id="global-time-left">00:00</span>
-</div>
-
-<script>
-// 页面层级 ID 常量定义
 const PAGE_INDEX_ID     = 'layer-pay-399'; 
 const PAGE_VIDEO_ID     = 'layer-video';   
 const PAGE_AI_ID        = 'layer-ai';      
@@ -819,36 +761,31 @@ const PAGE_THANKYOU_ID  = 'layer-thankyou';
 
 let globalTimerInterval = null;
 
-// ==========================================
-// 🚀 核心算法一：免服务器密码散列与象限判定机制
-// ==========================================
 function verifyAndRouting(inputPassword) {
     if (!inputPassword) {
         alert("请输入时空契约密钥！");
         return;
     }
 
-    const pwd = inputPassword.trim();
+    // 自动清理空格并转大写，包容客户的输入习惯
+    const pwd = inputPassword.trim().toUpperCase();
 
-    // 1. 拦截防倒卖：检查该密码是否在本地已被销毁
     if (localStorage.getItem('burnt_' + pwd)) {
         alert("⚠️ 该时空契约密钥已被激活使用，无法二次冒领！");
         return;
     }
 
-    // 2. 提取象限标记首字母
-    const type = pwd.charAt(0).toUpperCase();
-    
-    // 3. 极其严密的哈希混淆校验 (右键看源码绝对无法反推密码)
+    const type = pwd.charAt(0);
     let isMatch = false;
-    if (pwd.length >= 6) {
-        // 算法规则：取密码除去首尾，中间字符的简单数学加权，配合离线发生盘校验
+    
+    // 严格的高维哈希解码器（匹配您手里的发生盘）
+    if (pwd.length >= 5) {
         let charSum = 0;
-        for (let i = 1; i < pwd.length; i++) {
+        for (let i = 1; i < pwd.length - 1; i++) {
             charSum += pwd.charCodeAt(i);
         }
-        // 验证指纹特征，满足此数学指纹的方可放行
-        if (charSum % 7 === 3 || pwd.includes('heluo') || pwd.length === 6) {
+        let checkDigit = pwd.charAt(pwd.length - 1);
+        if ((charSum + checkDigit.charCodeAt(0)) % 7 === 3) {
             isMatch = true;
         }
     }
@@ -858,24 +795,18 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // ==========================================
-    // 🚀 核心算法二：多向分流与闪现流转控制
-    // ==========================================
-    // 立即熔断：将该密码放入全网烧毁名录
+    // 验证成功：烧毁密码，种下身份令牌
     localStorage.setItem('burnt_' + pwd, 'true');
-    localStorage.setItem('user_token_auth', type); // 给浏览器种下身份令牌
+    localStorage.setItem('user_token_auth', type);
 
-    // 轨道一：私域 VIP 熟人通道 (输入 V 开头密码)
     if (type === 'V') {
         alert("尊贵的 VIP 阁下，身份互信已对齐，已为您跳过公域考核，直达时空通道！");
         localStorage.setItem('currentLayer', PAGE_AI_ID);
-        // VIP 直接空降到第三层，且不需要倒计时限制
         showTargetLayerOnly(PAGE_AI_ID);
         hideTimerBar();
         return;
     }
 
-    // 轨道二：第二重付款解禁 (普通人付完 3000 元，输入 P 开头密码)
     if (type === 'P') {
         alert("3000元基础对价核对成功！深度背景采集系统已解锁。");
         localStorage.setItem('currentLayer', PAGE_AI_ID);
@@ -884,35 +815,30 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 轨道三：公域 399 元多面向视频分流 (E/F/W 密码)
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
         let videoTitle = "";
 
         if (type === 'E') {
             videoTitle = "【少儿教育与培根逻辑专属微课】";
-            videoUrl = "https://your-platform.com/education-video.mp4"; // 🎯 未来在这里替换教育视频地址
+            videoUrl = "https://your-platform.com/education-video.mp4"; 
         } else if (type === 'F') {
             videoTitle = "【家庭关系与能量场对齐专属微课】";
-            videoUrl = "https://your-platform.com/family-video.mp4";      // 🎯 未来在这里替换家庭视频地址
+            videoUrl = "https://your-platform.com/family-video.mp4";      
         } else if (type === 'W') {
-            videoTitle = "// 🎯 未来在这里替换工作事业视频地址
             videoTitle = "【工作事业与河洛九宫破局专属微课】";
-            videoUrl = "https://your-platform.com/work-video.mp4";        // 🎯 未来在这里替换事业视频地址
+            videoUrl = "https://your-platform.com/work-video.mp4";        
         }
 
-        // 动态向网页注入特定的视频源
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
             videoElement.src = videoUrl;
-            videoElement.load(); // 强制刷新视频轨
+            videoElement.load(); 
         }
         
-        // 动态修改视频上方的提示标题（更显专业尊贵）
         const titleElement = document.querySelector('#layer-video h2');
         if (titleElement) titleElement.innerText = videoTitle;
 
-        // 启动 2 小时严苛倒计时逼单结界
         const expiryTime = Date.now() + (2 * 60 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
@@ -923,15 +849,11 @@ function verifyAndRouting(inputPassword) {
     }
 }
 
-// ==========================================
-// 🚀 核心算法三：全局路由状态恢复 (抗误触、刷新不丢失)
-// ==========================================
 function checkStateAndRestore() {
     const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
-    const authType = localStorage.getItem('user_token_auth'); // 获取身份牌
+    const authType = localStorage.getItem('user_token_auth'); 
     const now = Date.now();
 
-    // 如果刷新时在视频页，认牌不认码，且继续继承倒计时
     if (currentLayer === PAGE_VIDEO_ID) {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
@@ -939,18 +861,14 @@ function checkStateAndRestore() {
             startGlobalTimer(videoExpiry, 'video');
         } else { forceKickOut(); }
 
-    // 如果在 AI 采集页，直接识别是 VIP 还是普通 P 轨，锁定状态
     } else if (currentLayer === PAGE_AI_ID) {
         showTargetLayerOnly(PAGE_AI_ID);
         hideTimerBar();
-        
-        // 如果是 VIP 熟人刷新，自动隐蔽公域话术，呈现 VIP 定制界面
         if (authType === 'V') {
             const aiTitle = document.querySelector('#layer-ai h2');
             if (aiTitle) aiTitle.innerText = "尊贵的 VIP 阁下，请补充前置背景拓扑";
         }
 
-    // 锁死最后一页的括号Bug
     } else if (currentLayer === PAGE_THANKYOU_ID) {
         showTargetLayerOnly(PAGE_THANKYOU_ID);
         hideTimerBar();
@@ -959,29 +877,27 @@ function checkStateAndRestore() {
             document.getElementById('thank-time-text').innerText = savedTime;
         }
 
-    // 锁死日历刷新掉进5月的Bug，自动同步到当前6月
     } else if (currentLayer === PAGE_SCHEDULE_ID) {
         showTargetLayerOnly(PAGE_SCHEDULE_ID);
         hideTimerBar();
-        currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
-        renderCalendar(); 
-
+        if(typeof todayDate !== 'undefined') {
+            currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+        }
+        if(typeof renderCalendar === 'function') {
+            renderCalendar(); 
+        }
     } else {
         showTargetLayerOnly(PAGE_INDEX_ID);
         hideTimerBar();
     }
 }
 
-// ==========================================
-// ⚙️ 辅助底层驱动（倒计时、清场、图层切换）
-// ==========================================
 function startGlobalTimer(expiry, type) {
     clearInterval(globalTimerInterval); 
     const timerBar = document.getElementById('global-timer-bar');
     const timeLeftSpan = document.getElementById('global-time-left');
     
     timerBar.style.background = '#010614';
-    // 🎯 无论如何，下边框线完美锁定为高维青绿色
     timerBar.style.borderBottom = '1px solid #10B981'; 
     timerBar.style.color = '#10B981';
     timerBar.style.display = 'block';
@@ -1025,13 +941,12 @@ function hideTimerBar() {
     if(timerBar) timerBar.style.display = 'none';
 }
 
-// 绑定原始的按钮事件：让前置密码框触发全新的 verifyAndRouting 函数
-document. some-button-selector...（系统会自动通过原有的点击进行映射绑定）
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
 
 </body>
 </html>
+
 
 
 
