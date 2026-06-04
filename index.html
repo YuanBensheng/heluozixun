@@ -1040,48 +1040,6 @@ function hideTimerBar() {
 }
 
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
-
-// ==========================================
-// 💎 VIP 专属分流通道控制逻辑 (强力覆盖版)
-// ==========================================
-window.addEventListener('DOMContentLoaded', () => {
-    // 增加 50 毫秒延迟，确保它绝对在“原有页面重置逻辑”之后执行，强行夺回控制权
-    setTimeout(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const typeParam = urlParams.get('type');
-        
-        // .toLowerCase() 保证无论输入 ?type=vip 还是 ?type=VIP 都能成功识别
-        if (typeParam && typeParam.toLowerCase() === 'vip') {
-            const currentLayer = localStorage.getItem('currentLayer');
-            
-            // 只要客户没进入日历排期，就强行向他展示 VIP 界面
-            if (!currentLayer || currentLayer === PAGE_INDEX_ID || currentLayer === PAGE_VIDEO_ID) {
-                
-                // 1. 强行显示第二层
-                showTargetLayerOnly(PAGE_VIDEO_ID);
-                
-                // 2. 获取该层的所有卡片面板
-                const videoLayer = document.getElementById(PAGE_VIDEO_ID);
-                if (videoLayer) {
-                    const panels = videoLayer.querySelectorAll('.holo-card-panel');
-                    
-                    // 3. 彻底隐藏【视频】和【收款码】板块，只留专属密钥输入框
-                    if (panels.length >= 3) {
-                        panels[0].style.display = 'none';
-                        panels[1].style.display = 'none';
-                    }
-                    
-                    // 4. 动态渲染 VIP 专属尊贵标题
-                    const mainTitle = videoLayer.querySelector('h2');
-                    if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
-                    
-                    const subTitle = videoLayer.querySelector('.sub-title');
-                    if (subTitle) subTitle.innerHTML = '身份互信 · 直达深度采集';
-                }
-            }
-        }
-    }, 50); 
-});
 </script>
 
 
