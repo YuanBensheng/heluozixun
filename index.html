@@ -540,7 +540,7 @@
     // ================= 🔑 密钥防线 =================
     const P_A_S_S = "2468"; const P_A_S_S_ADV = "1357"; 
 
-    // 【已升级】：第一重密码验证（触发 30 分钟倒计时）
+    // 第一重密码验证（触发 30 分钟倒计时）
     function verifyPublicPassword() {
         if (document.getElementById('password-input').value === P_A_S_S) {
             document.getElementById('err-msg').style.display = 'none'; 
@@ -565,7 +565,7 @@
         }
     }
 
-    // 【已升级】：第二重密码同步动画（触发 60 分钟倒计时）
+    // 第二重密码同步动画（触发 60 分钟倒计时）
     function triggerEnergySync() {
         const btn = document.getElementById('active-ai-btn'); const loaderBox = document.getElementById('loader-box'); const statusText = document.getElementById('sync-status-text');
         btn.disabled = true; loaderBox.style.display = "block";
@@ -590,9 +590,8 @@
     let currentDisplayDate = new Date(); const todayDate = new Date(); const maxFutureDate = new Date(new Date().setFullYear(todayDate.getFullYear() + 1)); 
     let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
 
-    // 【已升级】：进入日历排期（解除计时，允许无限刷新停留）
+    // 进入日历排期（解除计时，允许无限刷新停留）
     async function initCalendarLayer() {
-        // 进入排期，时间限制解除，只记录层级
         localStorage.removeItem('aiExpiry');
         localStorage.setItem('currentLayer', 'layer-schedule');
         hideTimerBar();
@@ -677,18 +676,18 @@
         document.body.removeChild(textarea); return success;
     }
 
-    // ⚡ 2. 锁定逻辑：线上正式版原子锁单，向 Vercel 接口发起霸占请求
+    // 2. 锁定逻辑：线上正式版原子锁单，向 Vercel 接口发起霸占请求
     async function submitAppointment() {
         const name = document.getElementById('user-name').value.trim(); const wechat = document.getElementById('user-wechat').value.trim();
         if(!name || !wechat) { alert("请完整填写您的尊称与微信号，以便完成最终因果对齐。"); return; }
         
         const wechatRegex = /^[a-zA-Z0-9_-]+$/;
-        if (!wechatRegex.test(wechat)) { alert("【微信格式错误】\n微信号只能由英文字母、数字、下划线(_)或减号(-)组成。"); return; }
+        if (!wechatRegex.test(wechat)) { alert("【微信格式错误】\n微信号只能由英文字入、数字、下划线(_)或减号(-)组成。"); return; }
 
         const submitBtn = document.querySelector('#appoint-form .btn'); const originalBtnText = submitBtn.innerText;
         submitBtn.disabled = true; submitBtn.innerText = "正在向云端发起全网垄断锁定...";
 
-        const slotKey = `${chosenDateKey}_${chosenPeriod}`; // 例如：2026-06-03_AM
+        const slotKey = `${chosenDateKey}_${chosenPeriod}`; 
 
         try {
             const response = await fetch('/api/booking', {
@@ -702,6 +701,10 @@
             if (response.ok && result.success) {
                 globalBookedSlots[slotKey] = true;
                 finalTimeStrGlobal = chosenDate + " " + chosenTime;
+                
+                // 【🔥核心修复】：在这里把选好的最终时间死死钉在本地缓存里，防止刷新丢失！
+                localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
+                
                 const credentialText = `老师您好，我已通过四层筛选并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
                 
                 const proceedToModal = () => {
@@ -726,7 +729,7 @@
         }
     }
 
-    // 【已升级】：最终确认完成弹窗（记录到达终极页面）
+    // 最终确认完成弹窗（记录到达终极页面）
     function closeModalAndProceed() { 
         document.getElementById('custom-modal').style.display = "none"; 
         document.getElementById('thank-time-text').innerText = finalTimeStrGlobal; 
@@ -748,7 +751,6 @@
 </div>
 
 <script>
-// 1. 真实门牌号已自动匹配
 const PAGE_INDEX_ID = 'layer-pay-399'; 
 const PAGE_VIDEO_ID = 'layer-video';   
 const PAGE_AI_ID    = 'layer-ai';      
@@ -757,7 +759,7 @@ const PAGE_THANKYOU_ID = 'layer-thankyou';
 
 let globalTimerInterval = null;
 
-// 2. 核心路由：只要一刷新，立刻执行，恢复当前页面状态
+// 核心路由：恢复页面状态
 function checkStateAndRestore() {
     const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
     const now = Date.now();
@@ -767,34 +769,38 @@ function checkStateAndRestore() {
         if (videoExpiry && now < videoExpiry) {
             showTargetLayerOnly(PAGE_VIDEO_ID);
             startGlobalTimer(videoExpiry, 'video');
-        } else { forceKickOut(); } // 超时踢出
+        } else { forceKickOut(); }
 
     } else if (currentLayer === PAGE_AI_ID) {
         const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
         if (aiExpiry && now < aiExpiry) {
             showTargetLayerOnly(PAGE_AI_ID);
             startGlobalTimer(aiExpiry, 'ai');
-        } else { forceKickOut(); } // 超时踢出
+        } else { forceKickOut(); }
 
-    } else if (currentLayer === PAGE_SCHEDULE_ID || currentLayer === PAGE_THANKYOU_ID) {
-        // 允许在排期页或感谢页刷新停留，此时无需倒计时
+    } else if (currentLayer === PAGE_THANKYOU_ID) {
+        // 【🔥核心修复】：如果刷新时处于最后一页，立刻把缓存的时间提取出来重新渲染！
+        showTargetLayerOnly(PAGE_THANKYOU_ID);
+        hideTimerBar();
+        const savedTime = localStorage.getItem('savedBookedTime');
+        if (savedTime) {
+            document.getElementById('thank-time-text').innerText = savedTime;
+        }
+    } else if (currentLayer === PAGE_SCHEDULE_ID) {
         showTargetLayerOnly(currentLayer);
         hideTimerBar();
     } else {
-        // 默认显示首页
         showTargetLayerOnly(PAGE_INDEX_ID);
         hideTimerBar();
     }
 }
 
-// 3. 倒计时主函数
 function startGlobalTimer(expiry, type) {
     clearInterval(globalTimerInterval); 
     const timerBar = document.getElementById('global-timer-bar');
     const timeLeftSpan = document.getElementById('global-time-left');
     
-    // 视觉匹配您的赛博风格
-    timerBar.style.background = type === 'video' ? '#010614' : '#010614';
+    timerBar.style.background = '#010614';
     timerBar.style.borderBottom = type === 'video' ? '1px solid #ffcc00' : '1px solid #10B981';
     timerBar.style.color = '#10B981';
     timerBar.style.display = 'block';
@@ -811,7 +817,6 @@ function startGlobalTimer(expiry, type) {
     }, 1000);
 }
 
-// 4. 接管原本的隐藏/显示逻辑
 function showTargetLayerOnly(targetId) {
     document.querySelectorAll('.layer').forEach(layer => {
         layer.style.display = 'none';
@@ -824,12 +829,12 @@ function showTargetLayerOnly(targetId) {
     }
 }
 
-// 5. 违规踢出函数：彻底清场
 function forceKickOut() {
     clearInterval(globalTimerInterval);
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
     localStorage.removeItem('aiExpiry');
+    localStorage.removeItem('savedBookedTime'); // 踢出时连同时间一块清空
     hideTimerBar();
     showTargetLayerOnly(PAGE_INDEX_ID);
 }
@@ -839,9 +844,9 @@ function hideTimerBar() {
     if(timerBar) timerBar.style.display = 'none';
 }
 
-// 给页面挂上门禁：在原来的 DOMContentLoaded 事件中追加
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
 
 </body>
 </html>
+
