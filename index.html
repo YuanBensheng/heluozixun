@@ -990,7 +990,10 @@ function showTargetLayerOnly(targetId) {
         targetElem.style.display = 'block';
         targetElem.classList.add('active');
     }
+    // 💡 核心修复：无论是手机还是电脑，换页后瞬间强制将视口拉回最顶端
+    window.scrollTo(0, 0);
 }
+
 
 function forceKickOut() {
     clearInterval(globalTimerInterval);
