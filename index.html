@@ -307,6 +307,24 @@
             .final-thank-card { padding: 35px 15px !important; }
         }
     </style>
+    <script>
+        if (window.location.search.toLowerCase().includes('type=vip')) {
+            const antiFlashStyle = document.createElement('style');
+            antiFlashStyle.innerHTML = `
+                /* 1. 瞬间隐藏第一层(公域)，神仙也看不到 */
+                #layer-pay-399 { display: none !important; }
+                
+                /* 2. 瞬间显示第二层(VIP)，注意：这里不加 !important，确保后面输完密码能正常跳转消失 */
+                #layer-video { display: block; }
+                
+                /* 3. 瞬间隐藏第二层里的视频(3)和收款码(4) */
+                #layer-video .holo-card-panel:nth-child(3),
+                #layer-video .holo-card-panel:nth-child(4) { display: none !important; }
+            `;
+            document.head.appendChild(antiFlashStyle);
+        }
+    </script>
+</head>
 
 </head>
 <body>
