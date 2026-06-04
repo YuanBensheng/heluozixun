@@ -957,25 +957,23 @@ async function verifyAndRouting(inputPassword) {
 // 👁️ 以下原有环境记忆维持与定时器逻辑 100% 留存，确保前置刷新不丢失
 // ====================================================================
 function checkStateAndRestore() {
-    // 🧹 1. 自动清洗上一版残留的 24 小时 Bug 签证 (阅后即焚)
+    // 🧹 1. 自动清洗残留的 Bug 签证
     let bugExp = localStorage.getItem('videoExpiry');
     if (bugExp && parseInt(bugExp) > Date.now() + 2 * 3600 * 1000) {
         localStorage.removeItem('videoExpiry');
         localStorage.removeItem('currentLayer');
     }
 
-    // 👑 2. VIP 纯净渲染模式 (绝不写伪造缓存)
+    // 👑 2. VIP 纯净渲染模式 
     const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
     if (isVipChannel) {
         const currentLayer = localStorage.getItem('currentLayer');
-        // 只要客户还没通关到下一页，就纯视觉呈现 VIP 界面
         if (!currentLayer || currentLayer === PAGE_INDEX_ID || currentLayer === PAGE_VIDEO_ID) {
             showTargetLayerOnly(PAGE_VIDEO_ID);
             hideTimerBar();
 
             const videoLayer = document.getElementById(PAGE_VIDEO_ID);
             if (videoLayer) {
-                // 在 JS 里，querySelectorAll('.holo-card-panel') 完美对应: [0]是视频, [1]是支付, [2]是密码框
                 const panels = videoLayer.querySelectorAll('.holo-card-panel');
                 if (panels.length >= 3) {
                     panels[0].style.display = 'none';
@@ -988,13 +986,12 @@ function checkStateAndRestore() {
                 const subTitle = videoLayer.querySelector('.sub-title');
                 if (subTitle) subTitle.innerHTML = '身份互信 · 直达深度采集';
             }
-            return; // 🚀 核心：渲染完 VIP 界面直接终止，绝不执行下方公域恢复逻辑！
+            return; 
         }
     }
 
-    // ========== 🟢 下面是原封不动的正常恢复逻辑 ==========
+    // ========== 🟢 正常恢复逻辑 ==========
     const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
-    const authType = localStorage.getItem('user_token_auth'); 
     const now = Date.now();
 
     if (currentLayer === PAGE_VIDEO_ID) {
@@ -1010,11 +1007,7 @@ function checkStateAndRestore() {
             showTargetLayerOnly(PAGE_AI_ID);
             startGlobalTimer(aiExpiry, 'ai');
         } else { forceKickOut(); }
-        
-        if (authType === 'V') {
-            const aiTitle = document.querySelector('#layer-ai h2');
-            if (aiTitle) aiTitle.innerText = "尊贵的 VIP 阁下，请补充前置背景拓扑";
-        }
+        // 🌟 多余的 VIP 改标题逻辑已经从这里被彻底删除了！
 
     } else if (currentLayer === PAGE_THANKYOU_ID) {
         showTargetLayerOnly(PAGE_THANKYOU_ID);
@@ -1034,6 +1027,7 @@ function checkStateAndRestore() {
         hideTimerBar();
     }
 }
+
 
 
 function startGlobalTimer(expiry, type) {
