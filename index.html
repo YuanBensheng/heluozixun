@@ -307,52 +307,6 @@
             .final-thank-card { padding: 35px 15px !important; }
         }
     </style>
-        <!-- ========================================== -->
-    <!-- 💎 VIP 绝对视觉防线（此代码优先级最高） -->
-    <!-- ========================================== -->
-          <script>
-        if (window.location.search.toLowerCase().includes('type=vip')) {
-            // 1. 注入纯净版 CSS：只隐藏不要的板块，【绝不】锁死整个页面，把显隐控制权还给系统！
-            const style = document.createElement('style');
-            style.innerHTML = `
-                #layer-pay-399 { display: none !important; }
-                /* 🎯 精准狙击：只隐藏视频(3)和收款码(4)，密码框保留 */
-                #layer-video .holo-card-panel:nth-child(3) { display: none !important; }
-                #layer-video .holo-card-panel:nth-child(4) { display: none !important; }
-            `;
-            document.head.appendChild(style);
-            
-            // 2. 欺骗底层状态机：给 VIP 客户悄悄发一张 24小时的“合法签证”
-            // 这样系统就不会把你踢回首页，而是名正言顺地让你停留在专属密码页
-            let cl = localStorage.getItem('currentLayer');
-            if (!cl || cl === 'layer-pay-399' || cl === 'layer-video') {
-                localStorage.setItem('currentLayer', 'layer-video');
-                localStorage.setItem('videoExpiry', Date.now() + (24 * 60 * 60 * 1000)); 
-            }
-
-            // 3. 动态替换尊贵标题，并抹除在密码页多余的倒计时条
-            window.addEventListener('DOMContentLoaded', function() {
-                const videoLayer = document.getElementById('layer-video');
-                if(videoLayer) {
-                    const mainTitle = videoLayer.querySelector('h2');
-                    if(mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
-                    const subTitle = videoLayer.querySelector('.sub-title');
-                    if(subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
-                }
-                
-                // 自动隐藏密码输入界面的那个倒计时条，保持页面纯粹
-                // 当进入下一个信息采集页时，倒计时会自动恢复
-                setInterval(() => {
-                    const timerBar = document.getElementById('global-timer-bar');
-                    if (timerBar && videoLayer && videoLayer.style.display === 'block') {
-                        timerBar.style.display = 'none';
-                    }
-                }, 100);
-            });
-        }
-    </script>
-
-
 
 </head>
 <body>
@@ -874,6 +828,22 @@ async function verifyAndRouting(inputPassword) {
 
     // 2. 本地二级防线：数理指纹对齐（不对齐的垃圾请求直接在这里拦截，绝不消耗云端 Redis 算力）
     const type = pwd.charAt(0); 
+        // ========== 🚨 核心拦截：跨频道密钥互斥防线 ==========
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
+
+    // 1. 如果在 VIP 通道，输入了公域密码 (E/F/W)，直接拦截报错！
+    if (isVipChannel && (type === 'E' || type === 'F' || type === 'W')) {
+        alert("❌ 凭证不匹配：此为 VIP 专属通道，公域密钥无法在此激活！");
+        return; // 强行截断，绝不触发倒计时
+    }
+
+    // 2. 如果在公域首页，输入了 VIP 纯熟人密码 (V)，提示去专属链接（保留 P 码容灾）
+    if (!isVipChannel && type === 'V') {
+        alert("❌ 通道不匹配：检测到 VIP 专属密钥，请通过专属链接进入！");
+        return;
+    }
+    // =======================================================
+
     let isMatch = false;
     
     if (pwd.length === 6) {
@@ -987,6 +957,42 @@ async function verifyAndRouting(inputPassword) {
 // 👁️ 以下原有环境记忆维持与定时器逻辑 100% 留存，确保前置刷新不丢失
 // ====================================================================
 function checkStateAndRestore() {
+    // 🧹 1. 自动清洗上一版残留的 24 小时 Bug 签证 (阅后即焚)
+    let bugExp = localStorage.getItem('videoExpiry');
+    if (bugExp && parseInt(bugExp) > Date.now() + 2 * 3600 * 1000) {
+        localStorage.removeItem('videoExpiry');
+        localStorage.removeItem('currentLayer');
+    }
+
+    // 👑 2. VIP 纯净渲染模式 (绝不写伪造缓存)
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
+    if (isVipChannel) {
+        const currentLayer = localStorage.getItem('currentLayer');
+        // 只要客户还没通关到下一页，就纯视觉呈现 VIP 界面
+        if (!currentLayer || currentLayer === PAGE_INDEX_ID || currentLayer === PAGE_VIDEO_ID) {
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            hideTimerBar();
+
+            const videoLayer = document.getElementById(PAGE_VIDEO_ID);
+            if (videoLayer) {
+                // 在 JS 里，querySelectorAll('.holo-card-panel') 完美对应: [0]是视频, [1]是支付, [2]是密码框
+                const panels = videoLayer.querySelectorAll('.holo-card-panel');
+                if (panels.length >= 3) {
+                    panels[0].style.display = 'none';
+                    panels[1].style.display = 'none';
+                }
+                
+                const mainTitle = videoLayer.querySelector('h2');
+                if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
+                
+                const subTitle = videoLayer.querySelector('.sub-title');
+                if (subTitle) subTitle.innerHTML = '身份互信 · 直达深度采集';
+            }
+            return; // 🚀 核心：渲染完 VIP 界面直接终止，绝不执行下方公域恢复逻辑！
+        }
+    }
+
+    // ========== 🟢 下面是原封不动的正常恢复逻辑 ==========
     const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
     const authType = localStorage.getItem('user_token_auth'); 
     const now = Date.now();
@@ -1014,9 +1020,7 @@ function checkStateAndRestore() {
         showTargetLayerOnly(PAGE_THANKYOU_ID);
         hideTimerBar();
         const savedTime = localStorage.getItem('savedBookedTime');
-        if (savedTime) {
-            document.getElementById('thank-time-text').innerText = savedTime;
-        }
+        if (savedTime) { document.getElementById('thank-time-text').innerText = savedTime; }
 
     } else if (currentLayer === PAGE_SCHEDULE_ID) {
         showTargetLayerOnly(PAGE_SCHEDULE_ID);
@@ -1024,14 +1028,13 @@ function checkStateAndRestore() {
         if(typeof todayDate !== 'undefined') {
             currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
         }
-        if(typeof renderCalendar === 'function') {
-            renderCalendar(); 
-        }
+        if(typeof renderCalendar === 'function') { renderCalendar(); }
     } else {
         showTargetLayerOnly(PAGE_INDEX_ID);
         hideTimerBar();
     }
 }
+
 
 function startGlobalTimer(expiry, type) {
     clearInterval(globalTimerInterval); 
