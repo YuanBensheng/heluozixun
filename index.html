@@ -338,15 +338,7 @@
     .arrow { font-size: 50px; color: #07C160; margin-top: 5px; padding-right: 15px; display: inline-block; animation: bounce 1.5s infinite; }
     @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
     </style>
-    ```
-
----
-
-### 📥 第二次粘贴：放入 `<body>` 标签正下方（结构层）
-在代码里找到 **`<body>`**（注意没有斜杠，这是网页内容的开始位置）。
-在 `<body>` 的**正下方一行**（也就是你原本网页所有内容的最前面），敲个回车，把下面这段遮罩层 HTML 粘进去：
-
-```html
+   
     <div id="weixin-mask">
         <div class="mask-content">
             <div class="arrow">↗</div>
@@ -355,38 +347,7 @@
             <p style="font-size: 14px; color: #aaa; margin-top: 20px;">即可正常访问预约咨询系统</p>
         </div>
     </div>
-    ```
-
----
-
-### 📥 第三次粘贴：放入 `</body>` 标签正上方（逻辑层）
-一直滚动到代码的最底部，找到 **`</body>`**（带有斜杠，网页主体的结束位置）。
-在 `</body>` 的**前一行**，敲个回车，把这段判断是不是微信的 JS 脚本粘进去：
-
-```html
-    <script>
-    (function() {
-        function isWeixinBrowser() {
-            var ua = navigator.userAgent.toLowerCase();
-            return ua.indexOf('micromessenger') !== -1;
-        }
-        if (isWeixinBrowser()) {
-            document.getElementById('weixin-mask').style.display = 'block';
-            document.body.style.overflow = 'hidden'; // 锁定微信内页面滚动
-        }
-    })();
-    </script>
-    ```
-
----
-
-## 🚀 提交并查看效果
-
-1. 确认三个地方都粘贴好后，点击 GitHub 页面右上角的绿色 **"Commit changes..."（提交修改）** 按钮。
-2. 在弹出的输入框里随便写个备注（例如：`update: add weixin mask`），然后点击 **"Commit changes"** 确认提交。
-3. 此时，Vercel 会在后台静默收到通知。你可以泡杯茶，等待大约 10 到 30 秒，Vercel 就会把新代码部署到你的 Namecheap 自定义域名上。
-
-现在，你就可以用手机微信打开你的网站域名去测试了。微信内会直接拉起黑色的分流遮罩，而用手机自带的浏览器打开则一切正常。
+  
 
 </head>
 <body>
