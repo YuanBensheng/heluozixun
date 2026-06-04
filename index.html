@@ -821,7 +821,7 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-        // 轨道三：公域 399 元多面向视频分流（开启 30 分钟紧凑倒计时）
+    // 轨道三：公域 399 元多面向视频分流（开启 30 分钟紧凑倒计时）
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
 
@@ -833,27 +833,14 @@ function verifyAndRouting(inputPassword) {
             videoUrl = "https://your-platform.com/work-video.mp4";        
         }
 
-        // 仅动态切换视频内核
+        // 仅动态切换视频内核，绝不修改上方的高维大标题
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
             videoElement.src = videoUrl;
             videoElement.load(); 
         }
 
-        const expiryTime = Date.now() + (30 * 60 * 1000); // ⏱️ 精准设定 30 分钟控制决策结界
-        localStorage.setItem('videoExpiry', expiryTime);
-        localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
-        
-        showTargetLayerOnly(PAGE_VIDEO_ID);
-        startGlobalTimer(expiryTime, 'video');
-        alert("第一重认知契约已达成。高维时空门槛已开启，停留时间：30分钟。");
-    }
-
-        
-        const titleElement = document.querySelector('#layer-video h2');
-        if (titleElement) titleElement.innerText = videoTitle;
-
-        const expiryTime = Date.now() + (30 * 60 * 1000); // ⏱️ 精准设定 30 分钟控制决策结界
+        const expiryTime = Date.now() + (30 * 60 * 1000); // ⏱️ 精准设定 30 分钟
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
         
@@ -868,7 +855,6 @@ function checkStateAndRestore() {
     const authType = localStorage.getItem('user_token_auth'); 
     const now = Date.now();
 
-    // 视频页状态恢复：严格继承 30 分钟残余时间
     if (currentLayer === PAGE_VIDEO_ID) {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
@@ -876,7 +862,6 @@ function checkStateAndRestore() {
             startGlobalTimer(videoExpiry, 'video');
         } else { forceKickOut(); }
 
-    // 信息采集页状态恢复：严格继承 60 分钟残余时间，防误触关网页
     } else if (currentLayer === PAGE_AI_ID) {
         const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
         if (aiExpiry && now < aiExpiry) {
@@ -884,6 +869,7 @@ function checkStateAndRestore() {
             startGlobalTimer(aiExpiry, 'ai');
         } else { forceKickOut(); }
         
+        // 唯独为 VIP 保留这句专属尊贵提示，其他公域客人的标题一律不变
         if (authType === 'V') {
             const aiTitle = document.querySelector('#layer-ai h2');
             if (aiTitle) aiTitle.innerText = "尊贵的 VIP 阁下，请补充前置背景拓扑";
@@ -967,6 +953,7 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 
 </body>
 </html>
+
 
 
 
