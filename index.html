@@ -310,22 +310,27 @@
         <!-- ========================================== -->
     <!-- 💎 VIP 绝对视觉防线（此代码优先级最高） -->
     <!-- ========================================== -->
-       <script>
-        // 只要网址里发现 type=vip，立刻执行霸道隐藏！
+          <script>
         if (window.location.search.toLowerCase().includes('type=vip')) {
+            // 1. 注入纯净版 CSS：只隐藏不要的板块，【绝不】锁死整个页面，把显隐控制权还给系统！
             const style = document.createElement('style');
-            // 使用 !important 强行推翻所有的底部 JS 逻辑，将公域内容封杀
             style.innerHTML = `
                 #layer-pay-399 { display: none !important; }
-                #layer-video { display: block !important; opacity: 1 !important; visibility: visible !important; }
-                
-                /* 🎯 精准狙击：彻底隐藏第3个(视频)和第4个(收款码)元素，只留最后一个密码框 */
+                /* 🎯 精准狙击：只隐藏视频(3)和收款码(4)，密码框保留 */
                 #layer-video .holo-card-panel:nth-child(3) { display: none !important; }
                 #layer-video .holo-card-panel:nth-child(4) { display: none !important; }
             `;
             document.head.appendChild(style);
             
-            // 顺便把大标题改掉
+            // 2. 欺骗底层状态机：给 VIP 客户悄悄发一张 24小时的“合法签证”
+            // 这样系统就不会把你踢回首页，而是名正言顺地让你停留在专属密码页
+            let cl = localStorage.getItem('currentLayer');
+            if (!cl || cl === 'layer-pay-399' || cl === 'layer-video') {
+                localStorage.setItem('currentLayer', 'layer-video');
+                localStorage.setItem('videoExpiry', Date.now() + (24 * 60 * 60 * 1000)); 
+            }
+
+            // 3. 动态替换尊贵标题，并抹除在密码页多余的倒计时条
             window.addEventListener('DOMContentLoaded', function() {
                 const videoLayer = document.getElementById('layer-video');
                 if(videoLayer) {
@@ -334,9 +339,19 @@
                     const subTitle = videoLayer.querySelector('.sub-title');
                     if(subTitle) subTitle.innerHTML = '身份互信 · 直达深度采集';
                 }
+                
+                // 自动隐藏密码输入界面的那个倒计时条，保持页面纯粹
+                // 当进入下一个信息采集页时，倒计时会自动恢复
+                setInterval(() => {
+                    const timerBar = document.getElementById('global-timer-bar');
+                    if (timerBar && videoLayer && videoLayer.style.display === 'block') {
+                        timerBar.style.display = 'none';
+                    }
+                }, 100);
             });
         }
     </script>
+
 
 
 </head>
