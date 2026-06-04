@@ -821,27 +821,34 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 轨道三：公域 399 元多面向视频分流（开启 30 分钟紧凑倒计时）
+        // 轨道三：公域 399 元多面向视频分流（开启 30 分钟紧凑倒计时）
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        let videoTitle = "";
 
         if (type === 'E') {
-            videoTitle = "【少儿教育与培根逻辑专属微课】";
             videoUrl = "https://your-platform.com/education-video.mp4"; 
         } else if (type === 'F') {
-            videoTitle = "【家庭关系与能量场对齐专属微课】";
             videoUrl = "https://your-platform.com/family-video.mp4";      
         } else if (type === 'W') {
-            videoTitle = "【工作事业与河洛九宫破局专属微课】";
             videoUrl = "https://your-platform.com/work-video.mp4";        
         }
 
+        // 仅动态切换视频内核
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
             videoElement.src = videoUrl;
             videoElement.load(); 
         }
+
+        const expiryTime = Date.now() + (30 * 60 * 1000); // ⏱️ 精准设定 30 分钟控制决策结界
+        localStorage.setItem('videoExpiry', expiryTime);
+        localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
+        
+        showTargetLayerOnly(PAGE_VIDEO_ID);
+        startGlobalTimer(expiryTime, 'video');
+        alert("第一重认知契约已达成。高维时空门槛已开启，停留时间：30分钟。");
+    }
+
         
         const titleElement = document.querySelector('#layer-video h2');
         if (titleElement) titleElement.innerText = videoTitle;
