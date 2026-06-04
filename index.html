@@ -761,6 +761,56 @@ const PAGE_THANKYOU_ID  = 'layer-thankyou';
 
 let globalTimerInterval = null;
 
+// ====================================================================
+// 🔒 镜像对齐防线：专属私密盐值 (Salt) 与 SHA-256 离线解密校验引擎
+// ====================================================================
+const SECRET_SALT = "HeLuoGuoxue2026#@!QuantumKeyCenter";
+
+function sha256(ascii) {
+    function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
+    var mathPow = Math.pow, maxWord = mathPow(2, 32), result = '', words = [], asciiLength = ascii.length;
+    var hash = [], k = [], primeCounter = 0, isPrime = {};
+    for (var n = 2; primeCounter < 64; n++) {
+        if (!isPrime[n]) {
+            for (var i = n * n; i < 312; i += n) isPrime[i] = true;
+            if (primeCounter < 8) hash.push((mathPow(n, 0.5) * maxWord) | 0);
+            k.push((mathPow(n, 1/3) * maxWord) | 0);
+            primeCounter++;
+        }
+    }
+    ascii += '\x80';
+    while (ascii.length % 64 - 56) ascii += '\x00';
+    for (var i = 0; i < ascii.length; i++) {
+        var j = ascii.charCodeAt(i);
+        if (j >> 8) return;
+        words[i >> 2] |= j << (24 - (i % 4) * 8);
+    }
+    words[words.length] = ((asciiLength * 8) / maxWord) | 0;
+    words[words.length] = (asciiLength * 8) | 0;
+    for (var j = 0; j < words.length; j += 16) {
+        var w = words.slice(j, j + 16), oldHash = hash.slice(0);
+        for (var i = 0; i < 64; i++) {
+            var w16 = w[i - 16], w15 = w[i - 15], w7 = w[i - 7], w2 = w[i - 2];
+            var s0 = i < 16 ? w[i] : (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3));
+            var s1 = i < 16 ? w[i] : (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10));
+            w[i] = i < 16 ? w[i] : (w16 + s0 + w7 + s1) | 0;
+            var ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]), maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+            var s0_h = rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22), s1_h = rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25);
+            var t1 = (hash[7] + s1_h + ch + k[i] + w[i]) | 0, t2 = (s0_h + maj) | 0;
+            hash = [(t1 + t2) | 0].concat(hash); hash[4] = (hash[4] + t1) | 0; hash.length = 8;
+        }
+        for (var i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+    for (var i = 0; i < 8; i++) {
+        for (var j = 3; j + 1; j--) {
+            var b = (hash[i] >> (j * 8)) & 255;
+            result += (b < 16 ? '0' : '') + b.toString(16);
+        }
+    }
+    return result;
+}
+
+// 核心契约鉴权引擎替换（完美继承分流架构）
 function verifyAndRouting(inputPassword) {
     if (!inputPassword) {
         alert("请输入时空契约密钥！");
@@ -774,16 +824,22 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    const type = pwd.charAt(0);
+    // --------------------------------======================--------------------------------
+    // ⚔️ 【量子防御内核对齐】严格执行 1位维度 + 4位特征 + 1位指纹 的 6位严格验证
+    // --------------------------------======================--------------------------------
+    const type = pwd.charAt(0); // 截取第 1 位时空维度情况（E/F/W/P/V）
     let isMatch = false;
     
-    if (pwd.length >= 5) {
-        let charSum = 0;
-        for (let i = 1; i < pwd.length - 1; i++) {
-            charSum += pwd.charCodeAt(i);
-        }
-        let checkDigit = pwd.charAt(pwd.length - 1);
-        if ((charSum + checkDigit.charCodeAt(0)) % 7 === 3) {
+    if (pwd.length === 6) {
+        let client = pwd.substring(1, 5);       // 提取中间 4 位特征码
+        let providedCheckDigit = pwd.charAt(5); // 提取最后 1 位防伪指纹
+
+        // 还原运算原料：维度 + 4位核心特征 + 只有两端知道的私密暗号
+        const stringToCheck = type + client + SECRET_SALT;
+        const fullHash = sha256(stringToCheck).toUpperCase();
+        let expectedCheckDigit = fullHash.charAt(0); // 死锁在第 0 位切片，完成跨设备咬合
+
+        if (providedCheckDigit === expectedCheckDigit) {
             isMatch = true;
         }
     }
@@ -793,14 +849,16 @@ function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 验证成功：熔断密钥，种下身份牌
+    // ======================================================================================
+    // 👑 基础承载逻辑 100% 保留：熔断密钥，种下身份牌，执行原有轨道切换和倒计时机制
+    // ======================================================================================
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
 
     // 轨道一：私域 VIP 熟人通道（直达信息采集，开启 60 分钟倒计时）
     if (type === 'V') {
         alert("尊贵的 VIP 阁下，身份互信已对齐，已为您跳过公域考核，直达深度背景采集通道！");
-        const expiryTime = Date.now() + (60 * 60 * 1000); // ⏱️ 精准设定 60 分钟
+        const expiryTime = Date.now() + (60 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
         
@@ -812,7 +870,7 @@ function verifyAndRouting(inputPassword) {
     // 轨道二：普通人付完 3000 元进入（开启 60 分钟倒计时）
     if (type === 'P') {
         alert("3000元基础对价核对成功！深度背景采集系统已解锁。");
-        const expiryTime = Date.now() + (60 * 60 * 1000); // ⏱️ 精准设定 60 分钟
+        const expiryTime = Date.now() + (60 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
         
@@ -840,7 +898,7 @@ function verifyAndRouting(inputPassword) {
             videoElement.load(); 
         }
 
-        const expiryTime = Date.now() + (30 * 60 * 1000); // ⏱️ 精准设定 30 分钟
+        const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
         
@@ -850,6 +908,9 @@ function verifyAndRouting(inputPassword) {
     }
 }
 
+// ====================================================================
+// 👁️ 以下原有环境记忆维持与定时器逻辑 100% 留存，确保前置刷新不丢失
+// ====================================================================
 function checkStateAndRestore() {
     const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
     const authType = localStorage.getItem('user_token_auth'); 
@@ -869,7 +930,6 @@ function checkStateAndRestore() {
             startGlobalTimer(aiExpiry, 'ai');
         } else { forceKickOut(); }
         
-        // 唯独为 VIP 保留这句专属尊贵提示，其他公域客人的标题一律不变
         if (authType === 'V') {
             const aiTitle = document.querySelector('#layer-ai h2');
             if (aiTitle) aiTitle.innerText = "尊贵的 VIP 阁下，请补充前置背景拓扑";
@@ -950,6 +1010,7 @@ function hideTimerBar() {
 
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
+
 
 </body>
 </html>
