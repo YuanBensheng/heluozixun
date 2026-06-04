@@ -940,6 +940,42 @@ async function verifyAndRouting(inputPassword) {
 // 👁️ 以下原有环境记忆维持与定时器逻辑 100% 留存，确保前置刷新不丢失
 // ====================================================================
 function checkStateAndRestore() {
+    // ========== 🚨 核心手术：VIP 绝对优先拦截机制 ==========
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    
+    // 如果网址里包含 type=vip (不区分大小写)
+    if (typeParam && typeParam.toLowerCase() === 'vip') {
+        const tempLayer = localStorage.getItem('currentLayer');
+        
+        // 只要客户还没通关进入填表页，就一律被拦截并死死锁在 VIP 密码页！
+        if (!tempLayer || tempLayer === PAGE_INDEX_ID || tempLayer === PAGE_VIDEO_ID) {
+            // 1. 强行显示第二层（专属密钥层）
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            hideTimerBar();
+            
+            // 2. 界面视觉大扫除
+            const videoLayer = document.getElementById(PAGE_VIDEO_ID);
+            if (videoLayer) {
+                const panels = videoLayer.querySelectorAll('.holo-card-panel');
+                if (panels.length >= 3) {
+                    panels[0].style.display = 'none'; // 藏起视频介绍
+                    panels[1].style.display = 'none'; // 藏起付款码
+                }
+                
+                // 3. 动态渲染 VIP 尊贵标题（继承原有青色呼吸发光样式）
+                const mainTitle = videoLayer.querySelector('h2');
+                if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
+                
+                const subTitle = videoLayer.querySelector('.sub-title');
+                if (subTitle) subTitle.innerHTML = '身份互信 · 直达深度采集';
+            }
+            // ⚠️ 极其关键的一句：VIP 渲染完毕后，直接打断函数，绝不执行下方任何公域逻辑！
+            return; 
+        }
+    }
+
+    // ========== 🟢 下面是你原封不动的正常恢复逻辑 ==========
     const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
     const authType = localStorage.getItem('user_token_auth'); 
     const now = Date.now();
@@ -985,6 +1021,7 @@ function checkStateAndRestore() {
         hideTimerBar();
     }
 }
+
 
 function startGlobalTimer(expiry, type) {
     clearInterval(globalTimerInterval); 
