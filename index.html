@@ -779,7 +779,7 @@ function checkStateAndRestore() {
         } else { forceKickOut(); }
 
     } else if (currentLayer === PAGE_THANKYOU_ID) {
-        // 【🔥核心修复】：如果刷新时处于最后一页，立刻把缓存的时间提取出来重新渲染！
+        // 如果刷新时处于最后一页，立刻把缓存的时间提取出来重新渲染！
         showTargetLayerOnly(PAGE_THANKYOU_ID);
         hideTimerBar();
         const savedTime = localStorage.getItem('savedBookedTime');
@@ -787,8 +787,13 @@ function checkStateAndRestore() {
             document.getElementById('thank-time-text').innerText = savedTime;
         }
     } else if (currentLayer === PAGE_SCHEDULE_ID) {
-        showTargetLayerOnly(currentLayer);
+        // 【🔥超级修复点】：如果刷新时在排期页，强制将日历时间校正为当前真实月份，并重新渲染！
+        showTargetLayerOnly(PAGE_SCHEDULE_ID);
         hideTimerBar();
+        
+        // 重新同步并校正到当前真实月份
+        currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+        renderCalendar(); 
     } else {
         showTargetLayerOnly(PAGE_INDEX_ID);
         hideTimerBar();
@@ -834,7 +839,7 @@ function forceKickOut() {
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
     localStorage.removeItem('aiExpiry');
-    localStorage.removeItem('savedBookedTime'); // 踢出时连同时间一块清空
+    localStorage.removeItem('savedBookedTime'); 
     hideTimerBar();
     showTargetLayerOnly(PAGE_INDEX_ID);
 }
@@ -849,4 +854,5 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 
 </body>
 </html>
+
 
