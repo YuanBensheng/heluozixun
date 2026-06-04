@@ -310,7 +310,7 @@
         <!-- ========================================== -->
     <!-- 💎 VIP 绝对视觉防线（此代码优先级最高） -->
     <!-- ========================================== -->
-    <script>
+       <script>
         // 只要网址里发现 type=vip，立刻执行霸道隐藏！
         if (window.location.search.toLowerCase().includes('type=vip')) {
             const style = document.createElement('style');
@@ -318,8 +318,10 @@
             style.innerHTML = `
                 #layer-pay-399 { display: none !important; }
                 #layer-video { display: block !important; opacity: 1 !important; visibility: visible !important; }
-                #layer-video .holo-card-panel:nth-of-type(1) { display: none !important; }
-                #layer-video .holo-card-panel:nth-of-type(2) { display: none !important; }
+                
+                /* 🎯 精准狙击：彻底隐藏第3个(视频)和第4个(收款码)元素，只留最后一个密码框 */
+                #layer-video .holo-card-panel:nth-child(3) { display: none !important; }
+                #layer-video .holo-card-panel:nth-child(4) { display: none !important; }
             `;
             document.head.appendChild(style);
             
@@ -335,7 +337,7 @@
             });
         }
     </script>
-</head>
+
 
 </head>
 <body>
