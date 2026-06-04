@@ -1040,7 +1040,44 @@ function hideTimerBar() {
 }
 
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
+
+// ==========================================
+// 💎 VIP 专属分流通道控制逻辑
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // 如果是通过 /?type=vip 进来的
+    if (urlParams.get('type') === 'vip') {
+        const currentLayer = localStorage.getItem('currentLayer');
+        
+        // 确保客户如果没有进入后面的流程（如 AI 采集或日历），才强行显示专属输入框
+        if (!currentLayer || currentLayer === PAGE_INDEX_ID || currentLayer === PAGE_VIDEO_ID) {
+            
+            // 1. 强制直接展示第二层（包含第二重密码框的层）
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            
+            // 2. 获取该层的所有卡片面板
+            const videoLayer = document.getElementById(PAGE_VIDEO_ID);
+            const panels = videoLayer.querySelectorAll('.holo-card-panel');
+            
+            // 3. 隐藏【认知对齐(视频)】和【超维接引(支付)】板块，只留第三个【专属密钥】输入板块
+            if (panels.length >= 3) {
+                panels[0].style.display = 'none';
+                panels[1].style.display = 'none';
+            }
+            
+            // 4. 动态修改大标题，完美继承你原有的青色发光特效
+            const mainTitle = videoLayer.querySelector('h2');
+            if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
+            
+            const subTitle = videoLayer.querySelector('.sub-title');
+            if (subTitle) subTitle.innerHTML = '身份互信 · 直达深度采集';
+        }
+    }
+});
 </script>
+
 
 
 </body>
