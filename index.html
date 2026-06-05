@@ -313,7 +313,7 @@
 <!-- 专属安全防护遮罩层：默认隐藏 -->
 <div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0c; z-index: 9999999; color: #e5e5e5; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
     
-    <!-- 右上角动态引导箭头（调整为温暖的香槟金） -->
+    <!-- 右上角动态引导箭头 -->
     <div style="position: absolute; top: 25px; right: 30px; animation: bounceRight 1.5s infinite;">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="7" y1="17" x2="17" y2="7"></line>
@@ -335,7 +335,7 @@
         <!-- 明确品牌身份的标题 -->
         <h2 style="font-size: 22px; font-weight: 600; color: #ffffff; letter-spacing: 1.5px; margin-bottom: 16px;">河洛咨询 · 温馨提示</h2>
         
-        <!-- 极简设计：香槟金分割线 -->
+        <!-- 极简设计：分割线 -->
         <div style="width: 40px; height: 2px; background: #14B8A6; margin: 0 auto 24px auto;"></div>
 
         <!-- 极简核心文案 -->
@@ -490,7 +490,7 @@
         <div class="calendar-box">
             <div class="article-title" style="margin-bottom: 25px;">－ 时空锁定 －</div>
             <p class="article-main-text">
-                为确保能量聚焦，一旦某时段被锁定，同半天时空场次将全自动强制全局熔断。全球任意设备同步更新。
+                为确保能量聚焦，一旦某时段被锁定，同半天时空场次将全自动全局熔断。全球任意设备同步更新。
             </p>
             <br>
             <div class="calendar-header">
@@ -561,7 +561,7 @@
         <div class="modal-title">✓【时空锁定成功】</div>
         <div class="modal-body">
             尊贵的 <span id="modal-user-name" style="font-weight: bold; color: #00ffcc;"></span> 阁下：<br><br>
-            您的专属时空已成功锁定。为确保场域纯粹，同半天的时空场次已全自动强制全局熔断。<br><br>
+            您的专属时空已成功锁定。为确保场域纯粹，同半天的时空场次已全自动全局熔断。<br><br>
             您的专属「时空凭证」已生成并自动复制。请点击确认后立即前往微信，将凭证**【直接粘贴】**并发送给山长。未经微信端人工核对与双向确认的凭证，将于 24 小时后自动湮灭。
         </div>
         <div class="modal-footer">
@@ -765,7 +765,7 @@
                 // 【🔥核心修复】：在这里把选好的最终时间死死钉在本地缓存里，防止刷新丢失！
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
-                const credentialText = `老师您好，我已通过三层对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
+                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
                 
                 const proceedToModal = () => {
                     submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
@@ -1005,7 +1005,7 @@ async function verifyAndRouting(inputPassword) {
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
         showTargetLayerOnly(PAGE_VIDEO_ID);
         startGlobalTimer(expiryTime, 'video');
-        alert("第一重认知契约已达成。高维时空门槛已开启，停留时间：30分钟。");
+        alert("认知对齐契约已达成。高维时空已开启，停留时间：30分钟。");
     }
 }
 
