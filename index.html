@@ -765,7 +765,7 @@
                 // 【🔥核心修复】：在这里把选好的最终时间死死钉在本地缓存里，防止刷新丢失！
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
-                const credentialText = `老师您好，我已通过四层筛选并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
+                const credentialText = `老师您好，我已通过三层对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
                 
                 const proceedToModal = () => {
                     submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
@@ -871,7 +871,7 @@ function sha256(ascii) {
 // ⚡【全网同步熔断版】核心契约鉴权引擎（完美继承分流架构，并接入云端 Redis 原子锁）
 async function verifyAndRouting(inputPassword) {
     if (!inputPassword) {
-        alert("请输入时空契约密钥！");
+        alert("请输入时空密钥！");
         return;
     }
 
@@ -879,7 +879,7 @@ async function verifyAndRouting(inputPassword) {
 
     // 1. 本地一级防线：防止同台手机频繁刷新恶意撞门
     if (localStorage.getItem('burnt_' + pwd)) {
-        alert("⚠️ 该时空契约密钥已被激活使用，无法二次冒领！");
+        alert("⚠️ 该时空密钥已被激活使用，无法二次冒领！");
         return;
     }
 
@@ -943,7 +943,7 @@ async function verifyAndRouting(inputPassword) {
 
         // 如果后端返回失败，说明该密钥已经在云端被别人（或换浏览器）烧毁过了
         if (!cloudResponse.ok || !cloudResult.success) {
-            alert("❌ " + (cloudResult.message || "该时空契约密钥已被全球其他因果节点熔断，无法二次冒领！"));
+            alert("❌ " + (cloudResult.message || "该时空密钥已被其他因果节点熔断，无法二次冒领！"));
             if(firstBtn) firstBtn.disabled = false;
             if(secondBtn) secondBtn.disabled = false;
             return;
@@ -967,7 +967,7 @@ async function verifyAndRouting(inputPassword) {
 
     // 轨道一：私域 VIP 熟人通道
     if (type === 'V') {
-        alert("尊贵的 VIP 阁下，身份互信已对齐，已为您跳过公域考核，直达深度背景采集通道！");
+        alert("尊敬的 VIP 阁下，已为您跳过公域互信对齐，直达深度背景采集通道！");
         const expiryTime = Date.now() + (60 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
