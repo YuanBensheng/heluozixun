@@ -5,9 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>河洛咨询前置对齐系统</title>
+       <script>
+        // 在浏览器开始画网页前瞬间判断，如果是 VIP，给根节点打个标签
+        if (window.location.search.toLowerCase().includes('type=vip')) {
+            document.documentElement.classList.add('is-vip-mode');
+        }
+    </script>
+
     <style>
         /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
-        
+                /* ================= 防闪烁补丁 ================= */
+        /* 如果系统检测到是 VIP 模式，强制让 399 页面隐身，天王老子来了也不显示 */
+        html.is-vip-mode #layer-pay-399 {
+            display: none !important;
+        }
+       
         /* 💡 特效动画1：舱板全息光圈——严格模拟人类 6秒/次 淡定从容的呼吸状态 */
         @keyframes holo-smooth-breath {
             0%, 100% { 
@@ -371,7 +383,7 @@
 <div class="container">
 
     <!-- 🔮 第一层：399 认知过滤 -->
-    <div id="layer-pay-399" class="layer active">
+    <div id="layer-pay-399" class="layer">
         <h2>认知过滤 · 破局契约</h2>
         <div class="sub-title">河洛智慧 · 高维咨询</div>
 
