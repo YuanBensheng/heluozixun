@@ -147,14 +147,22 @@
             text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
         }
 
-        .article-main-text { 
+                .article-main-text { 
             font-size: 16px; 
             color: #7ebdae; 
             line-height: 1.9;
-            text-align: left;
-            text-indent: 2em; 
-            margin: 0;
+            /* 👇 核心修改区域 */
+            text-align: justify;      /* 左右两端绝对对齐，如刀切般平整 */
+            text-align-last: left;    /* 段落最后一行自然靠左，防止字间距被异常拉伸 */
+            text-indent: 0;           /* 彻底斩断首行缩进，呈现纯粹的区块感 */
+            margin: 0 0 22px 0;       /* 放弃回车，用 22px 的底部留白隔开不同段落 */
         }
+        
+        /* 👇 新增：消除最后一个段落多余的底部留白，保持卡片内边距对称 */
+        .article-main-text:last-child {
+            margin-bottom: 0;
+        }
+
 
         .flex-pay-container {
             display: flex;
@@ -182,12 +190,16 @@
             font-size: 14px; 
             color: #7ebdae; 
             line-height: 1.8; 
-            text-align: left;
+            /* 👇 核心修改区域 */
+            text-align: justify; 
+            text-align-last: left;
+            /* 👆 核心修改区域 */
             display: flex;
             flex-direction: column;
             justify-content: center; 
             flex: 1;
         }
+
 
         .video-wrapper-inner { 
             width: 100%; 
@@ -305,7 +317,17 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-card { background: rgba(1, 5, 18, 0.92); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; width: 90%; max-width: 450px; padding: 25px; box-sizing: border-box; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); will-change: box-shadow, border-color, transform; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         .modal-title { font-size: 18px; font-weight: bold; color: #00ffcc; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; text-align: center; }
-        .modal-body { font-size: 14px; color: #7ebdae; line-height: 1.8; margin-bottom: 25px; text-align: left; } 
+                .modal-body { 
+            font-size: 14px; 
+            color: #7ebdae; 
+            line-height: 1.8; 
+            margin-bottom: 25px; 
+            /* 👇 核心修改区域 */
+            text-align: justify; 
+            text-align-last: left;
+            /* 👆 核心修改区域 */
+        } 
+
         .modal-footer { text-align: center; border-top: 1px dashed rgba(16,185,129,0.15); padding-top: 20px; } 
 
         @media (max-width: 650px) {
