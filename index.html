@@ -147,22 +147,14 @@
             text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
         }
 
-                .article-main-text { 
+        .article-main-text { 
             font-size: 16px; 
             color: #7ebdae; 
             line-height: 1.9;
-            /* 👇 核心修改区域 */
-            text-align: justify;      /* 左右两端绝对对齐，如刀切般平整 */
-            text-align-last: left;    /* 段落最后一行自然靠左，防止字间距被异常拉伸 */
-            text-indent: 0;           /* 彻底斩断首行缩进，呈现纯粹的区块感 */
-            margin: 0 0 22px 0;       /* 放弃回车，用 22px 的底部留白隔开不同段落 */
+            text-align: left;
+            text-indent: 2em; 
+            margin: 0;
         }
-        
-        /* 👇 新增：消除最后一个段落多余的底部留白，保持卡片内边距对称 */
-        .article-main-text:last-child {
-            margin-bottom: 0;
-        }
-
 
         .flex-pay-container {
             display: flex;
@@ -190,16 +182,12 @@
             font-size: 14px; 
             color: #7ebdae; 
             line-height: 1.8; 
-            /* 👇 核心修改区域 */
-            text-align: justify; 
-            text-align-last: left;
-            /* 👆 核心修改区域 */
+            text-align: left;
             display: flex;
             flex-direction: column;
             justify-content: center; 
             flex: 1;
         }
-
 
         .video-wrapper-inner { 
             width: 100%; 
@@ -317,12 +305,7 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-card { background: rgba(1, 5, 18, 0.92); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; width: 90%; max-width: 450px; padding: 25px; box-sizing: border-box; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); will-change: box-shadow, border-color, transform; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         .modal-title { font-size: 18px; font-weight: bold; color: #00ffcc; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; text-align: center; }
-        .modal-body { font-size: 14px; color: #7ebdae; line-height: 1.8; margin-bottom: 25px; 
-            /* 👇 核心修改区域 */
-            text-align: justify; 
-            text-align-last: left;
-            /* 👆 核心修改区域 */
-        } 
+        .modal-body { font-size: 14px; color: #7ebdae; line-height: 1.8; margin-bottom: 25px; text-align: left; } 
         .modal-footer { text-align: center; border-top: 1px dashed rgba(16,185,129,0.15); padding-top: 20px; } 
 
         @media (max-width: 650px) {
@@ -394,22 +377,26 @@
 
         <div class="holo-card-panel">
             <div class="article-title">－ 认知过滤 －</div>
-            <p class="article-main-text">既然来到这里，就不必掩饰来意：你在原有的维度卡住了，急需高维的破局之法。</p>
-<p class="article-main-text">我们能相遇，是认知同频的感召；我们能成交，是维度对齐的需要。这里只有破局的真相，没有情绪的抚慰；支付与交付，就是我们之间最纯粹的语言。</p>
-<p class="article-main-text">高维的能量，绝不消耗在证明与拉扯上；你下决断的速度，决定了你走出困局的速度。</p>
+            <p class="article-main-text">
+                既然来到这里，就不必掩饰来意：你在原有的维度卡住了，急需高维的破局之法。
+                我们能相遇，是认知同频的感召；我们能成交，是维度对齐的需要。
+                我只输出破局的真相，不提供情绪的抚慰。因为高维的能量，绝不消耗在证明与拉扯上。
+                支付与交付，就是我们之间最纯粹的语言。
+                你下决断的速度，决定了你走出困局的速度。
+            </p>
         </div>
 
         <div class="holo-card-panel">
             <div class="article-title">－ 破局契约 －</div>
             <div class="flex-pay-container">
                 <div class="qrcode-box">
-                    <img src="./images/wechat-pay.png" alt="微信收款码">
+                    <img src="your-qrcode-399-url.png" alt="微信支付 399 元二维码">
                 </div>
                 <div class="pay-desc-text">
                     1. 斩断犹豫，确认同频。<br>
-                    扫码支付 399 元，买断一次认知对齐的机会：观摩展现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。你行“财施”的果断，对应我行“法施”的纯粹。只判断，不纠缠。<br><br>
+                    扫码支付 399 元，买断一次认知对齐的机会：内含展现我底层架构的核心微课。对得齐，我们继续深入；对不齐，立刻各自前行。你行“财施”的果断，对应我行“法施”的纯粹。不解释，不挽留。<br><br>
                     2. 密钥激活，时空逆转。<br>
-                    付款后您将获取专属「时空密钥」，在下方输入并点击激活，即刻开启高维通道，系统同步启动30分钟倒计时，届时将自动退出。
+                    付款后您将获取专属「时空密钥」。在下方输入并点击激活，即刻开启高维通道，系统将同步启动30分钟倒计时，届时密钥自动熔断，系统退出。
                 </div>
             </div>
         </div>
@@ -443,7 +430,7 @@
             <div class="article-title">－ 超维接引 －</div>
             <div class="flex-pay-container">
                 <div class="qrcode-box">
-                    <img src="./images/wechat-pay.png" alt="微信收款码">
+                    <img src="your-qrcode-2600-url.png" alt="微信支付 3000 元二维码">
                 </div>
                 <div class="pay-desc-text">
                     1. 若你在影像中照见了破局的可能，并渴望进一步的深度解构，请在此支付 3000 元，获取「深度破局」的入场密钥。<br><br>
@@ -566,13 +553,13 @@
 <div class="modal-overlay" id="global-alert-modal">
     <div class="modal-card" style="text-align: center;">
         <div class="modal-title" id="global-alert-title">系统提示</div>
-        <div class="modal-body" id="global-alert-body" style="margin-bottom: 30px;"></div>
+        <div class="modal-body" id="global-alert-body" style="text-align: center; margin-bottom: 30px;">
+            </div>
         <div class="modal-footer" style="padding-top: 0; border-top: none;">
             <button class="btn" id="global-alert-btn" style="padding: 12px 40px; font-size: 14px; border-color: #00ffcc; color: #00ffcc; background: transparent; width: auto;">知悉</button>
         </div>
     </div>
 </div>
-
 <div class="modal-overlay" id="custom-modal">
     <div class="modal-card">
         <div class="modal-title">✓【时空锁定成功】</div>
@@ -978,8 +965,7 @@ async function verifyAndRouting(inputPassword) {
         const cloudResult = await cloudResponse.json();
 
         if (!cloudResponse.ok || !cloudResult.success) {
-            showCustomAlert("❌ 节点熔断", "该时空密钥已被其他因果节点熔断，无法二次冒领！");
-
+            showCustomAlert("❌ 节点熔断", cloudResult.message || "该时空密钥已被其他因果节点熔断，无法二次冒领！");
             if(firstBtn) firstBtn.disabled = false;
             if(secondBtn) secondBtn.disabled = false;
             return;
