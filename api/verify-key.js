@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         } else {
             return res.status(400).json({ 
                 success: false, 
-                message: "该时空契约密钥已被全球其他因果节点熔断，无法二次冒领！" 
+                message: "该时空密钥已被其他因果节点熔断，无法二次冒领！" 
             });
         }
     } catch (error) {
