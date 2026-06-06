@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>河洛咨询前置对齐系统</title>
-       <script>
+    <script>
         // 在浏览器开始画网页前瞬间判断，如果是 VIP，给根节点打个标签
         if (window.location.search.toLowerCase().includes('type=vip')) {
             document.documentElement.classList.add('is-vip-mode');
@@ -13,12 +13,21 @@
 
     <style>
         /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
-                /* ================= 防闪烁补丁 ================= */
-        /* 如果系统检测到是 VIP 模式，强制让 399 页面隐身，天王老子来了也不显示 */
+        /* ================= 防闪烁补丁 ================= */
         html.is-vip-mode #layer-pay-399 {
             display: none !important;
         }
        
+        /* 全局防选择、防拖拽 */
+        .noselect {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
         /* 💡 特效动画1：舱板全息光圈——严格模拟人类 6秒/次 淡定从容的呼吸状态 */
         @keyframes holo-smooth-breath {
             0%, 100% { 
@@ -147,22 +156,19 @@
             text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
         }
 
-                .article-main-text { 
+        .article-main-text { 
             font-size: 16px; 
             color: #7ebdae; 
             line-height: 1.9;
-            /* 👇 核心修改区域 */
-            text-align: justify;      /* 左右两端绝对对齐，如刀切般平整 */
-            text-align-last: left;    /* 段落最后一行自然靠左，防止字间距被异常拉伸 */
-            text-indent: 0;           /* 彻底斩断首行缩进，呈现纯粹的区块感 */
-            margin: 0 0 22px 0;       /* 放弃回车，用 22px 的底部留白隔开不同段落 */
+            text-align: justify;
+            text-align-last: left;
+            text-indent: 0;
+            margin: 0 0 22px 0;
         }
         
-        /* 👇 新增：消除最后一个段落多余的底部留白，保持卡片内边距对称 */
         .article-main-text:last-child {
             margin-bottom: 0;
         }
-
 
         .flex-pay-container {
             display: flex;
@@ -186,20 +192,17 @@
         }
         .qrcode-box img { width: 92%; height: 92%; object-fit: contain; }
 
-                .pay-desc-text {
+        .pay-desc-text {
             font-size: 14px; 
             color: #7ebdae; 
             line-height: 1.8; 
-            /* 👇 核心修改区域 */
             text-align: justify; 
             text-align-last: left;
-            /* 👆 核心修改区域 */
             display: flex;
             flex-direction: column;
             justify-content: center; 
             flex: 1;
         }
-
 
         .video-wrapper-inner { 
             width: 100%; 
@@ -209,8 +212,14 @@
             overflow: hidden;
             border: 1px solid rgba(0, 255, 204, 0.2);
             margin-bottom: 15px;
+            position: relative; /* 为动态水印提供定位基准 */
         }
-        .video-wrapper-inner video { width: 100%; height: 100%; object-fit: cover; }
+        .video-wrapper-inner video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            pointer-events: auto;
+        }
         
         .auth-section { 
             padding: 10px 0; 
@@ -317,15 +326,13 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-card { background: rgba(1, 5, 18, 0.92); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; width: 90%; max-width: 450px; padding: 25px; box-sizing: border-box; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); will-change: box-shadow, border-color, transform; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         .modal-title { font-size: 18px; font-weight: bold; color: #00ffcc; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; text-align: center; }
-                .modal-body { 
+        .modal-body { 
             font-size: 14px; 
             color: #7ebdae; 
             line-height: 1.8; 
             margin-bottom: 25px; 
-            /* 👇 核心修改区域 */
             text-align: justify; 
             text-align-last: left;
-            /* 👆 核心修改区域 */
         } 
 
         .modal-footer { text-align: center; border-top: 1px dashed rgba(16,185,129,0.15); padding-top: 20px; } 
@@ -342,7 +349,7 @@
     </style>
 
 </head>
-<body>
+<body class="noselect" ondragstart="return false">
 <div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0c; z-index: 9999999; color: #e5e5e5; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
     
     <div style="position: absolute; top: 25px; right: 30px; animation: bounceRight 1.5s infinite;">
@@ -389,7 +396,6 @@
         }
     </style>
 </div>
-
 
 <div class="container">
 
@@ -446,7 +452,8 @@
                 下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义；若觉晦涩排斥，止步于此便是最佳的安排。
             </p>
             <div class="video-wrapper-inner">
-                <video src="your-video-url.mp4" controls poster="封面图地址.jpg"></video>
+                <video src="" controls controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false;" preload="metadata" poster=""></video>
+                <div id="dynamic-watermark" style="position: absolute; bottom: 20px; right: 20px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.45); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; opacity: 0; transition: all 0.4s ease; display: none;"></div>
             </div>
         </div>
 
@@ -577,13 +584,13 @@
 <div class="modal-overlay" id="global-alert-modal">
     <div class="modal-card" style="text-align: center;">
         <div class="modal-title" id="global-alert-title">系统提示</div>
-        <div class="modal-body" id="global-alert-body" style="text-align: center; margin-bottom: 30px;">
-            </div>
+        <div class="modal-body" id="global-alert-body" style="text-align: center; margin-bottom: 30px;"></div>
         <div class="modal-footer" style="padding-top: 0; border-top: none;">
             <button class="btn" id="global-alert-btn" style="padding: 12px 40px; font-size: 14px; border-color: #00ffcc; color: #00ffcc; background: transparent; width: auto;">知悉</button>
         </div>
     </div>
 </div>
+
 <div class="modal-overlay" id="custom-modal">
     <div class="modal-card">
         <div class="modal-title">✓【时空锁定成功】</div>
@@ -599,42 +606,68 @@
 </div>
 
 <script>
-    // ================= 💡 新增：全局弹窗核心控制函数 =================
+    // ================= 全局防御机制 =================
+    // 屏蔽全局右键菜单
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    
+    // 屏蔽审查元素与保存操作快捷键
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || 
+           (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || 
+           (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))) {
+            e.preventDefault();
+        }
+    });
+
+    // ================= 动态溯源水印系统 =================
+    let watermarkInterval = null;
+    function startDynamicWatermark(pwd) {
+        const wm = document.getElementById('dynamic-watermark');
+        if (!wm) return;
+        wm.style.display = 'block';
+        wm.innerText = "【溯源对齐: " + pwd + "】";
+
+        if (watermarkInterval) clearInterval(watermarkInterval);
+
+        // 每隔 2.5 秒改变一次状态，制造闪现效果并在右下角进行位移防遮挡
+        watermarkInterval = setInterval(() => {
+            const isShow = Math.random() > 0.3; // 70% 概率显示
+            if (isShow) {
+                wm.style.opacity = '1';
+                // 在右下角小范围内随机漂移 (10px 到 40px 之间)
+                const randomBottom = Math.floor(Math.random() * 30) + 10; 
+                const randomRight = Math.floor(Math.random() * 30) + 10;  
+                wm.style.bottom = randomBottom + 'px';
+                wm.style.right = randomRight + 'px';
+            } else {
+                wm.style.opacity = '0';
+            }
+        }, 2500); 
+    }
+
+    // ================= 全局弹窗核心控制函数 =================
     function showCustomAlert(title, message, callback) {
         document.getElementById('global-alert-title').innerHTML = title;
-        // 将普通文本换行符转为 HTML 换行，以便在弹窗中优雅显示
         document.getElementById('global-alert-body').innerHTML = message.replace(/\n/g, '<br><br>');
-        
         const modal = document.getElementById('global-alert-modal');
         const btn = document.getElementById('global-alert-btn');
-        
-        // 绑定点击事件，点击后关闭弹窗并执行可能的后续逻辑
         btn.onclick = function() {
             modal.style.display = 'none';
-            if (typeof callback === 'function') {
-                callback();
-            }
+            if (typeof callback === 'function') callback();
         };
-        
-        // 显示弹窗
         modal.style.display = 'flex';
     }
-    // =========================================================
 
-    // ⚡ 终极定盘星：Vercel Serverless + Redis 全自动垄断存储链
     let globalBookedSlots = {}; 
 
-    // 1. 读取逻辑：从真实的云端大脑获取最新锁定状态
     async function syncSlotsFromCloud() {
         try {
-            const response = await fetch('/api/booking'); // 调用 Vercel 真实接口
+            const response = await fetch('/api/booking'); 
             if (response.ok) {
                 const data = await response.json();
                 globalBookedSlots = {}; 
                 if (data.bookedSlots && Array.isArray(data.bookedSlots)) {
-                    data.bookedSlots.forEach(slot => {
-                        globalBookedSlots[slot] = true;
-                    });
+                    data.bookedSlots.forEach(slot => { globalBookedSlots[slot] = true; });
                 }
                 return true;
             }
@@ -647,35 +680,8 @@
 
     window.addEventListener('DOMContentLoaded', () => { syncSlotsFromCloud(); });
 
-    // ================= 🔑 密钥防线 =================
     const P_A_S_S = "2468"; const P_A_S_S_ADV = "1357"; 
 
-    // 第一重密码验证（触发 30 分钟倒计时）
-    function verifyPublicPassword() {
-        if (document.getElementById('password-input').value === P_A_S_S) {
-            document.getElementById('err-msg').style.display = 'none'; 
-            
-            // 写入 30 分钟记忆
-            const videoExpiry = Date.now() + (30 * 60 * 1000);
-            localStorage.setItem('videoExpiry', videoExpiry);
-            localStorage.setItem('currentLayer', 'layer-video');
-            
-            switchLayer('layer-pay-399', 'layer-video');
-            startGlobalTimer(videoExpiry, 'video'); // 启动倒计时UI
-        } else { document.getElementById('err-msg').style.display = 'block'; }
-    }
-
-    function verifyAdvancedPassword() {
-        if (document.getElementById('advanced-password-input').value === P_A_S_S_ADV) {
-            document.getElementById('adv-err-msg').style.display = 'none'; triggerEnergySync(); 
-        } else {
-            document.getElementById('adv-err-msg').style.display = 'block';
-            document.getElementById('loader-box').style.display = "none";
-            document.getElementById('sync-status-text').innerHTML = "";
-        }
-    }
-
-    // 第二重密码同步动画（触发 60 分钟倒计时）
     function triggerEnergySync() {
         const btn = document.getElementById('active-ai-btn'); const loaderBox = document.getElementById('loader-box'); const statusText = document.getElementById('sync-status-text');
         btn.disabled = true; loaderBox.style.display = "block";
@@ -684,29 +690,23 @@
         setTimeout(() => { statusText.innerHTML = "<span style='color: #00ffcc;'>因果磁场高度同频，正在全自动点亮前置采集通道...</span>"; }, 800);
         setTimeout(() => { 
             loaderBox.style.display = "none"; 
-            
-            // 废除视频计时，写入 60 分钟 AI 互动记忆
             localStorage.removeItem('videoExpiry'); 
             const aiExpiry = Date.now() + (60 * 60 * 1000);
             localStorage.setItem('aiExpiry', aiExpiry);
             localStorage.setItem('currentLayer', 'layer-ai');
-            
             switchLayer('layer-video', 'layer-ai'); 
-            startGlobalTimer(aiExpiry, 'ai'); // 启动倒计时UI
+            startGlobalTimer(aiExpiry, 'ai'); 
         }, 1200);
     }
 
-    // ================= 🗓️ 日历引擎系统 =================
     let currentDisplayDate = new Date(); const todayDate = new Date(); const maxFutureDate = new Date(new Date().setFullYear(todayDate.getFullYear() + 1)); 
     let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
 
-    // 进入日历排期（解除计时，允许无限刷新停留）
     async function initCalendarLayer() {
         localStorage.removeItem('aiExpiry');
         localStorage.setItem('currentLayer', 'layer-schedule');
         hideTimerBar();
         clearInterval(globalTimerInterval);
-        
         switchLayer('layer-ai', 'layer-schedule'); 
         currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); 
         await syncSlotsFromCloud(); renderCalendar();
@@ -786,19 +786,11 @@
         document.body.removeChild(textarea); return success;
     }
 
-    // 2. 锁定逻辑：线上正式版原子锁单，向 Vercel 接口发起霸占请求
     async function submitAppointment() {
         const name = document.getElementById('user-name').value.trim(); const wechat = document.getElementById('user-wechat').value.trim();
-        if(!name || !wechat) { 
-            showCustomAlert("⚠️ 信息缺失", "请完整填写您的尊称与微信号，以便完成最终因果对齐。"); 
-            return; 
-        }
-        
+        if(!name || !wechat) { showCustomAlert("⚠️ 信息缺失", "请完整填写您的尊称与微信号，以便完成最终因果对齐。"); return; }
         const wechatRegex = /^[a-zA-Z0-9_-]+$/;
-        if (!wechatRegex.test(wechat)) { 
-            showCustomAlert("⚠️ 格式异常", "微信号只能由英文字母、数字、下划线(_)或减号(-)组成。"); 
-            return; 
-        }
+        if (!wechatRegex.test(wechat)) { showCustomAlert("⚠️ 格式异常", "微信号只能由英文字母、数字、下划线(_)或减号(-)组成。"); return; }
 
         const submitBtn = document.querySelector('#appoint-form .btn'); const originalBtnText = submitBtn.innerText;
         submitBtn.disabled = true; submitBtn.innerText = "正在向云端发起全网垄断锁定...";
@@ -817,8 +809,6 @@
             if (response.ok && result.success) {
                 globalBookedSlots[slotKey] = true;
                 finalTimeStrGlobal = chosenDate + " " + chosenTime;
-                
-                // 【🔥核心修复】：在这里把选好的最终时间死死钉在本地缓存里，防止刷新丢失！
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
                 const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
@@ -846,14 +836,10 @@
         }
     }
 
-    // 最终确认完成弹窗（记录到达终极页面）
     function closeModalAndProceed() { 
         document.getElementById('custom-modal').style.display = "none"; 
         document.getElementById('thank-time-text').innerText = finalTimeStrGlobal; 
-        
-        // 记录终极感谢页层级
         localStorage.setItem('currentLayer', 'layer-thankyou');
-        
         switchLayer('layer-schedule', 'layer-thankyou'); 
     }
     
@@ -873,9 +859,6 @@ const PAGE_THANKYOU_ID  = 'layer-thankyou';
 
 let globalTimerInterval = null;
 
-// ====================================================================
-// 🔒 镜像对齐防线：专属私密盐值 (Salt) 与 SHA-256 离线解密校验引擎
-// ====================================================================
 const SECRET_SALT = "HeLuoGuoxue2026#@!QuantumKeyCenter";
 
 function sha256(ascii) {
@@ -922,7 +905,6 @@ function sha256(ascii) {
     return result;
 }
 
-// ⚡【全网同步熔断版】核心契约鉴权引擎
 async function verifyAndRouting(inputPassword) {
     if (!inputPassword) {
         showCustomAlert("⚠️ 密钥缺失", "请输入时空密钥！");
@@ -931,13 +913,11 @@ async function verifyAndRouting(inputPassword) {
 
     const pwd = inputPassword.trim().toUpperCase();
 
-    // 1. 本地一级防线：防止同台手机频繁刷新恶意撞门
     if (localStorage.getItem('burnt_' + pwd)) {
         showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被激活使用，无法二次冒领！");
         return;
     }
 
-    // 2. 本地二级防线：数理指纹对齐
     const type = pwd.charAt(0); 
     const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
 
@@ -970,10 +950,6 @@ async function verifyAndRouting(inputPassword) {
         showCustomAlert("❌ 对齐失败", "密钥未与当前时空对齐，请重新核对或联系山长！");
         return;
     }
-
-    // ====================================================================
-    // 🌐 向 Vercel 后端发起全网唯一性验证与销毁请求
-    // ====================================================================
     
     const firstBtn = document.querySelector('#layer-pay-399 .btn');
     const secondBtn = document.getElementById('active-ai-btn');
@@ -1004,49 +980,46 @@ async function verifyAndRouting(inputPassword) {
     if(firstBtn) firstBtn.disabled = false;
     if(secondBtn) secondBtn.disabled = false;
 
-    // ====================================================================
-    // 👑 云端熔断成功！轨道切换
-    // ====================================================================
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
+    // 专门为动态水印记忆这串密钥
+    localStorage.setItem('active_pwd', pwd);
 
-    // 轨道一：私域 VIP 熟人通道
     if (type === 'V') {
         const expiryTime = Date.now() + (60 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
         showTargetLayerOnly(PAGE_AI_ID);
         startGlobalTimer(expiryTime, 'ai');
-        
-        // 使用弹窗并赋予回调（弹窗消失时页面已在此停留）
         showCustomAlert("✓ VIP专属通道开启", "跳过公域互信对齐，直达深度背景采集系统！\n当前安全停留时间：60分钟。");
         return;
     }
 
-    // 轨道二：普通人付完 3000 元进入
     if (type === 'P') {
         const expiryTime = Date.now() + (60 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
         showTargetLayerOnly(PAGE_AI_ID);
         startGlobalTimer(expiryTime, 'ai');
-        
         showCustomAlert("✓ 契约达成", "3000元基础对价已核，进入深度背景采集系统。\n当前安全停留时间：60分钟。");
         return;
     }
 
-    // 轨道三：公域 399 元视频分流
+    // 轨道三：部署真实的云端视频直链
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        if (type === 'E') videoUrl = "https://your-platform.com/education-video.mp4"; 
-        else if (type === 'F') videoUrl = "https://your-platform.com/family-video.mp4";      
-        else if (type === 'W') videoUrl = "https://your-platform.com/work-video.mp4";        
+        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
 
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
             videoElement.src = videoUrl;
             videoElement.load(); 
         }
+
+        // 启动专属溯源水印
+        startDynamicWatermark(pwd);
 
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
@@ -1058,10 +1031,6 @@ async function verifyAndRouting(inputPassword) {
     }
 }
 
-
-// ====================================================================
-// 👁️ 以下原有环境记忆维持与定时器逻辑 100% 留存
-// ====================================================================
 function checkStateAndRestore() {
     let bugExp = localStorage.getItem('videoExpiry');
     if (bugExp && parseInt(bugExp) > Date.now() + 2 * 3600 * 1000) {
@@ -1100,6 +1069,22 @@ function checkStateAndRestore() {
         if (videoExpiry && now < videoExpiry) {
             showTargetLayerOnly(PAGE_VIDEO_ID);
             startGlobalTimer(videoExpiry, 'video');
+            
+            // 【重要】刷新防丢失：恢复水印和对应的视频源
+            const activePwd = localStorage.getItem('active_pwd');
+            const authType = localStorage.getItem('user_token_auth');
+            if (activePwd && authType) {
+                let videoUrl = "";
+                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";  
+                const videoElement = document.querySelector('#layer-video video');
+                if (videoElement) {
+                    videoElement.src = videoUrl;
+                    videoElement.load();
+                }
+                startDynamicWatermark(activePwd);
+            }
         } else { forceKickOut(); }
 
     } else if (currentLayer === PAGE_AI_ID) {
@@ -1165,11 +1150,13 @@ function showTargetLayerOnly(targetId) {
 
 function forceKickOut() {
     clearInterval(globalTimerInterval);
+    if(watermarkInterval) clearInterval(watermarkInterval);
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
     localStorage.removeItem('aiExpiry');
     localStorage.removeItem('user_token_auth');
     localStorage.removeItem('savedBookedTime'); 
+    localStorage.removeItem('active_pwd'); 
     hideTimerBar();
     showTargetLayerOnly(PAGE_INDEX_ID);
 }
