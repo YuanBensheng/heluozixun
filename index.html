@@ -445,13 +445,10 @@
             <p class="article-main-text" style="margin-bottom: 20px;">
                 下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义；若觉晦涩排斥，止步于此便是最佳的安排。
             </p>
-            <div class="video-wrapper-inner" style="position: relative;">
-    <video controls controlsList="nodownload" oncontextmenu="return false;" disablePictureInPicture></video>
-    
-    <div id="video-watermark" style="position: absolute; top: 15px; right: 15px; color: rgba(255, 255, 255, 0.25); font-size: 13px; font-weight: bold; pointer-events: none; z-index: 10; letter-spacing: 2px;">
-    </div>
-</div>
-
+            <div class="video-wrapper-inner">
+                <video src="your-video-url.mp4" controls poster="封面图地址.jpg"></video>
+            </div>
+        </div>
 
         <div class="holo-card-panel">
             <div class="article-title">－ 超维接引 －</div>
@@ -1039,26 +1036,17 @@ async function verifyAndRouting(inputPassword) {
     }
 
     // 轨道三：公域 399 元视频分流
-        if (type === 'E' || type === 'F' || type === 'W') {
+    if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        // 👇 这里填入您在腾讯云拿到的三个真实地址
-        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
+        if (type === 'E') videoUrl = "https://your-platform.com/education-video.mp4"; 
+        else if (type === 'F') videoUrl = "https://your-platform.com/family-video.mp4";      
+        else if (type === 'W') videoUrl = "https://your-platform.com/work-video.mp4";        
 
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
             videoElement.src = videoUrl;
             videoElement.load(); 
         }
-        
-        // 激活水印逻辑
-        const watermark = document.getElementById('video-watermark');
-        if(watermark) watermark.innerText = "专属场域授权码: " + pwd;
-
-        // ... 保持后面的计时逻辑不变 ...
-    }
-
 
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
