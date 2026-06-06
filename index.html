@@ -13,6 +13,46 @@
 
     <style>
         /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
+        /* ================= 自定义右下角视频控制台 ================= */
+.custom-video-controls {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 16px;
+    border-radius: 30px;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.custom-video-controls button {
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    font-weight: 500;
+    padding: 0;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.custom-video-controls button:hover {
+    color: #00ffcc;
+}
+
+.control-divider {
+    width: 1px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
         /* ================= 防闪烁补丁 ================= */
         html.is-vip-mode #layer-pay-399 {
             display: none !important;
@@ -452,11 +492,20 @@
             <p class="article-main-text" style="margin-bottom: 20px;">
                 下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义；若觉晦涩排斥，止步于此便是最佳的安排。
             </p>
-            <div class="video-wrapper-inner">
-                <video src="" controls controlsList="nodownload noplaybackrate" disablePictureInPicture playsinline webkit-playsinline oncontextmenu="return false;" preload="metadata" poster=""></video>
-                <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
-            </div>
-        </div>
+            <div class="video-wrapper-inner" style="position: relative;">
+    <video id="core-video" src="" disablePictureInPicture playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" oncontextmenu="return false;" preload="metadata" style="cursor: pointer;"></video>
+    
+    <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: #FFFFFF; text-shadow: 0px 2px 6px rgba(0,0,0,0.9); pointer-events: none; z-index: 100; display: none;"></div>
+
+    <div id="custom-controls" class="custom-video-controls" style="display: none;">
+        <button id="play-pause-btn">播放</button>
+        <div class="control-divider"></div>
+        <button id="mute-btn">静音</button>
+        <div class="control-divider"></div>
+        <button id="speed-btn">1.0x</button>
+    </div>
+</div>
+
 
         <div class="holo-card-panel">
             <div class="article-title">－ 超维接引 －</div>
@@ -1124,6 +1173,12 @@ function startGlobalTimer(expiry, type) {
 }
 
 function showTargetLayerOnly(targetId) {
+    // 【核心修复】：防止路由跳转时的后台幽灵播放
+    document.querySelectorAll('video').forEach(vid => {
+        vid.pause();
+        vid.muted = true; // 强制断绝声音
+    });
+
     document.querySelectorAll('.layer').forEach(layer => {
         layer.style.display = 'none';
         layer.classList.remove('active');
@@ -1135,6 +1190,7 @@ function showTargetLayerOnly(targetId) {
     }
     window.scrollTo(0, 0);
 }
+
 
 // 【核心修复】：踢出系统时，也一并强制静音暂停
 function forceKickOut() {
@@ -1177,6 +1233,55 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
         }
     });
 </script>
+// ================= 自定义视频控制逻辑 =================
+window.addEventListener('DOMContentLoaded', () => {
+    const video = document.getElementById('core-video');
+    const customControls = document.getElementById('custom-controls');
+    const playBtn = document.getElementById('play-pause-btn');
+    const muteBtn = document.getElementById('mute-btn');
+    const speedBtn = document.getElementById('speed-btn');
+
+    if(video && customControls) {
+        // 视频资源加载后，显示控制条
+        video.addEventListener('loadeddata', () => {
+            customControls.style.display = 'flex';
+        });
+
+        // 点击视频画面中心，可快捷切换播放/暂停
+        video.addEventListener('click', () => {
+            if(video.paused) video.play();
+            else video.pause();
+        });
+
+        // 监听视频状态改变按钮文字
+        video.addEventListener('play', () => playBtn.innerText = '暂停');
+        video.addEventListener('pause', () => playBtn.innerText = '播放');
+
+        // 播放/暂停按钮
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止点击事件穿透到视频画面
+            if(video.paused) video.play();
+            else video.pause();
+        });
+
+        // 静音/取消静音按钮
+        muteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            video.muted = !video.muted;
+            muteBtn.innerText = video.muted ? '取消静音' : '静音';
+        });
+
+        // 播放倍速切换 (1.0x -> 1.25x -> 1.5x 循环)
+        let speeds = [1.0, 1.25, 1.5];
+        let speedIdx = 0;
+        speedBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speedIdx = (speedIdx + 1) % speeds.length;
+            video.playbackRate = speeds[speedIdx];
+            speedBtn.innerText = speeds[speedIdx] + 'x';
+        });
+    }
+});
 
 </body>
 </html>
