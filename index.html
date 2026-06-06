@@ -566,12 +566,13 @@
 <div class="modal-overlay" id="global-alert-modal">
     <div class="modal-card" style="text-align: center;">
         <div class="modal-title" id="global-alert-title">系统提示</div>
-        <div class="modal-body" id="global-alert-body" style="margin-bottom: 30px;">
+        <div class="modal-body" id="global-alert-body" style="margin-bottom: 30px;"></div>
         <div class="modal-footer" style="padding-top: 0; border-top: none;">
             <button class="btn" id="global-alert-btn" style="padding: 12px 40px; font-size: 14px; border-color: #00ffcc; color: #00ffcc; background: transparent; width: auto;">知悉</button>
         </div>
     </div>
 </div>
+
 <div class="modal-overlay" id="custom-modal">
     <div class="modal-card">
         <div class="modal-title">✓【时空锁定成功】</div>
@@ -977,7 +978,8 @@ async function verifyAndRouting(inputPassword) {
         const cloudResult = await cloudResponse.json();
 
         if (!cloudResponse.ok || !cloudResult.success) {
-            showCustomAlert("❌ 节点熔断", cloudResult.message || "该时空密钥已被其他因果节点熔断，无法二次冒领！");
+            showCustomAlert("❌ 节点熔断", "该时空密钥已被其他因果节点熔断，无法二次冒领！");
+
             if(firstBtn) firstBtn.disabled = false;
             if(secondBtn) secondBtn.disabled = false;
             return;
