@@ -214,6 +214,7 @@
             margin-bottom: 15px;
             position: relative; /* 为动态水印提供定位基准 */
         }
+        
         .video-wrapper-inner video { 
             width: 100%; 
             height: 100%; 
@@ -452,8 +453,8 @@
                 下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义；若觉晦涩排斥，止步于此便是最佳的安排。
             </p>
             <div class="video-wrapper-inner">
-                <video src="" controls controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false;" preload="metadata" poster=""></video>
-                <div id="dynamic-watermark" style="position: absolute; bottom: 20px; right: 20px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.45); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; opacity: 0; transition: all 0.4s ease; display: none;"></div>
+                <video src="" controls controlsList="nodownload noplaybackrate" disablePictureInPicture playsinline webkit-playsinline oncontextmenu="return false;" preload="metadata" poster=""></video>
+                <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
             </div>
         </div>
 
@@ -619,30 +620,12 @@
         }
     });
 
-    // ================= 动态溯源水印系统 =================
-    let watermarkInterval = null;
+    // ================= 溯源水印系统 (已修改为固定右上角显示) =================
     function startDynamicWatermark(pwd) {
         const wm = document.getElementById('dynamic-watermark');
         if (!wm) return;
         wm.style.display = 'block';
         wm.innerText = "【溯源对齐: " + pwd + "】";
-
-        if (watermarkInterval) clearInterval(watermarkInterval);
-
-        // 每隔 2.5 秒改变一次状态，制造闪现效果并在右下角进行位移防遮挡
-        watermarkInterval = setInterval(() => {
-            const isShow = Math.random() > 0.3; // 70% 概率显示
-            if (isShow) {
-                wm.style.opacity = '1';
-                // 在右下角小范围内随机漂移 (10px 到 40px 之间)
-                const randomBottom = Math.floor(Math.random() * 30) + 10; 
-                const randomRight = Math.floor(Math.random() * 30) + 10;  
-                wm.style.bottom = randomBottom + 'px';
-                wm.style.right = randomRight + 'px';
-            } else {
-                wm.style.opacity = '0';
-            }
-        }, 2500); 
     }
 
     // ================= 全局弹窗核心控制函数 =================
@@ -843,7 +826,16 @@
         switchLayer('layer-schedule', 'layer-thankyou'); 
     }
     
-    function switchLayer(fromId, toId) { document.getElementById(fromId).style.display = 'none'; document.getElementById(toId).style.display = 'block'; window.scrollTo(0, 0); }
+    // 【核心修复】：切换图层时，强行让所有在播放的视频静音并暂停
+    function switchLayer(fromId, toId) { 
+        document.querySelectorAll('video').forEach(vid => {
+            vid.pause();
+        });
+        
+        document.getElementById(fromId).style.display = 'none'; 
+        document.getElementById(toId).style.display = 'block'; 
+        window.scrollTo(0, 0); 
+    }
 </script>
 
 <div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
@@ -982,7 +974,6 @@ async function verifyAndRouting(inputPassword) {
 
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
-    // 专门为动态水印记忆这串密钥
     localStorage.setItem('active_pwd', pwd);
 
     if (type === 'V') {
@@ -1005,7 +996,6 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 轨道三：部署真实的云端视频直链
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
@@ -1018,7 +1008,6 @@ async function verifyAndRouting(inputPassword) {
             videoElement.load(); 
         }
 
-        // 启动专属溯源水印
         startDynamicWatermark(pwd);
 
         const expiryTime = Date.now() + (30 * 60 * 1000); 
@@ -1070,7 +1059,6 @@ function checkStateAndRestore() {
             showTargetLayerOnly(PAGE_VIDEO_ID);
             startGlobalTimer(videoExpiry, 'video');
             
-            // 【重要】刷新防丢失：恢复水印和对应的视频源
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
@@ -1148,9 +1136,13 @@ function showTargetLayerOnly(targetId) {
     window.scrollTo(0, 0);
 }
 
+// 【核心修复】：踢出系统时，也一并强制静音暂停
 function forceKickOut() {
+    document.querySelectorAll('video').forEach(vid => {
+        vid.pause();
+    });
+    
     clearInterval(globalTimerInterval);
-    if(watermarkInterval) clearInterval(watermarkInterval);
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
     localStorage.removeItem('aiExpiry');
