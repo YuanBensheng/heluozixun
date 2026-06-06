@@ -1037,7 +1037,6 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 轨道三：公域 399 元视频分流
         // 轨道三：公域 399 元视频分流
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
@@ -1064,8 +1063,8 @@ async function verifyAndRouting(inputPassword) {
         startGlobalTimer(expiryTime, 'video');
         
         showCustomAlert("✓ 契约达成", "认知对齐契约已达成。\n\n高维时空已开启，当前安全停留时间：30分钟。");
-    }
-
+    } 
+} // <--- 这是之前缺失的那个关键大括号，请务必加上！
 
 
 // ====================================================================
