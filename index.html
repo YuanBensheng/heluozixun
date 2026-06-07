@@ -1142,6 +1142,18 @@ function startGlobalTimer(expiry, type) {
 }
 
 function showTargetLayerOnly(targetId) {
+    // 【终极防漏补丁】：在这个函数执行图层切换前，也无脑执行一次全员视频静音与暂停
+    document.querySelectorAll('video').forEach(vid => {
+        vid.pause();
+        vid.muted = true;
+    });
+    
+    // 安全地关闭可能存在的画中画
+    if (document.pictureInPictureElement && document.exitPictureInPicture) {
+        document.exitPictureInPicture().catch(() => {}); 
+    }
+
+    // 原有的图层切换逻辑
     document.querySelectorAll('.layer').forEach(layer => {
         layer.style.display = 'none';
         layer.classList.remove('active');
