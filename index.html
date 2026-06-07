@@ -453,7 +453,7 @@
                 下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义；若觉晦涩排斥，止步于此便是最佳的安排。
             </p>
             <div class="video-wrapper-inner">
-                <video src="" controls controlsList="nodownload noplaybackrate" disablePictureInPicture playsinline webkit-playsinline oncontextmenu="return false;" preload="metadata" poster=""></video>
+                <video src="" controls controlsList="nodownload noplaybackrate" disablePictureInPicture playsinline webkit-playsinline oncontextmenu="return false;" preload="none" poster="./images/video-cover.jpg"></video>
                 <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
             </div>
         </div>
@@ -1005,7 +1005,6 @@ async function verifyAndRouting(inputPassword) {
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
             videoElement.src = videoUrl;
-            videoElement.load(); 
         }
 
         startDynamicWatermark(pwd);
@@ -1069,7 +1068,6 @@ function checkStateAndRestore() {
                 const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) {
                     videoElement.src = videoUrl;
-                    videoElement.load();
                 }
                 startDynamicWatermark(activePwd);
             }
