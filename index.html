@@ -522,63 +522,102 @@
         </div>
     </div>
 
-    <div id="layer-ai" class="layer">
+        <div id="layer-ai" class="layer">
         <h2>前置研判 · 局象案卷</h2>
         <div class="sub-title">高端私密体检 · 严谨案卷保全</div>
         
         <div class="holo-card-panel">
             <div class="article-title">－ 私密保全与豁免宣告 －</div>
             <p class="article-main-text" style="font-size: 14px; opacity: 0.85; line-height: 1.7; text-align: justify;">
-                河洛案卷视阁下隐私为最高法度。本案卷采用全封闭数字隔离加密，除山长本人用于前置格局研判外，前端不设任何公开留存痕迹。在河洛的空间里，阁下无需背负社会的期许，亦无需修饰现实的棱角。请卸下防御，直面真实。因为唯有直面真实的局象，推演方能破局。
+                河洛案卷视阁下隐私为最高法度。本案卷采用全封闭数字隔离加密，除山长本人用于前置格局研判外，前端不设任何公开留存痕迹。请卸下防御，直面真实。因为唯有直面真实的局象，推演方能破局。
             </p>
         </div>
 
         <div class="holo-card-panel" style="text-align: left;">
             <div class="article-title">－ 局象前置微观体检 －</div>
             
-            <div class="case-section-title">一、时空与界域定格 (基础硬要素)</div>
+            <div class="case-section-title">一、时空结构定格</div>
             <div class="input-row-container" style="margin-top: 10px;">
                 <div class="form-group-half">
-                    <label style="font-size: 13px; color: #2e7a68;">家庭人员结构构成</label>
-                    <input type="text" id="case-family-struct" class="form-input-box" placeholder="例：已婚 / 育有一子一女 / 父母同住" style="font-size: 14px; padding: 10px;">
+                    <label style="font-size: 13px; color: #2e7a68;">阁下称呼 (必填)</label>
+                    <input type="text" id="ts-name" class="form-input-box" placeholder="如：李先生 / 王女士" style="font-size: 14px; padding: 10px;">
                 </div>
                 <div class="form-group-half">
-                    <label style="font-size: 13px; color: #2e7a68;">核心成员年龄或生肖</label>
-                    <input type="text" id="case-family-zodiac" class="form-input-box" placeholder="例：夫85年属牛、妻88年属龙" style="font-size: 14px; padding: 10px;">
+                    <label style="font-size: 13px; color: #2e7a68;">您在家庭中的身份</label>
+                    <input type="text" id="ts-role" class="form-input-box" placeholder="如：父亲 / 男主人" style="font-size: 14px; padding: 10px;">
                 </div>
             </div>
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 13px; color: #10b981; font-weight: bold; display: block; margin-bottom: 8px;">常住一起生活的家庭成员有哪些？</label>
+                <input type="text" id="ts-members" class="form-input-box" placeholder="如：夫妻二人、长子、爷爷奶奶" style="font-size: 14px; padding: 10px; width: 100%;">
+            </div>
             <div style="margin-bottom: 20px;">
-                <label style="font-size: 13px; color: #10b981; font-weight: bold; display: block; margin-bottom: 8px;">当前行业背景与工作现状</label>
-                <input type="text" id="case-job-status" class="form-input-box" placeholder="例：金融业管理层 / 自由职业 / 企业主" style="font-size: 14px; padding: 10px; width: 100%;">
+                <label style="font-size: 13px; color: #10b981; font-weight: bold; display: block; margin-bottom: 8px;">核心成员生辰排盘采集 <span style="font-size: 12px; color: #2e7a68; font-weight: normal;">(注：包含年月日时、公/农历、出生市县)</span></label>
+                <textarea id="ts-birthinfo" class="case-textarea" style="height: 100px; font-size: 14px;" placeholder="请按此格式输入：&#10;男主：公历1985年8月4日辰时，出生于广州&#10;女主：农历1988年九月初八未时，出生于成都&#10;子女：..."></textarea>
             </div>
 
-            <div class="case-section-title">二、伴侣关系定性 (气场直觉定格)</div>
-            <div class="case-grid" id="grid-spouse-rel">
-                <div class="case-option" onclick="selectCaseTag('spouse', '共振融洽', this)">【共振融洽】<br><span style="font-size:11px; opacity:0.7;">互为支撑，气场顺畅</span></div>
-                <div class="case-option" onclick="selectCaseTag('spouse', '磁场相敬', this)">【磁场相敬】<br><span style="font-size:11px; opacity:0.7;">表面平静，深层共鸣暂闭</span></div>
-                <div class="case-option" onclick="selectCaseTag('spouse', '暗流受制', this)">【暗流受制】<br><span style="font-size:11px; opacity:0.7;">观念分歧，存在隐性消耗</span></div>
-                <div class="case-option" onclick="selectCaseTag('spouse', '局势内耗', this)">【局势内耗】<br><span style="font-size:11px; opacity:0.7;">冲突显化，信任边界受损</span></div>
+            <div class="case-section-title">二、五伦关系定性 (磁场直觉定格)</div>
+            
+            <label style="font-size: 13px; color: #2e7a68; display: block; margin-bottom: 5px;">【夫妇有别】伴侣之间气场与职能现状：</label>
+            <div class="case-grid" id="grid-rel_spouse" style="margin-bottom: 15px;">
+                <div class="case-option" onclick="selectCaseTag('rel_spouse', '共振融洽', this)">共振融洽/互补</div>
+                <div class="case-option" onclick="selectCaseTag('rel_spouse', '磁场相敬', this)">磁场相敬/平淡</div>
+                <div class="case-option" onclick="selectCaseTag('rel_spouse', '暗流受制', this)">暗流受制/分歧</div>
+                <div class="case-option" onclick="selectCaseTag('rel_spouse', '局势内耗', this)">局势内耗/冲突</div>
             </div>
 
-            <div class="case-section-title">三、后代亲子沟通定性 (脉络交感)</div>
-            <div class="case-grid" id="grid-child-rel">
-                <div class="case-option" onclick="selectCaseTag('child', '共振深切', this)">【共振深切】<br><span style="font-size:11px; opacity:0.7;">良性引导，孩子乐于分享</span></div>
-                <div class="case-option" onclick="selectCaseTag('child', '代际疏离', this)">【代际疏离】<br><span style="font-size:11px; opacity:0.7;">沟通匮乏，情感联结淡漠</span></div>
-                <div class="case-option" onclick="selectCaseTag('child', '磁场对抗', this)">【磁场对抗】<br><span style="font-size:11px; opacity:0.7;">存在明显叛逆与沟通壁垒</span></div>
-                <div class="case-option" onclick="selectCaseTag('child', '暂无此局', this)">【未育/暂无此局】<br><span style="font-size:11px; opacity:0.7;">当前尚未涉及代际关系</span></div>
+            <label style="font-size: 13px; color: #2e7a68; display: block; margin-bottom: 5px;">【父子有亲】代际之间(亲子)沟通现状：</label>
+            <div class="case-grid" id="grid-rel_parentchild" style="margin-bottom: 15px;">
+                <div class="case-option" onclick="selectCaseTag('rel_parentchild', '交心引导', this)">交心引导/亲密</div>
+                <div class="case-option" onclick="selectCaseTag('rel_parentchild', '平和顺随', this)">平和顺随/正常</div>
+                <div class="case-option" onclick="selectCaseTag('rel_parentchild', '代际疏离', this)">代际疏离/少言</div>
+                <div class="case-option" onclick="selectCaseTag('rel_parentchild', '磁场对抗', this)">磁场对抗/叛逆</div>
+            </div>
+
+            <label style="font-size: 13px; color: #2e7a68; display: block; margin-bottom: 5px;">【君臣有义】职场从属/社会协作契约：</label>
+            <div class="case-grid" id="grid-rel_workplace" style="margin-bottom: 15px;">
+                <div class="case-option" onclick="selectCaseTag('rel_workplace', '契约顺畅', this)">契约顺畅/互信</div>
+                <div class="case-option" onclick="selectCaseTag('rel_workplace', '价值对等', this)">价值对等/平稳</div>
+                <div class="case-option" onclick="selectCaseTag('rel_workplace', '向上受阻', this)">向上受阻/瓶颈</div>
+                <div class="case-option" onclick="selectCaseTag('rel_workplace', '团队内耗', this)">团队内耗/倾轧</div>
+            </div>
+
+            <label style="font-size: 13px; color: #2e7a68; display: block; margin-bottom: 5px;">【长幼有序】原生家庭/父母同辈序位：</label>
+            <div class="case-grid" id="grid-rel_originfamily" style="margin-bottom: 15px;">
+                <div class="case-option" onclick="selectCaseTag('rel_originfamily', '序位清晰', this)">序位清晰/和谐</div>
+                <div class="case-option" onclick="selectCaseTag('rel_originfamily', '边界融合', this)">边界融合/平顺</div>
+                <div class="case-option" onclick="selectCaseTag('rel_originfamily', '过度索取', this)">过度索取/消耗</div>
+                <div class="case-option" onclick="selectCaseTag('rel_originfamily', '观念割裂', this)">观念割裂/疏远</div>
+            </div>
+
+            <label style="font-size: 13px; color: #2e7a68; display: block; margin-bottom: 5px;">【朋友有信】圈层社交/合伙人信任度：</label>
+            <div class="case-grid" id="grid-rel_social" style="margin-bottom: 20px;">
+                <div class="case-option" onclick="selectCaseTag('rel_social', '势能互补', this)">势能互补/共赢</div>
+                <div class="case-option" onclick="selectCaseTag('rel_social', '君子之交', this)">君子之交/淡水</div>
+                <div class="case-option" onclick="selectCaseTag('rel_social', '圈层固化', this)">圈层固化/平庸</div>
+                <div class="case-option" onclick="selectCaseTag('rel_social', '识人不察', this)">识人不察/背叛</div>
+            </div>
+
+            <div class="case-section-title">三、事业学业维度</div>
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 13px; color: #10b981; font-weight: bold; display: block; margin-bottom: 8px;">男主/女主行业或职业方向</label>
+                <input type="text" id="ce-career" class="form-input-box" placeholder="如：男主金融高管，女主全职太太 / 三甲医院主治" style="font-size: 14px; padding: 10px; width: 100%;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 13px; color: #10b981; font-weight: bold; display: block; margin-bottom: 8px;">子女所处学段、学业水平与专业方向</label>
+                <input type="text" id="ce-edu" class="form-input-box" placeholder="如：长子初二成绩中等，长女大二法学专业" style="font-size: 14px; padding: 10px; width: 100%;">
             </div>
 
             <div class="case-section-title">四、核心诉求原点 (本次推演聚焦轴)</div>
-            <div class="case-grid" id="grid-core-focus">
-                <div class="case-option" onclick="selectCaseTag('focus', '家庭健康/情绪化解', this)">【家庭健康/情绪化解】</div>
-                <div class="case-option" onclick="selectCaseTag('focus', '夫妻认知/信任对齐', this)">【夫妻认知/信任对齐】</div>
-                <div class="case-option" onclick="selectCaseTag('focus', '后代运势/学业抉rz', this)">【后代运势/学业抉择】</div>
-                <div class="case-option" onclick="selectCaseTag('focus', '个人事业/财富决策', this)">【个人事业/财富决策】</div>
+            <div class="case-grid" id="grid-focus">
+                <div class="case-option" onclick="selectCaseTag('focus', '家庭关系/认知对齐', this)">【家庭关系/认知对齐】</div>
+                <div class="case-option" onclick="selectCaseTag('focus', '子女教育/关键抉择', this)">【子女教育/关键抉择】</div>
+                <div class="case-option" onclick="selectCaseTag('focus', '工作事业/重大决策', this)">【工作事业/重大决策】</div>
             </div>
 
-            <div class="case-section-title">五、余绪微言 (除上述客观标签外，你想补充的)</div>
+            <div class="case-section-title">五、余绪微言 (其他补充)</div>
             <div style="margin-bottom: 25px;">
-                <textarea id="case-more-notes" class="case-textarea" placeholder="在此可自由罗列您想让咨询师提前知悉的任何点滴状况（选填，不限字数）..."></textarea>
+                <textarea id="extra-notes" class="case-textarea" placeholder="在此可自由罗列您想让咨询师提前知悉的任何点滴状况（选填，不限字数）..."></textarea>
             </div>
 
             <div style="text-align: center; margin-top: 30px;">
@@ -586,6 +625,7 @@
             </div>
         </div>
     </div>
+
 
     <div id="layer-schedule" class="layer">
         <h2>时空锁定 · 双向确认</h2>
@@ -715,44 +755,63 @@
         modal.style.display = 'flex';
     }
 
-    // ================= 📋 案卷单选标签核心控制 =================
-    let selectedCaseData = { spouse: "", child: "", focus: "" };
+        // ================= 📋 案卷数据核心控制 (新版 Schema) =================
+    let selectedCaseData = { 
+        rel_spouse: "", 
+        rel_parentchild: "", 
+        rel_workplace: "", 
+        rel_originfamily: "", 
+        rel_social: "", 
+        focus: "" 
+    };
     
     function selectCaseTag(type, value, element) {
-        // 清除同一分类下的选中样式
-        const gridId = type === 'spouse' ? 'grid-spouse-rel' : (type === 'child' ? 'grid-child-rel' : 'grid-core-focus');
+        // 清除对应网格内的选中状态
+        const gridId = `grid-${type}`;
         document.querySelectorAll(`#${gridId} .case-option`).forEach(opt => opt.classList.remove('selected'));
-        // 点亮当前卡片
+        // 点亮当前
         element.classList.add('selected');
-        // 存入全局变量
         selectedCaseData[type] = value;
     }
 
-    // 案卷提交与链路打包
     async function saveCaseAndProceed() {
-        // 验证必选项
-        if (!selectedCaseData.spouse || !selectedCaseData.child || !selectedCaseData.focus) {
-            showCustomAlert("⚠️ 案卷未完备", "请完整选择伴侣关系、代际沟通以及核心诉求标签，以便山长提取精准局象。");
-            return;
+        // 校验必选项
+        const name = document.getElementById('ts-name').value.trim();
+        if (!name) {
+            showCustomAlert("⚠️ 案卷未完备", "请填写【时空结构】中的“阁下称呼”"); return;
+        }
+        if (!selectedCaseData.rel_spouse || !selectedCaseData.rel_parentchild || !selectedCaseData.focus) {
+            showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】及【核心诉求】的磁场标签，以便山长提取精准局象。"); return;
         }
 
-        // 打包前端采集的硬要素与软标签
+        // 打包五大模块数据契约 (严格对齐后端)
         const payload = {
-            familyStructure: document.getElementById('case-family-struct').value.trim(),
-            familyZodiac: document.getElementById('case-family-zodiac').value.trim(),
-            jobStatus: document.getElementById('case-job-status').value.trim(),
-            spouseTag: selectedCaseData.spouse,
-            childTag: selectedCaseData.child,
-            coreFocusTag: selectedCaseData.focus,
-            moreNotes: document.getElementById('case-more-notes').value.trim()
+            timeSpace: {
+                name: name,
+                role: document.getElementById('ts-role').value.trim(),
+                members: document.getElementById('ts-members').value.trim(),
+                birthInfo: document.getElementById('ts-birthinfo').value.trim()
+            },
+            fiveRelations: {
+                spouse: selectedCaseData.rel_spouse,
+                parentchild: selectedCaseData.rel_parentchild,
+                workplace: selectedCaseData.rel_workplace || "未选",
+                originfamily: selectedCaseData.rel_originfamily || "未选",
+                social: selectedCaseData.rel_social || "未选"
+            },
+            careerEdu: {
+                career: document.getElementById('ce-career').value.trim(),
+                edu: document.getElementById('ce-edu').value.trim()
+            },
+            coreFocus: selectedCaseData.focus,
+            extraNotes: document.getElementById('extra-notes').value.trim()
         };
 
-        // 将打包数据暂存，在 submitAppointment 中取出并通过 fetch 发送
+        // 存入沙盒
         localStorage.setItem('heLuoCaseDataPayload', JSON.stringify(payload));
-
-        // 切换至排期层
         initCalendarLayer();
     }
+
 
     let globalBookedSlots = {}; 
 
