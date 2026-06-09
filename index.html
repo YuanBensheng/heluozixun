@@ -883,67 +883,57 @@
     }
 
     async function submitAppointment() {
-        const name = document.getElementById('user-name').value.trim(); const wechat = document.getElementById('user-wechat').value.trim();
-        if(!name || !wechat) { showCustomAlert("⚠️ 信息缺失", "请完整填写您的尊称与微信号，以便完成最终因果对齐。"); return; }
-        const wechatRegex = /^[a-zA-Z0-9_-]+$/;
-        if (!wechatRegex.test(wechat)) { showCustomAlert("⚠️ 格式异常", "微信号只能由英文字母、数字、下划线(_)或减号(-)组成。"); return; }
-
-        const submitBtn = document.querySelector('#appoint-form .btn'); const originalBtnText = submitBtn.innerText;
-        submitBtn.disabled = true; submitBtn.innerText = "正在向云端发起全网垄断锁定...";
-
-        const slotKey = `${chosenDateKey}_${chosenPeriod}`; 
-
-        try {
-            // 提取前面缓存的案卷全量数据
-            let caseData = {};
-            const cachedCase = localStorage.getItem('heLuoCaseDataPayload');
-            if (cachedCase) {
-                caseData = JSON.parse(cachedCase);
-            }
-
-            // 修改点1：触发后台 API 进行同步，顺带把前置案卷作为 caseReport 发送给后台
-            const response = await fetch('/api/booking', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    slot: slotKey,
-                    user: { name: name, wechat: wechat },
-                    caseReport: caseData 
-                })
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.success) {
-                globalBookedSlots[slotKey] = true;
-                finalTimeStrGlobal = chosenDate + " " + chosenTime;
-                localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
-                
-                // 修改点2：不再复制全表明文内容，仅保留3行极简双向核对凭证
-                const credentialText = `【河洛时空·双向核对凭证】\n锁定场域：${chosenDate} ${chosenTime}\n溯源代号：${name} (全量精密案卷已暗网同步山长库)`;
-                
-                const proceedToModal = () => {
-                    submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
-                    document.getElementById('modal-user-name').innerText = name; 
-                    document.getElementById('custom-modal').style.display = "flex";
-                };
-
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(credentialText).then(() => { proceedToModal(); }).catch(err => { fallbackCopyText(credentialText); proceedToModal(); });
-                } else { fallbackCopyText(credentialText); proceedToModal(); }
-
-            } else {
-                showCustomAlert("❌ 锁定失败", result.message || "该时空已被全局锁定，请选择其他时段。");
-                submitBtn.disabled = false; submitBtn.innerText = originalBtnText; 
-                await syncSlotsFromCloud(); renderCalendar();
-                document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
-            }
-
-        } catch (error) {
-            showCustomAlert("❌ 网络异常", "线上公网连接出现异常，请检查网络后重新点击。");
-            submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
-        }
+    const name = document.getElementById('user-name').value.trim();
+    const wechat = document.getElementById('user-wechat').value.trim();
+    
+    if(!name || !wechat) {
+        showCustomAlert("⚠️ 信息缺失", "请完整填写您的尊称与微信号，以便完成最终因果对齐。");
+        return;
     }
+
+    const submitBtn = document.querySelector('#appoint-form .btn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "正在向云端发起全网垄断锁定...";
+
+    // 1. 采集全量数据（完全对齐您前端 HTML 的 ID，不再简化）
+    const payload = {
+        name: name,
+        wechat: wechat,
+        familyStructure: document.getElementById('case-family-struct')?.value || '未填',
+        familyZodiac: document.getElementById('case-family-zodiac')?.value || '未填',
+        jobStatus: document.getElementById('case-job-status')?.value || '未填',
+        spouseTag: selectedCaseData.spouse,
+        childTag: selectedCaseData.child,
+        coreFocusTag: selectedCaseData.focus,
+        moreNotes: document.getElementById('case-more-notes')?.value || ''
+    };
+
+    const slotKey = `${chosenDateKey}_${chosenPeriod}`; 
+
+    try {
+        const response = await fetch('/api/booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slot: slotKey, user: { name, wechat }, caseReport: payload })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // 2. 恢复您最满意的长格式凭证
+            const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}\n【体检案卷存照】\n家庭结构：${payload.familyStructure}\n生肖信息：${payload.familyZodiac}\n工作现状：${payload.jobStatus}\n夫妻状态：${payload.spouseTag}\n亲子沟通：${payload.childTag}\n核心聚焦：${payload.coreFocusTag}\n备注：${payload.moreNotes}`;
+            
+            navigator.clipboard.writeText(credentialText);
+            
+            document.getElementById('modal-user-name').innerText = name; 
+            document.getElementById('custom-modal').style.display = "flex";
+        }
+    } catch (error) {
+        showCustomAlert("❌ 网络异常", "连接异常，请重试。");
+        submitBtn.disabled = false;
+    }
+}
+
 
     function closeModalAndProceed() { 
         document.getElementById('custom-modal').style.display = "none"; 
