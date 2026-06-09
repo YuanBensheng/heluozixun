@@ -212,7 +212,7 @@
             overflow: hidden;
             border: 1px solid rgba(0, 255, 204, 0.2);
             margin-bottom: 15px;
-            position: relative; /* 为动态水印提供定位基准 */
+            position: relative; 
         }
         
         .video-wrapper-inner video { 
@@ -290,7 +290,69 @@
         
         .layer { display: none; }
         .layer.active { display: block; }
-        .ai-container { width: 100%; height: 620px; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; overflow: hidden; margin-top: 20px; background: #000; box-shadow: 0 0 25px rgba(0,255,204,0.15); }
+
+        /* ================= 📋 局象前置体检案卷专属样式 ================= */
+        .case-section-title {
+            font-size: 15px;
+            color: #10b981;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            border-left: 3px solid #00ffcc;
+            padding-left: 10px;
+            letter-spacing: 1px;
+        }
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .case-option {
+            background: #010614;
+            border: 1px solid #0d211c;
+            padding: 14px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #7ebdae;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .case-option:hover {
+            border-color: #00ffcc;
+            background: #010e21;
+            color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
+        }
+        .case-option.selected {
+            background: rgba(0, 255, 204, 0.1) !important;
+            border-color: #00ffcc !important;
+            color: #00ffcc !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.25);
+        }
+        .case-textarea {
+            width: 100%;
+            height: 110px;
+            background: #000000;
+            border: 1px solid #0d211c;
+            color: #00ffcc;
+            padding: 12px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+            transition: all 0.3s;
+        }
+        .case-textarea:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 12px rgba(0, 255, 204, 0.2);
+            background: #010614;
+        }
 
         .calendar-box { background: rgba(1, 5, 18, 0.7); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 25px; margin-top: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); will-change: box-shadow; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; box-sizing: border-box;}
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; font-size: 16px; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; color: #00ffcc; }
@@ -346,46 +408,34 @@
             .modal-card { width: 88% !important; padding: 20px !important; }
             .holo-card-panel { padding: 25px 20px !important; }
             .final-thank-card { padding: 35px 15px !important; }
+            .case-grid { grid-template-columns: 1fr; gap: 10px; }
         }
-   /* 👑 彻底从界面上移除 Webkit 内核浏览器视频控件的全屏按钮 */
-video::-webkit-media-controls-fullscreen-button {
-    display: none !important;
-}
-/* 针对不同厂商可能的前缀进行覆盖 */
-video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button {
-    display: none !important;
-}
 
+        video::-webkit-media-controls-fullscreen-button { display: none !important; }
+        video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button { display: none !important; }
     </style>
-
 </head>
 <body class="noselect" ondragstart="return false">
+
 <div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0c; z-index: 9999999; color: #e5e5e5; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
-    
     <div style="position: absolute; top: 25px; right: 30px; animation: bounceRight 1.5s infinite;">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="7" y1="17" x2="17" y2="7"></line>
             <polyline points="7 7 17 7 17 17"></polyline>
         </svg>
     </div>
-
     <div style="position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 420px; text-align: center;">
-        
         <div style="margin-bottom: 24px;">
             <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.95;">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
             </svg>
         </div>
-
         <h2 style="font-size: 22px; font-weight: 600; color: #ffffff; letter-spacing: 1.5px; margin-bottom: 16px;">河洛咨询 · 温馨提示</h2>
-        
         <div style="width: 40px; height: 2px; background: #14B8A6; margin: 0 auto 24px auto;"></div>
-
         <p style="font-size: 15px; color: #a1a1aa; line-height: 1.8; text-align: justify; margin-bottom: 36px; padding: 0 10px;">
             为保障您的核心咨询数据与隐私安全，请不要在第三方社交软件内直接加载。
         </p>
-
         <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 24px 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
             <p style="font-size: 16px; color: #ffffff; margin: 0 0 14px 0; letter-spacing: 1px;">
                 请点击右上角 <span style="font-size: 22px; font-weight: bold; letter-spacing: 2px; vertical-align: middle;">···</span> 菜单
@@ -395,16 +445,8 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
                 <span style="background: #007aff; color: #ffffff; font-size: 15px; font-weight: 500; padding: 6px 14px; border-radius: 6px; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(0,122,255,0.4);">在浏览器中打开</span>
             </div>
         </div>
-        
         <p style="font-size: 11px; color: #52525b; margin-top: 36px; letter-spacing: 1.5px;">SECURE ENVIRONMENT · HELUO CONSULTING</p>
     </div>
-
-    <style>
-        @keyframes bounceRight {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-6px, 6px); }
-        }
-    </style>
 </div>
 
 <div class="container">
@@ -415,40 +457,29 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
 
         <div class="holo-card-panel">
             <div class="article-title">－ 认知过滤 －</div>
-            <p class="article-main-text">
-                既然来到这里，就不必掩饰来意：你在原有的维度卡住了，急需高维的破局之法。
-            </p>
-            <p class="article-main-text">
-                我们能相遇，是认知同频的感召；我们能成交，是维度对齐的需要。这里只有破局的真相，没有情绪的抚慰；支付与交付，就是我们之间最纯粹的语言。
-            </p>
-            <p class="article-main-text">
-                高维的能量，绝不消耗在证明与拉扯上；你下决断的速度，决定了你走出困局的速度。
-            </p>
+            <p class="article-main-text">既然来到这里，就不必掩饰来意：你在原有的维度卡住了，急需高维的破局之法。</p>
+            <p class="article-main-text">我们能相遇，是认知同频的感召；我们能成交，是维度对齐的需要。这里只有破局的真相，没有情绪的抚慰；支付与交付，就是我们之间最纯粹的语言。</p>
+            <p class="article-main-text">高维的能量，绝不消耗在证明与拉扯上；你下决断的速度，决定了你走出困局的速度。</p>
         </div>
 
         <div class="holo-card-panel">
             <div class="article-title">－ 破局契约 －</div>
             <div class="flex-pay-container">
-                <div class="qrcode-box">
-                    <img src="./images/wechat-pay.png" alt="微信收款码">
-                </div>
+                <div class="qrcode-box"><img src="./images/wechat-pay.png" alt="微信收款码"></div>
                 <div class="pay-desc-text">
-                    1. 斩断犹豫，确认同频。<br>
-                    扫码支付 399 元，买断一次认知对齐的机会：观摩展现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。你行“财施”的果断，对应我行“法施”的纯粹。只判断，不纠缠。<br><br>
-                    2. 密钥激活，时空逆转。<br>
-                    付款后您将获取专属「时空密钥」，在下方输入并点击激活，即刻开启高维通道，系统同步启动30分钟倒计时，届时将自动退出。
+                    1. 扫码支付 399 元，观摩底层架构的核心微课。对得齐继续，对不齐各自前行。只判断，不纠缠。<br><br>
+                    2. 付款后获取「时空密钥」，在下方输入激活，即刻开启高维通道，系统同步启动 30 分钟倒计时。
                 </div>
             </div>
         </div>
 
         <div class="holo-card-panel">
             <div class="article-title">－ 专属密钥 －</div>
-          <div class="auth-section">
-    <input type="text" id="password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
-    <button class="btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('password-input').value)">输入密钥 · 开启破局</button>
-    <p id="err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
-</div>
-
+            <div class="auth-section">
+                <input type="text" id="password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
+                <button class="btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('password-input').value)">输入密钥 · 开启破局</button>
+                <p id="err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
+            </div>
         </div>
     </div>
 
@@ -458,9 +489,7 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
 
         <div class="holo-card-panel">
             <div class="article-title">－ 认知对齐 －</div>
-            <p class="article-main-text" style="margin-bottom: 20px;">
-                下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义；若觉晦涩排斥，止步于此便是最佳的安排。
-            </p>
+            <p class="article-main-text" style="margin-bottom: 20px;">下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义。</p>
             <div class="video-wrapper-inner">
                 <video src="" controls controlsList="nodownload noplaybackrate nofullscreen" disablePictureInPicture playsinline webkit-playsinline oncontextmenu="return false;" preload="none" poster="./images/video-cover.png"></video>
                 <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
@@ -470,52 +499,90 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
         <div class="holo-card-panel">
             <div class="article-title">－ 超维接引 －</div>
             <div class="flex-pay-container">
-                <div class="qrcode-box">
-                    <img src="./images/wechat-pay.png" alt="微信收款码">
-                </div>
+                <div class="qrcode-box"><img src="./images/wechat-pay.png" alt="微信收款码"></div>
                 <div class="pay-desc-text">
-                    1. 若你在影像中照见了破局的可能，并渴望进一步的深度解构，请在此支付 3000 元，获取「深度破局」的入场密钥。<br><br>
-                    2. 这不是一次简单的咨询购买，而是对你我能量场的一次郑重结界。(以 3000 元为界，锁定 2 小时专属场域。若需延展时空，超出部分将按 1000 元/小时进行能量对价，其他特定时空产生的损耗另计。)
+                    1. 若你在影像中照见了破局的可能，请在此支付 3000 元，获取「深度破局」的入场密钥。<br><br>
+                    2. 这不是一次简单的咨询购买，而是对你我能量场的一次郑重结界。(以 3000 元为界，锁定 2 小时专属场域。超出的部分按 1000 元/小时进行能量对价。)
                 </div>
             </div>
         </div>
 
         <div class="holo-card-panel">
             <div class="article-title">－ 专属密钥 －</div>
-           <div class="auth-section">
-    <input type="text" id="advanced-password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
-    <div id="sync-status-text" style="font-size: 14px; color: #00ffcc; min-height: 24px; font-weight: 500; margin-top: 15px; margin-bottom: 5px;"></div>
-    <div class="sync-container" id="loader-box" style="margin: 10px auto;">
-        <div class="sync-ring"></div>
-        <div class="sync-pulse"></div>
-    </div>
-    <button class="btn" id="active-ai-btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('advanced-password-input').value)">输入密钥 · 深度破局</button>
-    <p id="adv-err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
-</div>
-
+            <div class="auth-section">
+                <input type="text" id="advanced-password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
+                <div id="sync-status-text" style="font-size: 14px; color: #00ffcc; min-height: 24px; font-weight: 500; margin-top: 15px; margin-bottom: 5px;"></div>
+                <div class="sync-container" id="loader-box" style="margin: 10px auto;">
+                    <div class="sync-ring"></div>
+                    <div class="sync-pulse"></div>
+                </div>
+                <button class="btn" id="active-ai-btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('advanced-password-input').value)">输入密钥 · 深度破局</button>
+                <p id="adv-err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
+            </div>
         </div>
     </div>
 
     <div id="layer-ai" class="layer">
-        <h2>前置接引 · 全维拓扑</h2>
-        <div class="sub-title">河洛智慧 · 高维咨询</div>
+        <h2>前置研判 · 局象案卷</h2>
+        <div class="sub-title">高端私密体检 · 严谨案卷保全</div>
         
         <div class="holo-card-panel">
-            <div class="article-title">－ 前置接引 －</div>
-            <p class="article-main-text">
-                唯有完成信息的前置淬炼，后续的深度推演才能聚焦能量、直击灵魂。
-                请与下方我的 AI 助理进行交互，它将直接切入你的认知底层，完成问题原点的信息提取与拓扑重构。
-                交互完成后，点击下方按钮切入「排期预约系统」。
+            <div class="article-title">－ 私密保全与豁免宣告 －</div>
+            <p class="article-main-text" style="font-size: 14px; opacity: 0.85; line-height: 1.7; text-align: justify;">
+                河洛案卷视阁下隐私为最高法度。本案卷采用全封闭数字隔离加密，除山长本人用于前置格局研判外，前端不设任何公开留存痕迹。在河洛的空间里，阁下无需背负社会的期许，亦无需修饰现实的棱角。请卸下防御，直面真实。因为唯有直面真实的局象，推演方能破局。
             </p>
         </div>
 
-        <div class="holo-card-panel">
-            <div class="article-title">－ 全维拓扑 －</div>
-            <div class="ai-container" style="margin-top: 0;">
-                <iframe src="https://www.coze.cn/store/bot/您的机器人ID..." width="100%" height="100%" scrolling="no" frameborder="0" allow="microphone"></iframe>
+        <div class="holo-card-panel" style="text-align: left;">
+            <div class="article-title">－ 局象前置微观体检 －</div>
+            
+            <div class="case-section-title">一、时空与界域定格 (基础硬要素)</div>
+            <div class="input-row-container" style="margin-top: 10px;">
+                <div class="form-group-half">
+                    <label style="font-size: 13px; color: #2e7a68;">家庭人员结构构成</label>
+                    <input type="text" id="case-family-struct" class="form-input-box" placeholder="例：已婚 / 育有一子一女 / 父母同住" style="font-size: 14px; padding: 10px;">
+                </div>
+                <div class="form-group-half">
+                    <label style="font-size: 13px; color: #2e7a68;">核心成员年龄或生肖</label>
+                    <input type="text" id="case-family-zodiac" class="form-input-box" placeholder="例：夫85年属牛、妻88年属龙" style="font-size: 14px; padding: 10px;">
+                </div>
             </div>
-            <div style="margin-top: 30px; text-align: center;">
-                <button class="btn" style="width: auto; padding: 14px 40px;" onclick="initCalendarLayer()">交互完毕，进入排期预约</button>
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 13px; color: #10b981; font-weight: bold; display: block; margin-bottom: 8px;">当前行业背景与工作现状</label>
+                <input type="text" id="case-job-status" class="form-input-box" placeholder="例：金融业管理层 / 自由职业 / 企业主" style="font-size: 14px; padding: 10px; width: 100%;">
+            </div>
+
+            <div class="case-section-title">二、伴侣关系定性 (气场直觉定格)</div>
+            <div class="case-grid" id="grid-spouse-rel">
+                <div class="case-option" onclick="selectCaseTag('spouse', '共振融洽', this)">【共振融洽】<br><span style="font-size:11px; opacity:0.7;">互为支撑，气场顺畅</span></div>
+                <div class="case-option" onclick="selectCaseTag('spouse', '磁场相敬', this)">【磁场相敬】<br><span style="font-size:11px; opacity:0.7;">表面平静，深层共鸣暂闭</span></div>
+                <div class="case-option" onclick="selectCaseTag('spouse', '暗流受制', this)">【暗流受制】<br><span style="font-size:11px; opacity:0.7;">观念分歧，存在隐性消耗</span></div>
+                <div class="case-option" onclick="selectCaseTag('spouse', '局势内耗', this)">【局势内耗】<br><span style="font-size:11px; opacity:0.7;">冲突显化，信任边界受损</span></div>
+            </div>
+
+            <div class="case-section-title">三、后代亲子沟通定性 (脉络交感)</div>
+            <div class="case-grid" id="grid-child-rel">
+                <div class="case-option" onclick="selectCaseTag('child', '共振深切', this)">【共振深切】<br><span style="font-size:11px; opacity:0.7;">良性引导，孩子乐于分享</span></div>
+                <div class="case-option" onclick="selectCaseTag('child', '代际疏离', this)">【代际疏离】<br><span style="font-size:11px; opacity:0.7;">沟通匮乏，情感联结淡漠</span></div>
+                <div class="case-option" onclick="selectCaseTag('child', '磁场对抗', this)">【磁场对抗】<br><span style="font-size:11px; opacity:0.7;">存在明显叛逆与沟通壁垒</span></div>
+                <div class="case-option" onclick="selectCaseTag('child', '暂无此局', this)">【未育/暂无此局】<br><span style="font-size:11px; opacity:0.7;">当前尚未涉及代际关系</span></div>
+            </div>
+
+            <div class="case-section-title">四、核心诉求原点 (本次推演聚焦轴)</div>
+            <div class="case-grid" id="grid-core-focus">
+                <div class="case-option" onclick="selectCaseTag('focus', '家庭健康/情绪化解', this)">【家庭健康/情绪化解】</div>
+                <div class="case-option" onclick="selectCaseTag('focus', '夫妻认知/信任对齐', this)">【夫妻认知/信任对齐】</div>
+                <div class="case-option" onclick="selectCaseTag('focus', '后代运势/学业抉rz', this)">【后代运势/学业抉择】</div>
+                <div class="case-option" onclick="selectCaseTag('focus', '个人事业/财富决策', this)">【个人事业/财富决策】</div>
+            </div>
+
+            <div class="case-section-title">五、余绪微言 (除上述客观标签外，你想补充的)</div>
+            <div style="margin-bottom: 25px;">
+                <textarea id="case-more-notes" class="case-textarea" placeholder="在此可自由罗列您想让咨询师提前知悉的任何点滴状况（选填，不限字数）..."></textarea>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" style="width: auto; padding: 14px 50px;" onclick="saveCaseAndProceed()">案卷定格，进入排期预约</button>
             </div>
         </div>
     </div>
@@ -526,9 +593,7 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
 
         <div class="calendar-box">
             <div class="article-title" style="margin-bottom: 25px;">－ 时空锁定 －</div>
-            <p class="article-main-text">
-                为确保能量聚焦、从容推演，一旦某时段被锁定，同半天时空场次将全自动全局熔断。
-            </p>
+            <p class="article-main-text">为确保能量聚焦、从容推演，一旦某时段被锁定，同半天时空场次将全自动全局熔断。</p>
             <br>
             <div class="calendar-header">
                 <button class="cal-nav-btn" onclick="navigateMonth(-1)">◀ 上个月</button>
@@ -577,15 +642,18 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
         <div class="final-thank-card">
             <div class="stamp-icon">✓</div>
             <h2>时空已锁定 · 能量已封存</h2>
-            <div class="sub-title" style="margin-bottom: 20px; color: #10b981;">深度咨询 · 双向确认</div>
+            <div class="sub-title" style="margin-bottom: 35px; color: #10b981;">深度咨询 · 双向确认</div>
             
-            <div style="background: #010614; border: 1px solid #0d211c; padding: 25px; border-radius: 4px; text-align: left; margin-bottom: 30px; max-width: 580px; width: 100%; box-sizing: border-box; margin-left: auto; margin-right: auto;">
-                <p style="margin: 0 0 15px 0; font-size: 16px; font-weight: bold; color: #00ffcc; text-align: center;">🎯 当前状态：等待山长微信核对确认</p>
-                <p style="margin: 0 0 15px 0; font-size: 15px; color: #7ebdae; line-height: 1.8; text-align: left;">
-                    阁下的专属时空（<span id="thank-time-text" style="color: #10b981; font-weight: bold;"></span>）已在能量沙盘中完成锁定。
+            <div style="background: #010614; border: 1px solid #0d211c; padding: 30px 25px; border-radius: 8px; text-align: left; margin-bottom: 30px; max-width: 580px; width: 100%; box-sizing: border-box; margin-left: auto; margin-right: auto;">
+                <p style="margin: 0 0 20px 0; font-size: 17px; font-weight: bold; color: #00ffcc; text-align: center; letter-spacing: 1px;">
+                    “直面问题就是解决问题的最大一步。”
+                </p>
+                <div style="width: 30px; height: 1px; background: rgba(16,185,129,0.3); margin: 0 auto 20px auto;"></div>
+                <p style="margin: 0; font-size: 15px; color: #7ebdae; line-height: 1.8; text-align: justify;">
+                    阁下的专属时空（<span id="thank-time-text" style="color: #10b981; font-weight: bold;"></span>）已在因果沙盘中锁定。在正式咨询这个面谈之前，如果有什么需要咨询师提前知道的信息，您可以随时通过微信直接补发给咨询师。
                 </p>
             </div>
-            <p style="font-size: 13px; color: #7ebdae; text-align: center; line-height: 1.6; margin-top: 20px;">* 至此，网页端时空使命已达，与山长完成微信双向确认后，阁下即可安心关闭此境。</p>
+            <p style="font-size: 13px; color: #527a6e; text-align: center; line-height: 1.6; margin-top: 25px;">* 网页端时空使命已达，与山长完成微信确认后，阁下即可安心关闭此境。</p>
         </div>
     </div>
 
@@ -617,10 +685,7 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
 
 <script>
     // ================= 全局防御机制 =================
-    // 屏蔽全局右键菜单
     document.addEventListener('contextmenu', event => event.preventDefault());
-    
-    // 屏蔽审查元素与保存操作快捷键
     document.addEventListener('keydown', function(e) {
         if (e.key === 'F12' || 
            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || 
@@ -629,7 +694,7 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
         }
     });
 
-    // ================= 溯源水印系统 (已修改为固定右上角显示) =================
+    // 水印系统
     function startDynamicWatermark(pwd) {
         const wm = document.getElementById('dynamic-watermark');
         if (!wm) return;
@@ -637,7 +702,7 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
         wm.innerText = "【溯源对齐: " + pwd + "】";
     }
 
-    // ================= 全局弹窗核心控制函数 =================
+    // 弹窗控制
     function showCustomAlert(title, message, callback) {
         document.getElementById('global-alert-title').innerHTML = title;
         document.getElementById('global-alert-body').innerHTML = message.replace(/\n/g, '<br><br>');
@@ -648,6 +713,57 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
             if (typeof callback === 'function') callback();
         };
         modal.style.display = 'flex';
+    }
+
+    // ================= 📋 案卷单选标签核心控制 =================
+    let selectedCaseData = { spouse: "", child: "", focus: "" };
+    
+    function selectCaseTag(type, value, element) {
+        // 清除同一分类下的选中样式
+        const gridId = type === 'spouse' ? 'grid-spouse-rel' : (type === 'child' ? 'grid-child-rel' : 'grid-core-focus');
+        document.querySelectorAll(`#${gridId} .case-option`).forEach(opt => opt.classList.remove('selected'));
+        // 点亮当前卡片
+        element.classList.add('selected');
+        // 存入全局变量
+        selectedCaseData[type] = value;
+    }
+
+    // 案卷提交与链路打包
+    async function saveCaseAndProceed() {
+        // 验证必选项
+        if (!selectedCaseData.spouse || !selectedCaseData.child || !selectedCaseData.focus) {
+            showCustomAlert("⚠️ 案卷未完备", "请完整选择伴侣关系、代际沟通以及核心诉求标签，以便山长提取精准局象。");
+            return;
+        }
+
+        // 打包前端采集的硬要素与软标签
+        const payload = {
+            familyStructure: document.getElementById('case-family-struct').value.trim(),
+            familyZodiac: document.getElementById('case-family-zodiac').value.trim(),
+            jobStatus: document.getElementById('case-job-status').value.trim(),
+            spouseTag: selectedCaseData.spouse,
+            childTag: selectedCaseData.child,
+            coreFocusTag: selectedCaseData.focus,
+            moreNotes: document.getElementById('case-more-notes').value.trim()
+        };
+
+        // 将打包数据暂存，后续发送邮件或调用后端 AI 分析生成简报时可直接读取
+        localStorage.setItem('heLuoCaseDataPayload', JSON.stringify(payload));
+
+        /* 💡 开发者预留接口点：
+           如果你现在就有后端接口可以接收表单并发送指定邮箱，可以直接在下方启用 fetch：
+           
+           try {
+               await fetch('/api/submit-case-report', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify(payload)
+               });
+           } catch(e) { console.error(e); }
+        */
+
+        // 切换至排期层
+        initCalendarLayer();
     }
 
     let globalBookedSlots = {}; 
@@ -803,7 +919,15 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
                 finalTimeStrGlobal = chosenDate + " " + chosenTime;
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
-                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
+                // 将之前采集的体检标签也同步追加到剪贴板文本中，方便微信端一步对齐
+                let caseText = "";
+                const cachedCase = localStorage.getItem('heLuoCaseDataPayload');
+                if (cachedCase) {
+                    const c = JSON.parse(cachedCase);
+                    caseText = `\n【体检案卷存照】\n夫妻状态：${c.spouseTag}\n亲子沟通：${c.childTag}\n核心核心诉求：${c.coreFocusTag}`;
+                }
+
+                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}${caseText}`;
                 
                 const proceedToModal = () => {
                     submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
@@ -835,27 +959,20 @@ video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-
         switchLayer('layer-schedule', 'layer-thankyou'); 
     }
     
-    // 【核心修复】：切换图层时，彻底让所有在播放的视频静音、暂停、并强制关闭画中画
-function switchLayer(fromId, toId) { 
-    // 1. 查找并处理网页上的所有 video 标签
-    document.querySelectorAll('video').forEach(vid => {
-        vid.pause();    // 强行暂停播放
-        vid.muted = true; // 强行设为静音（声音问题的双重保障）
-    });
+    function switchLayer(fromId, toId) { 
+        document.querySelectorAll('video').forEach(vid => {
+            vid.pause();    
+            vid.muted = true; 
+        });
 
-    // 2. 强行关闭已经开启的浏览器原生画中画（Picture-in-Picture）模式
-    // 这是解决切换页面后仍存在视频框的关键！
-    if (document.exitPictureInPicture) {
-        document.exitPictureInPicture();
+        if (document.exitPictureInPicture) {
+            document.exitPictureInPicture();
+        }
+
+        document.getElementById(fromId).style.display = 'none'; 
+        document.getElementById(toId).style.display = 'block'; 
+        window.scrollTo(0, 0); 
     }
-
-    // 3. 执行原本的图层切换逻辑
-    document.getElementById(fromId).style.display = 'none'; 
-    document.getElementById(toId).style.display = 'block'; 
-    window.scrollTo(0, 0); 
-}
-
-
 </script>
 
 <div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
@@ -870,7 +987,6 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-
 const SECRET_SALT = "HeLuoGuoxue2026#@!QuantumKeyCenter";
 
 function sha256(ascii) {
@@ -944,7 +1060,6 @@ async function verifyAndRouting(inputPassword) {
     }
 
     let isMatch = false;
-    
     if (pwd.length === 6) {
         let client = pwd.substring(1, 5);       
         let providedCheckDigit = pwd.charAt(5); 
@@ -1142,18 +1257,15 @@ function startGlobalTimer(expiry, type) {
 }
 
 function showTargetLayerOnly(targetId) {
-    // 【终极防漏补丁】：在这个函数执行图层切换前，也无脑执行一次全员视频静音与暂停
     document.querySelectorAll('video').forEach(vid => {
         vid.pause();
         vid.muted = true;
     });
     
-    // 安全地关闭可能存在的画中画
     if (document.pictureInPictureElement && document.exitPictureInPicture) {
         document.exitPictureInPicture().catch(() => {}); 
     }
 
-    // 原有的图层切换逻辑
     document.querySelectorAll('.layer').forEach(layer => {
         layer.style.display = 'none';
         layer.classList.remove('active');
@@ -1166,9 +1278,7 @@ function showTargetLayerOnly(targetId) {
     window.scrollTo(0, 0);
 }
 
-// 【核心修复】：踢出系统时，也一并强制关闭视频声音、暂停、并关闭画中画
 function forceKickOut() {
-    // 徹底暂停并静音所有视频，关闭画中画
     document.querySelectorAll('video').forEach(vid => {
         vid.pause();
         vid.muted = true;
@@ -1178,7 +1288,6 @@ function forceKickOut() {
         document.exitPictureInPicture();
     }
     
-    // 执行原本的踢出逻辑
     clearInterval(globalTimerInterval);
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
@@ -1189,8 +1298,6 @@ function forceKickOut() {
     hideTimerBar();
     showTargetLayerOnly(PAGE_INDEX_ID);
 }
-
-
 
 function hideTimerBar() {
     const timerBar = document.getElementById('global-timer-bar');
