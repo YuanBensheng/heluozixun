@@ -1,51 +1,1209 @@
-// api/verify-key.js
-// ⚡ 100% 继承 booking.js 的原生 fetch 架构，零第三方包依赖，纯净秒级同步
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>河洛咨询前置对齐系统</title>
+    <script>
+        // 在浏览器开始画网页前瞬间判断，如果是 VIP，给根节点打个标签
+        if (window.location.search.toLowerCase().includes('type=vip')) {
+            document.documentElement.classList.add('is-vip-mode');
+        }
+    </script>
 
-export default async function handler(req, res) {
-    // 完美复用您已在 Vercel 配置好的环境变量
-    const url = process.env.KV_REST_API_URL;
-    const token = process.env.KV_REST_API_TOKEN;
+    <style>
+        /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
+        /* ================= 防闪烁补丁 ================= */
+        html.is-vip-mode #layer-pay-399 {
+            display: none !important;
+        }
+       
+        /* 全局防选择、防拖拽 */
+        .noselect {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
-    if (!url || !token) {
-        return res.status(500).json({ success: false, message: "云端数据库钥匙未配置" });
+        /* 💡 特效动画1：舱板全息光圈——严格模拟人类 6秒/次 淡定从容的呼吸状态 */
+        @keyframes holo-smooth-breath {
+            0%, 100% { 
+                border-color: rgba(16, 185, 129, 0.25);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85),
+                            0 0 12px rgba(16, 185, 129, 0.35), 
+                            0 0 24px rgba(0, 255, 204, 0.15),
+                            inset 0 1px 0 rgba(0, 255, 204, 0.06);
+            }
+            33% {
+                border-color: rgba(0, 255, 204, 0.65);
+                box-shadow: 0 18px 45px rgba(0, 0, 0, 0.95),
+                            0 0 58px rgba(16, 185, 129, 0.65),    
+                            0 0 88px rgba(0, 255, 204, 0.45),   
+                            inset 0 0 20px rgba(16, 185, 129, 0.2);
+            }
+            50% {
+                border-color: rgba(0, 255, 204, 0.6);
+                box-shadow: 0 18px 45px rgba(0, 0, 0, 0.95),
+                            0 0 54px rgba(16, 185, 129, 0.6),    
+                            0 0 82px rgba(0, 255, 204, 0.4),   
+                            inset 0 0 18px rgba(16, 185, 129, 0.18);
+            }
+        }
+
+        /* 💡 特效动画2：激活按钮光圈——与大外圈完成 6秒周期的微秒级因果同步共振 */
+        @keyframes btn-smooth-resonance {
+            0%, 100% { 
+                border-color: rgba(16, 185, 129, 0.5);
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.35); 
+            }
+            33% {
+                border-color: #00ffcc; 
+                box-shadow: 0 0 25px rgba(0, 255, 204, 0.65); 
+            }
+            50% {
+                border-color: rgba(0, 255, 204, 0.8); 
+                box-shadow: 0 0 22px rgba(0, 255, 204, 0.55); 
+            }
+        }
+
+        /* 👑 从根源上斩断横向溢出，锁死画布漂移缺陷，确保绝对正位 */
+        html, body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; 
+            position: relative;
+            background: #000000;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(165deg, #000000 0%, #010614 50%, #020c24 100%); 
+            background-attachment: fixed;
+            color: #7ebdae; 
+            line-height: 1.9; 
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 80%, rgba(1, 6, 20, 0.95) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 45%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 750px; 
+            text-align: center; 
+            box-sizing: border-box; 
+            margin: 0 auto; 
+            padding: 40px 16px; 
+            overflow: hidden;
+        } 
+        
+        h2 { 
+            font-size: 26px; 
+            color: #00ffcc; 
+            margin-bottom: 12px; 
+            letter-spacing: 3px; 
+            font-weight: 600; 
+            text-shadow: 0 0 18px rgba(0, 255, 204, 0.6), 0 0 5px rgba(16, 185, 129, 0.4); 
+            text-align: center; 
+        }
+        .sub-title { 
+            font-size: 13px; 
+            color: #10b981; 
+            margin-bottom: 45px; 
+            line-height: 1.6; 
+            letter-spacing: 4px; 
+            font-weight: 500; 
+            text-align: center; 
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+        }
+
+        /* 👑 脉冲仿生呼吸磨砂舱板 */
+        .holo-card-panel {
+            background: rgba(1, 5, 18, 0.7); 
+            border: 1px solid rgba(16, 185, 129, 0.25); 
+            border-radius: 12px;
+            padding: 30px 35px;
+            margin-bottom: 35px;
+            text-align: justify;
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            will-change: box-shadow, border-color, transform; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+            box-sizing: border-box;
+        }
+        
+        .article-title {
+            text-align: center;
+            text-indent: 0;
+            color: #10b981; 
+            font-size: 18px; 
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .article-main-text { 
+            font-size: 16px; 
+            color: #7ebdae; 
+            line-height: 1.9;
+            text-align: justify;
+            text-align-last: left;
+            text-indent: 0;
+            margin: 0 0 22px 0;
+        }
+        
+        .article-main-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .flex-pay-container {
+            display: flex;
+            align-items: stretch; 
+            justify-content: space-between;
+            gap: 30px;
+        }
+        
+        .qrcode-box { 
+            width: 200px; 
+            height: 200px; 
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            background: #000000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 8px; 
+            flex-shrink: 0;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+        }
+        .qrcode-box img { width: 92%; height: 92%; object-fit: contain; }
+
+        .pay-desc-text {
+            font-size: 14px; 
+            color: #7ebdae; 
+            line-height: 1.8; 
+            text-align: justify; 
+            text-align-last: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            flex: 1;
+        }
+
+        .video-wrapper-inner { 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            background: #000000; 
+            border-radius: 8px; 
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            margin-bottom: 15px;
+            position: relative; /* 为动态水印提供定位基准 */
+        }
+        
+        .video-wrapper-inner video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            pointer-events: auto;
+        }
+        
+        .auth-section { 
+            padding: 10px 0; 
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+        }
+
+        .crypto-input { 
+            width: 240px; 
+            padding: 14px 0; 
+            border: 1px solid rgba(16, 185, 129, 0.45); 
+            border-radius: 6px; 
+            font-size: 20px; 
+            letter-spacing: 8px; 
+            text-indent: 8px; 
+            outline: none; 
+            background: #000000; 
+            color: #00ffcc; 
+            text-align: center;
+            box-shadow: inset 0 2px 8px rgba(0,255,204,0.08), 0 0 12px rgba(0,255,204,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            line-height: normal !important;
+            position: relative;
+            z-index: 2;
+            transform: translateZ(0);
+        }
+        .crypto-input:focus { 
+            border-color: #00ffcc; 
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.45), inset 0 1px 5px rgba(0, 255, 204, 0.25); 
+            background: #01071a;
+        }
+        
+        .btn { 
+            background: #000000; 
+            color: #00ffcc; 
+            border: 1px solid rgba(16, 185, 129, 0.6); 
+            width: 240px; 
+            padding: 14px 0; 
+            border-radius: 6px; 
+            font-size: 15px; 
+            font-weight: bold;
+            cursor: pointer; 
+            letter-spacing: 3px; 
+            transition: all 0.3s ease; 
+            animation: btn-smooth-resonance 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            display: inline-block;
+            box-sizing: border-box;
+            text-align: center;
+            will-change: box-shadow, border-color;
+        }
+        .btn:hover { 
+            background: #00ffcc; 
+            color: #000000; 
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.7); 
+            border-color: #00ffcc;
+        }
+        .btn:disabled { background: #010614; color: #16362e; border-color: #0d211c; cursor: not-allowed; box-shadow: none; animation: none; }
+        
+        .sync-container { display: none; margin: 25px auto; position: relative; width: 60px; height: 60px; }
+        .sync-ring { position: absolute; width: 100%; height: 100%; border: 2px solid transparent; border-top-color: #00ffcc; border-bottom-color: #10b981; border-radius: 50%; animation: spin 0.4s linear infinite; }
+        .sync-pulse { position: absolute; width: 80%; height: 80%; top: 10%; left: 10%; background: rgba(0, 255, 204, 0.15); border-radius: 50%; animation: pulse 1.5s ease-in-out infinite alternate; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.2; } 100% { transform: scale(1.2); opacity: 0.6; } }
+        
+        .layer { display: none; }
+        .layer.active { display: block; }
+        .ai-container { width: 100%; height: 620px; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; overflow: hidden; margin-top: 20px; background: #000; box-shadow: 0 0 25px rgba(0,255,204,0.15); }
+
+        .calendar-box { background: rgba(1, 5, 18, 0.7); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 25px; margin-top: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); will-change: box-shadow; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; box-sizing: border-box;}
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; font-size: 16px; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; color: #00ffcc; }
+        .cal-nav-btn { background: #010614; border: 1px solid #10b981; color: #00ffcc; padding: 6px 14px; font-size: 13px; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+        .cal-nav-btn:hover { background: #00ffcc; color: #111; border-color: #00ffcc; box-shadow: 0 0 10px rgba(0,255,204,0.3); }
+        
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+        .weekday-label { font-size: 13px; color: #2e7a68; text-align: center; font-weight: bold; }
+        
+        .day-cell { background: #010614; border: 1px solid #0d211c; padding: 15px 5px; text-align: center; border-radius: 4px; cursor: pointer; transition: all 0.2s; font-size: 14px; color: #7ebdae; }
+        .day-cell:hover:not(.disabled):not(.full) { background: #00ffcc; color: #111; border-color: #00ffcc; font-weight: bold; box-shadow: 0 0 15px rgba(0,255,204,0.5); }
+        .day-cell.selected-day { background: #10b981 !important; color: #000000 !important; border-color: #10b981 !important; font-weight: bold; box-shadow: 0 0 15px rgba(16,185,129,0.5); }
+        .day-cell.disabled { background: #000000; color: #122923; cursor: not-allowed; border-color: transparent; }
+        .day-cell.full { background: #240c13; color: #f43f5e; border-color: #4c1122; cursor: not-allowed; opacity: 0.55; }
+        
+        .time-panel { display: none; margin-top: 25px; border-top: 1px dashed rgba(16, 185, 129, 0.2); padding-top: 20px; text-align: center; }
+        .time-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+        .time-slot { border: 1px solid #0d211c; padding: 15px; text-align: center; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; background: #010614; color: #7ebdae; }
+        .time-slot:hover { background: #031814; border-color: #00ffcc; color: #00ffcc; box-shadow: 0 0 12px rgba(0,255,204,0.2); }
+        .time-slot.selected { background: #00ffcc; color: #111; border-color: #00ffcc; font-weight: bold; box-shadow: 0 0 18px rgba(0,255,204,0.45); }
+        .time-slot.fused { background: #000000; color: #16362e; border-color: transparent; cursor: not-allowed; text-decoration: line-through; }
+        
+        .appoint-form { display: none; margin-top: 25px; background: #010614; padding: 25px; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.25); text-align: left; box-sizing: border-box;}
+        .input-row-container { display: flex; gap: 20px; margin-top: 15px; margin-bottom: 15px; }
+        .form-group-half { flex: 1; display: flex; flex-direction: column; }
+        .form-group-half label { font-size: 14px; margin-bottom: 8px; font-weight: bold; color: #10b981; letter-spacing: 1px; }
+        .form-input-box { width: 100%; padding: 12px; border: 1px solid #0d211c; background: #000; color: #00ffcc; border-radius: 4px; box-sizing: border-box; font-size: 16px; outline: none; transition: border-color 0.3s, box-shadow 0.3s; line-height: normal !important; position: relative; z-index: 2; transform: translateZ(0); }
+        .form-input-box:focus { border-color: #00ffcc; box-shadow: 0 0 12px rgba(0,255,204,0.3); }
+        .form-btn-center-box { text-align: center; margin-top: 25px; }
+
+        .final-thank-card { background: rgba(1, 5, 18, 0.7); border: 1px solid #00ffcc; border-radius: 12px; padding: 45px 30px; margin-top: 20px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); will-change: box-shadow; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; box-sizing: border-box; width: 100%; max-width: 100%; margin-left: auto; margin-right: auto; }
+        .stamp-icon { font-size: 48px; color: #00ffcc; margin-bottom: 20px; text-shadow: 0 0 20px rgba(0,255,204,0.5); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-card { background: rgba(1, 5, 18, 0.92); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; width: 90%; max-width: 450px; padding: 25px; box-sizing: border-box; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); will-change: box-shadow, border-color, transform; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .modal-title { font-size: 18px; font-weight: bold; color: #00ffcc; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; text-align: center; }
+        .modal-body { 
+            font-size: 14px; 
+            color: #7ebdae; 
+            line-height: 1.8; 
+            margin-bottom: 25px; 
+            text-align: justify; 
+            text-align-last: left;
+        } 
+
+        .modal-footer { text-align: center; border-top: 1px dashed rgba(16,185,129,0.15); padding-top: 20px; } 
+
+        @media (max-width: 650px) {
+            .flex-pay-container { flex-direction: column; align-items: center; }
+            .input-row-container { flex-direction: column !important; gap: 15px !important; }
+            .calendar-grid { gap: 6px !important; }
+            .day-cell { padding: 10px 2px !important; font-size: 12px !important; }
+            .modal-card { width: 88% !important; padding: 20px !important; }
+            .holo-card-panel { padding: 25px 20px !important; }
+            .final-thank-card { padding: 35px 15px !important; }
+        }
+   /* 👑 彻底从界面上移除 Webkit 内核浏览器视频控件的全屏按钮 */
+video::-webkit-media-controls-fullscreen-button {
+    display: none !important;
+}
+/* 针对不同厂商可能的前缀进行覆盖 */
+video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button {
+    display: none !important;
+}
+
+    </style>
+
+</head>
+<body class="noselect" ondragstart="return false">
+<div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0c; z-index: 9999999; color: #e5e5e5; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
+    
+    <div style="position: absolute; top: 25px; right: 30px; animation: bounceRight 1.5s infinite;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+        </svg>
+    </div>
+
+    <div style="position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 420px; text-align: center;">
+        
+        <div style="margin-bottom: 24px;">
+            <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.95;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+        </div>
+
+        <h2 style="font-size: 22px; font-weight: 600; color: #ffffff; letter-spacing: 1.5px; margin-bottom: 16px;">河洛咨询 · 温馨提示</h2>
+        
+        <div style="width: 40px; height: 2px; background: #14B8A6; margin: 0 auto 24px auto;"></div>
+
+        <p style="font-size: 15px; color: #a1a1aa; line-height: 1.8; text-align: justify; margin-bottom: 36px; padding: 0 10px;">
+            为保障您的核心咨询数据与隐私安全，请不要在第三方社交软件内直接加载。
+        </p>
+
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 24px 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+            <p style="font-size: 16px; color: #ffffff; margin: 0 0 14px 0; letter-spacing: 1px;">
+                请点击右上角 <span style="font-size: 22px; font-weight: bold; letter-spacing: 2px; vertical-align: middle;">···</span> 菜单
+            </p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                <span style="font-size: 15px; color: #a1a1aa;">选择</span>
+                <span style="background: #007aff; color: #ffffff; font-size: 15px; font-weight: 500; padding: 6px 14px; border-radius: 6px; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(0,122,255,0.4);">在浏览器中打开</span>
+            </div>
+        </div>
+        
+        <p style="font-size: 11px; color: #52525b; margin-top: 36px; letter-spacing: 1.5px;">SECURE ENVIRONMENT · HELUO CONSULTING</p>
+    </div>
+
+    <style>
+        @keyframes bounceRight {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-6px, 6px); }
+        }
+    </style>
+</div>
+
+<div class="container">
+
+    <div id="layer-pay-399" class="layer">
+        <h2>认知过滤 · 破局契约</h2>
+        <div class="sub-title">河洛智慧 · 高维咨询</div>
+
+        <div class="holo-card-panel">
+            <div class="article-title">－ 认知过滤 －</div>
+            <p class="article-main-text">
+                既然来到这里，就不必掩饰来意：你在原有的维度卡住了，急需高维的破局之法。
+            </p>
+            <p class="article-main-text">
+                我们能相遇，是认知同频的感召；我们能成交，是维度对齐的需要。这里只有破局的真相，没有情绪的抚慰；支付与交付，就是我们之间最纯粹的语言。
+            </p>
+            <p class="article-main-text">
+                高维的能量，绝不消耗在证明与拉扯上；你下决断的速度，决定了你走出困局的速度。
+            </p>
+        </div>
+
+        <div class="holo-card-panel">
+            <div class="article-title">－ 破局契约 －</div>
+            <div class="flex-pay-container">
+                <div class="qrcode-box">
+                    <img src="./images/wechat-pay.png" alt="微信收款码">
+                </div>
+                <div class="pay-desc-text">
+                    1. 斩断犹豫，确认同频。<br>
+                    扫码支付 399 元，买断一次认知对齐的机会：观摩展现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。你行“财施”的果断，对应我行“法施”的纯粹。只判断，不纠缠。<br><br>
+                    2. 密钥激活，时空逆转。<br>
+                    付款后您将获取专属「时空密钥」，在下方输入并点击激活，即刻开启高维通道，系统同步启动30分钟倒计时，届时将自动退出。
+                </div>
+            </div>
+        </div>
+
+        <div class="holo-card-panel">
+            <div class="article-title">－ 专属密钥 －</div>
+          <div class="auth-section">
+    <input type="text" id="password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
+    <button class="btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('password-input').value)">输入密钥 · 开启破局</button>
+    <p id="err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
+</div>
+
+        </div>
+    </div>
+
+    <div id="layer-video" class="layer">
+        <h2>认知对齐 · 超维接引</h2>
+        <div class="sub-title">河洛智慧 · 高维咨询</div>
+
+        <div class="holo-card-panel">
+            <div class="article-title">－ 认知对齐 －</div>
+            <p class="article-main-text" style="margin-bottom: 20px;">
+                下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义；若觉晦涩排斥，止步于此便是最佳的安排。
+            </p>
+            <div class="video-wrapper-inner">
+                <video src="" controls controlsList="nodownload noplaybackrate nofullscreen" disablePictureInPicture playsinline webkit-playsinline oncontextmenu="return false;" preload="none" poster="./images/video-cover.png"></video>
+                <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
+            </div>
+        </div>
+
+        <div class="holo-card-panel">
+            <div class="article-title">－ 超维接引 －</div>
+            <div class="flex-pay-container">
+                <div class="qrcode-box">
+                    <img src="./images/wechat-pay.png" alt="微信收款码">
+                </div>
+                <div class="pay-desc-text">
+                    1. 若你在影像中照见了破局的可能，并渴望进一步的深度解构，请在此支付 3000 元，获取「深度破局」的入场密钥。<br><br>
+                    2. 这不是一次简单的咨询购买，而是对你我能量场的一次郑重结界。(以 3000 元为界，锁定 2 小时专属场域。若需延展时空，超出部分将按 1000 元/小时进行能量对价，其他特定时空产生的损耗另计。)
+                </div>
+            </div>
+        </div>
+
+        <div class="holo-card-panel">
+            <div class="article-title">－ 专属密钥 －</div>
+           <div class="auth-section">
+    <input type="text" id="advanced-password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
+    <div id="sync-status-text" style="font-size: 14px; color: #00ffcc; min-height: 24px; font-weight: 500; margin-top: 15px; margin-bottom: 5px;"></div>
+    <div class="sync-container" id="loader-box" style="margin: 10px auto;">
+        <div class="sync-ring"></div>
+        <div class="sync-pulse"></div>
+    </div>
+    <button class="btn" id="active-ai-btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('advanced-password-input').value)">输入密钥 · 深度破局</button>
+    <p id="adv-err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
+</div>
+
+        </div>
+    </div>
+
+    <div id="layer-ai" class="layer">
+        <h2>前置接引 · 全维拓扑</h2>
+        <div class="sub-title">河洛智慧 · 高维咨询</div>
+        
+        <div class="holo-card-panel">
+            <div class="article-title">－ 前置接引 －</div>
+            <p class="article-main-text">
+                唯有完成信息的前置淬炼，后续的深度推演才能聚焦能量、直击灵魂。
+                请与下方我的 AI 助理进行交互，它将直接切入你的认知底层，完成问题原点的信息提取与拓扑重构。
+                交互完成后，点击下方按钮切入「排期预约系统」。
+            </p>
+        </div>
+
+        <div class="holo-card-panel">
+            <div class="article-title">－ 全维拓扑 －</div>
+            <div class="ai-container" style="margin-top: 0;">
+                <iframe src="https://www.coze.cn/store/bot/您的机器人ID..." width="100%" height="100%" scrolling="no" frameborder="0" allow="microphone"></iframe>
+            </div>
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="btn" style="width: auto; padding: 14px 40px;" onclick="initCalendarLayer()">交互完毕，进入排期预约</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="layer-schedule" class="layer">
+        <h2>时空锁定 · 双向确认</h2>
+        <div class="sub-title">河洛智慧 · 高维咨询</div>
+
+        <div class="calendar-box">
+            <div class="article-title" style="margin-bottom: 25px;">－ 时空锁定 －</div>
+            <p class="article-main-text">
+                为确保能量聚焦、从容推演，一旦某时段被锁定，同半天时空场次将全自动全局熔断。
+            </p>
+            <br>
+            <div class="calendar-header">
+                <button class="cal-nav-btn" onclick="navigateMonth(-1)">◀ 上个月</button>
+                <div class="article-title" id="calendar-month-title" style="margin-bottom: 0; display: inline-block; color: #00ffcc;">2026年 5月</div>
+                <button class="cal-nav-btn" onclick="navigateMonth(1)">下个月 ▶</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid-dom"></div>
+
+            <div class="time-panel" id="time-panel">
+                <div id="selected-date-text" style="font-weight: bold; font-size: 15px; margin-bottom: 15px; color: #10b981; text-align: center;"></div>
+                <div class="time-slots">
+                    <div class="time-slot" id="slot-am1" onclick="selectTime('08:00 - 10:00', 'AM')">第一场：08:00 - 10:00 (可约)</div>
+                    <div class="time-slot" id="slot-am2" onclick="selectTime('10:00 - 12:00', 'AM')">第二场：10:00 - 12:00 (可约)</div>
+                    <div class="time-slot" id="slot-pm1" onclick="selectTime('14:00 - 16:00', 'PM')">第三场：14:00 - 16:00 (可约)</div>
+                    <div class="time-slot" id="slot-pm2" onclick="selectTime('16:00 - 18:00', 'PM')">第四场：16:00 - 18:00 (可约)</div>
+                </div>
+            </div>
+
+            <div class="appoint-form" id="appoint-form">
+                <div class="article-title" style="text-align: center; border-bottom: 1px solid rgba(16,185,129,0.25); padding-bottom: 12px;">－ 确认您的时空锁定凭证 －</div>
+                
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <div style="font-size: 14px; color: #10b981; font-weight: bold; margin-bottom: 8px;">已选时空</div>
+                    <div id="final-time-string" style="font-size: 16px; color: #00ffcc; font-weight: bold; letter-spacing: 0.5px; padding-left: 2px;"></div>
+                </div>
+                
+                <div class="input-row-container">
+                    <div class="form-group-half">
+                        <label>阁下姓名</label>
+                        <input type="text" id="user-name" class="form-input-box" autocomplete="off" placeholder="请输入尊称">
+                    </div>
+                    <div class="form-group-half">
+                        <label>微信账号</label>
+                        <input type="text" id="user-wechat" class="form-input-box" autocomplete="off" placeholder="请输入真实微信号">
+                    </div>
+                </div>
+                
+                <div class="form-btn-center-box">
+                    <button class="btn" style="width: auto; padding: 14px 50px;" onclick="submitAppointment()">正式锁定所选时空</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="layer-thankyou" class="layer">
+        <div class="final-thank-card">
+            <div class="stamp-icon">✓</div>
+            <h2>时空已锁定 · 能量已封存</h2>
+            <div class="sub-title" style="margin-bottom: 20px; color: #10b981;">深度咨询 · 双向确认</div>
+            
+            <div style="background: #010614; border: 1px solid #0d211c; padding: 25px; border-radius: 4px; text-align: left; margin-bottom: 30px; max-width: 580px; width: 100%; box-sizing: border-box; margin-left: auto; margin-right: auto;">
+                <p style="margin: 0 0 15px 0; font-size: 16px; font-weight: bold; color: #00ffcc; text-align: center;">🎯 当前状态：等待山长微信核对确认</p>
+                <p style="margin: 0 0 15px 0; font-size: 15px; color: #7ebdae; line-height: 1.8; text-align: left;">
+                    阁下的专属时空（<span id="thank-time-text" style="color: #10b981; font-weight: bold;"></span>）已在能量沙盘中完成锁定。
+                </p>
+            </div>
+            <p style="font-size: 13px; color: #7ebdae; text-align: center; line-height: 1.6; margin-top: 20px;">* 至此，网页端时空使命已达，与山长完成微信双向确认后，阁下即可安心关闭此境。</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="global-alert-modal">
+    <div class="modal-card" style="text-align: center;">
+        <div class="modal-title" id="global-alert-title">系统提示</div>
+        <div class="modal-body" id="global-alert-body" style="text-align: center; margin-bottom: 30px;"></div>
+        <div class="modal-footer" style="padding-top: 0; border-top: none;">
+            <button class="btn" id="global-alert-btn" style="padding: 12px 40px; font-size: 14px; border-color: #00ffcc; color: #00ffcc; background: transparent; width: auto;">知悉</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="custom-modal">
+    <div class="modal-card">
+        <div class="modal-title">✓【时空锁定成功】</div>
+        <div class="modal-body">
+            尊贵的 <span id="modal-user-name" style="font-weight: bold; color: #00ffcc;"></span> 阁下：<br><br>
+            您的专属时空已成功锁定。为确保场域纯粹，同半天的时空场次已全自动全局熔断。<br><br>
+            您的专属「时空凭证」已生成并自动复制。请点击确认后立即前往微信，将凭证**【直接粘贴】**并发送给山长。未经微信端人工核对与双向确认的凭证，将于 24 小时后自动湮灭。
+        </div>
+        <div class="modal-footer">
+            <button class="btn" style="padding: 12px 40px; font-size: 14px; border-color: #00ffcc; color: #00ffcc; background: transparent; width: auto;" onclick="closeModalAndProceed()">确认</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ================= 全局防御机制 =================
+    // 屏蔽全局右键菜单
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    
+    // 屏蔽审查元素与保存操作快捷键
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || 
+           (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || 
+           (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))) {
+            e.preventDefault();
+        }
+    });
+
+    // ================= 溯源水印系统 (已修改为固定右上角显示) =================
+    function startDynamicWatermark(pwd) {
+        const wm = document.getElementById('dynamic-watermark');
+        if (!wm) return;
+        wm.style.display = 'block';
+        wm.innerText = "【溯源对齐: " + pwd + "】";
     }
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ success: false, message: '请求路径不匹配' });
+    // ================= 全局弹窗核心控制函数 =================
+    function showCustomAlert(title, message, callback) {
+        document.getElementById('global-alert-title').innerHTML = title;
+        document.getElementById('global-alert-body').innerHTML = message.replace(/\n/g, '<br><br>');
+        const modal = document.getElementById('global-alert-modal');
+        const btn = document.getElementById('global-alert-btn');
+        btn.onclick = function() {
+            modal.style.display = 'none';
+            if (typeof callback === 'function') callback();
+        };
+        modal.style.display = 'flex';
     }
 
-    const { key } = req.body;
-    if (!key) {
-        return res.status(400).json({ success: false, message: '维度密钥为空' });
+    let globalBookedSlots = {}; 
+
+    async function syncSlotsFromCloud() {
+        try {
+            const response = await fetch('/api/booking'); 
+            if (response.ok) {
+                const data = await response.json();
+                globalBookedSlots = {}; 
+                if (data.bookedSlots && Array.isArray(data.bookedSlots)) {
+                    data.bookedSlots.forEach(slot => { globalBookedSlots[slot] = true; });
+                }
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("云端数据同步闪烁:", error);
+            return false;
+        }
     }
+
+    window.addEventListener('DOMContentLoaded', () => { syncSlotsFromCloud(); });
+
+    const P_A_S_S = "2468"; const P_A_S_S_ADV = "1357"; 
+
+    function triggerEnergySync() {
+        const btn = document.getElementById('active-ai-btn'); const loaderBox = document.getElementById('loader-box'); const statusText = document.getElementById('sync-status-text');
+        btn.disabled = true; loaderBox.style.display = "block";
+        statusText.innerHTML = "正在链接高维数据节点，校验当前时空资金链对齐状态...";
+        setTimeout(() => { statusText.innerHTML = "<span style='color: #10b981;'>资金链迹息已捕捉，正在通过河洛算法锁定状态...</span>"; }, 400);
+        setTimeout(() => { statusText.innerHTML = "<span style='color: #00ffcc;'>因果磁场高度同频，正在全自动点亮前置采集通道...</span>"; }, 800);
+        setTimeout(() => { 
+            loaderBox.style.display = "none"; 
+            localStorage.removeItem('videoExpiry'); 
+            const aiExpiry = Date.now() + (60 * 60 * 1000);
+            localStorage.setItem('aiExpiry', aiExpiry);
+            localStorage.setItem('currentLayer', 'layer-ai');
+            switchLayer('layer-video', 'layer-ai'); 
+            startGlobalTimer(aiExpiry, 'ai'); 
+        }, 1200);
+    }
+
+    let currentDisplayDate = new Date(); const todayDate = new Date(); const maxFutureDate = new Date(new Date().setFullYear(todayDate.getFullYear() + 1)); 
+    let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
+
+    async function initCalendarLayer() {
+        localStorage.removeItem('aiExpiry');
+        localStorage.setItem('currentLayer', 'layer-schedule');
+        hideTimerBar();
+        clearInterval(globalTimerInterval);
+        switchLayer('layer-ai', 'layer-schedule'); 
+        currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1); 
+        await syncSlotsFromCloud(); renderCalendar();
+    }
+
+    function navigateMonth(direction) {
+        currentDisplayDate.setMonth(currentDisplayDate.getMonth() + direction); renderCalendar();
+        document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
+    }
+
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-grid-dom'); const title = document.getElementById('calendar-month-title');
+        const year = currentDisplayDate.getFullYear(); const month = currentDisplayDate.getMonth();
+        title.innerText = `${year}年 ${month + 1}月`;
+        grid.innerHTML = '<div class="weekday-label">日</div><div class="weekday-label">一</div><div class="weekday-label">二</div><div class="weekday-label">三</div><div class="weekday-label">四</div><div class="weekday-label">五</div><div class="weekday-label">六</div>';
+        
+        const firstDayIndex = new Date(year, month, 1).getDay(); const totalDaysInMonth = new Date(year, month + 1, 0).getDate(); 
+        for (let i = 0; i < firstDayIndex; i++) { const blank = document.createElement('div'); blank.className = "day-cell disabled"; grid.appendChild(blank); }
+        
+        const dayNames = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+        for (let day = 1; day <= totalDaysInMonth; day++) {
+            const dateStorageKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const cell = document.createElement('div'); cell.innerText = day;
+            const compareCell = new Date(year, month, day).setHours(0,0,0,0);
+            const compareToday = new Date(todayDate).setHours(0,0,0,0);
+
+            if (compareCell < compareToday) { cell.className = "day-cell disabled"; } else {
+                if (globalBookedSlots[`${dateStorageKey}_AM`] && globalBookedSlots[`${dateStorageKey}_PM`]) {
+                    cell.className = "day-cell full"; cell.innerText = `${day} (满)`;
+                } else {
+                    cell.className = "day-cell";
+                    cell.onclick = function() { 
+                        document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected-day')); this.classList.add('selected-day');
+                        const weekdayName = dayNames[new Date(year, month, day).getDay()];
+                        selectDate(dateStorageKey, `${month + 1}月${day}日 (${weekdayName})`); 
+                    };
+                }
+            }
+            grid.appendChild(cell);
+        }
+    }
+
+    function selectDate(storageKey, displayText) {
+        chosenDate = displayText; chosenDateKey = storageKey;
+        document.getElementById('selected-date-text').innerText = "已选日期：" + displayText + "，请选专属时段：";
+        document.getElementById('time-panel').style.display = 'block'; clearPrivacyInputs(); resetSlots();
+        if (globalBookedSlots[`${storageKey}_AM`]) {
+            setSlotFused('slot-am1', '第一场：08:00 - 10:00 (上午场能量已满)'); setSlotFused('slot-am2', '第二场：10:00 - 12:00 (上午场能量已满)');
+        }
+        if (globalBookedSlots[`${storageKey}_PM`]) {
+            setSlotFused('slot-pm1', '第三场：14:00 - 16:00 (下午场能量已满)'); setSlotFused('slot-pm2', '第四场：16:00 - 18:00 (下午场能量已满)');
+        }
+    }
+
+    function setSlotFused(id, text) { const el = document.getElementById(id); el.className = "time-slot fused"; el.innerText = text; }
+    function resetSlots() {
+        document.getElementById('slot-am1').className = "time-slot"; document.getElementById('slot-am1').innerText = "第一场：08:00 - 10:00 (可约)";
+        document.getElementById('slot-am2').className = "time-slot"; document.getElementById('slot-am2').innerText = "第二场：10:00 - 12:00 (可约)";
+        document.getElementById('slot-pm1').className = "time-slot"; document.getElementById('slot-pm1').innerText = "第三场：14:00 - 16:00 (可约)";
+        document.getElementById('slot-pm2').className = "time-slot"; document.getElementById('slot-pm2').innerText = "第四场：16:00 - 18:00 (可约)";
+    }
+
+    function selectTime(timeStr, period) {
+        if (globalBookedSlots[`${chosenDateKey}_${period}`]) return;
+        chosenTime = timeStr; chosenPeriod = period; clearPrivacyInputs();
+        document.querySelectorAll('.time-slot').forEach(s => { if(s.innerText.includes(timeStr)) s.classList.add('selected'); else s.classList.remove('selected'); });
+        document.getElementById('final-time-string').innerText = chosenDate + " " + chosenTime; document.getElementById('appoint-form').style.display = 'block';
+    }
+
+    function clearPrivacyInputs() { document.getElementById('appoint-form').style.display = 'none'; document.getElementById('user-name').value = ""; document.getElementById('user-wechat').value = ""; }
+
+    function fallbackCopyText(text) {
+        const textarea = document.createElement('textarea'); textarea.value = text;
+        textarea.style.position = 'fixed'; textarea.style.top = '0'; textarea.style.left = '0'; textarea.style.width = '2em'; textarea.style.height = '2em'; textarea.style.padding = '0'; textarea.style.border = 'none'; textarea.style.outline = 'none'; textarea.style.boxShadow = 'none'; textarea.style.background = 'transparent'; document.body.appendChild(textarea);
+        textarea.select(); textarea.setSelectionRange(0, 99999); 
+        let success = false; try { success = document.execCommand('copy'); } catch (err) { success = false; }
+        document.body.removeChild(textarea); return success;
+    }
+
+    async function submitAppointment() {
+        const name = document.getElementById('user-name').value.trim(); const wechat = document.getElementById('user-wechat').value.trim();
+        if(!name || !wechat) { showCustomAlert("⚠️ 信息缺失", "请完整填写您的尊称与微信号，以便完成最终因果对齐。"); return; }
+        const wechatRegex = /^[a-zA-Z0-9_-]+$/;
+        if (!wechatRegex.test(wechat)) { showCustomAlert("⚠️ 格式异常", "微信号只能由英文字母、数字、下划线(_)或减号(-)组成。"); return; }
+
+        const submitBtn = document.querySelector('#appoint-form .btn'); const originalBtnText = submitBtn.innerText;
+        submitBtn.disabled = true; submitBtn.innerText = "正在向云端发起全网垄断锁定...";
+
+        const slotKey = `${chosenDateKey}_${chosenPeriod}`; 
+
+        try {
+            const response = await fetch('/api/booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slot: slotKey })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                globalBookedSlots[slotKey] = true;
+                finalTimeStrGlobal = chosenDate + " " + chosenTime;
+                localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
+                
+                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n预约日期：${chosenDate}\n专属时段：${chosenTime}\n客户尊称：${name}\n微信号码：${wechat}`;
+                
+                const proceedToModal = () => {
+                    submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
+                    document.getElementById('modal-user-name').innerText = name; 
+                    document.getElementById('custom-modal').style.display = "flex";
+                };
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(credentialText).then(() => { proceedToModal(); }).catch(err => { fallbackCopyText(credentialText); proceedToModal(); });
+                } else { fallbackCopyText(credentialText); proceedToModal(); }
+
+            } else {
+                showCustomAlert("❌ 锁定失败", result.message || "该时空已被全局锁定，请选择其他时段。");
+                submitBtn.disabled = false; submitBtn.innerText = originalBtnText; 
+                await syncSlotsFromCloud(); renderCalendar();
+                document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
+            }
+
+        } catch (error) {
+            showCustomAlert("❌ 网络异常", "线上公网连接出现异常，请检查网络后重新点击。");
+            submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
+        }
+    }
+
+    function closeModalAndProceed() { 
+        document.getElementById('custom-modal').style.display = "none"; 
+        document.getElementById('thank-time-text').innerText = finalTimeStrGlobal; 
+        localStorage.setItem('currentLayer', 'layer-thankyou');
+        switchLayer('layer-schedule', 'layer-thankyou'); 
+    }
+    
+    // 【核心修复】：切换图层时，彻底让所有在播放的视频静音、暂停、并强制关闭画中画
+function switchLayer(fromId, toId) { 
+    // 1. 查找并处理网页上的所有 video 标签
+    document.querySelectorAll('video').forEach(vid => {
+        vid.pause();    // 强行暂停播放
+        vid.muted = true; // 强行设为静音（声音问题的双重保障）
+    });
+
+    // 2. 强行关闭已经开启的浏览器原生画中画（Picture-in-Picture）模式
+    // 这是解决切换页面后仍存在视频框的关键！
+    if (document.exitPictureInPicture) {
+        document.exitPictureInPicture();
+    }
+
+    // 3. 执行原本的图层切换逻辑
+    document.getElementById(fromId).style.display = 'none'; 
+    document.getElementById(toId).style.display = 'block'; 
+    window.scrollTo(0, 0); 
+}
+
+
+</script>
+
+<div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
+    高维时空剩余停留时间: <span id="global-time-left">00:00</span>
+</div>
+
+<script>
+const PAGE_INDEX_ID     = 'layer-pay-399'; 
+const PAGE_VIDEO_ID     = 'layer-video';   
+const PAGE_AI_ID        = 'layer-ai';      
+const PAGE_SCHEDULE_ID  = 'layer-schedule'; 
+const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
+
+let globalTimerInterval = null;
+
+const SECRET_SALT = "HeLuoGuoxue2026#@!QuantumKeyCenter";
+
+function sha256(ascii) {
+    function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
+    var mathPow = Math.pow, maxWord = mathPow(2, 32), result = '', words = [], asciiLength = ascii.length;
+    var hash = [], k = [], primeCounter = 0, isPrime = {};
+    for (var n = 2; primeCounter < 64; n++) {
+        if (!isPrime[n]) {
+            for (var i = n * n; i < 312; i += n) isPrime[i] = true;
+            if (primeCounter < 8) hash.push((mathPow(n, 0.5) * maxWord) | 0);
+            k.push((mathPow(n, 1/3) * maxWord) | 0);
+            primeCounter++;
+        }
+    }
+    ascii += '\x80';
+    while (ascii.length % 64 - 56) ascii += '\x00';
+    for (var i = 0; i < ascii.length; i++) {
+        var j = ascii.charCodeAt(i);
+        if (j >> 8) return;
+        words[i >> 2] |= j << (24 - (i % 4) * 8);
+    }
+    words[words.length] = ((asciiLength * 8) / maxWord) | 0;
+    words[words.length] = (asciiLength * 8) | 0;
+    for (var j = 0; j < words.length; j += 16) {
+        var w = words.slice(j, j + 16), oldHash = hash.slice(0);
+        for (var i = 0; i < 64; i++) {
+            var w16 = w[i - 16], w15 = w[i - 15], w7 = w[i - 7], w2 = w[i - 2];
+            var s0 = i < 16 ? w[i] : (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3));
+            var s1 = i < 16 ? w[i] : (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10));
+            w[i] = i < 16 ? w[i] : (w16 + s0 + w7 + s1) | 0;
+            var ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]), maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+            var s0_h = rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22), s1_h = rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25);
+            var t1 = (hash[7] + s1_h + ch + k[i] + w[i]) | 0, t2 = (s0_h + maj) | 0;
+            hash = [(t1 + t2) | 0].concat(hash); hash[4] = (hash[4] + t1) | 0; hash.length = 8;
+        }
+        for (var i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+    for (var i = 0; i < 8; i++) {
+        for (var j = 3; j + 1; j--) {
+            var b = (hash[i] >> (j * 8)) & 255;
+            result += (b < 16 ? '0' : '') + b.toString(16);
+        }
+    }
+    return result;
+}
+
+async function verifyAndRouting(inputPassword) {
+    if (!inputPassword) {
+        showCustomAlert("⚠️ 密钥缺失", "请输入时空密钥！");
+        return;
+    }
+
+    const pwd = inputPassword.trim().toUpperCase();
+
+    if (localStorage.getItem('burnt_' + pwd)) {
+        showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被激活使用，无法二次冒领！");
+        return;
+    }
+
+    const type = pwd.charAt(0); 
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
+
+    if (isVipChannel && (type === 'E' || type === 'F' || type === 'W')) {
+        showCustomAlert("❌ 通道不匹配", "此为 VIP 专属通道，公域密钥无法在此激活！");
+        return;
+    }
+
+    if (!isVipChannel && type === 'V') {
+        showCustomAlert("❌ 凭证不匹配", "检测到 VIP 专属密钥，请通过专属链接进入！");
+        return;
+    }
+
+    let isMatch = false;
+    
+    if (pwd.length === 6) {
+        let client = pwd.substring(1, 5);       
+        let providedCheckDigit = pwd.charAt(5); 
+
+        const stringToCheck = type + client + SECRET_SALT;
+        const fullHash = sha256(stringToCheck).toUpperCase();
+        let expectedCheckDigit = fullHash.charAt(0); 
+
+        if (providedCheckDigit === expectedCheckDigit) {
+            isMatch = true;
+        }
+    }
+
+    if (!isMatch) {
+        showCustomAlert("❌ 对齐失败", "密钥未与当前时空对齐，请重新核对或联系山长！");
+        return;
+    }
+    
+    const firstBtn = document.querySelector('#layer-pay-399 .btn');
+    const secondBtn = document.getElementById('active-ai-btn');
+    if(firstBtn) firstBtn.disabled = true;
+    if(secondBtn) secondBtn.disabled = true;
 
     try {
-        const redisKey = `burnt_key:${key}`;
-
-        // ====================================================================
-        // 【核心原子锁】：直接用原生 fetch 向 Redis 发送最高权限的指令
-        // 指令翻译：SET 密钥名 activated NX EX 7200
-        // (NX: 如果不存在才允许写入。 EX 7200: 2小时后自动灰飞烟灭)
-        // ====================================================================
-        const response = await fetch(url, {
+        const cloudResponse = await fetch('/api/verify-key', {
             method: 'POST',
-            headers: { Authorization: `Bearer ${token}` },
-            body: JSON.stringify(["SET", redisKey, "activated", "NX", "EX", "7200"])
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: pwd })
         });
-        
-        const data = await response.json();
+        const cloudResult = await cloudResponse.json();
 
-        // Redis 规则：如果返回 "OK" 代表全网没人用过，现在归你了；如果别人用过，会返回 null
-        if (data.result === "OK") {
-            return res.status(200).json({ success: true, message: "因果锁定成功，密钥全网熔断生效" });
-        } else {
-            return res.status(400).json({ 
-                success: false, 
-                message: "该时空密钥已被其他节点熔断，无法二次冒领！" 
-            });
+        if (!cloudResponse.ok || !cloudResult.success) {
+            showCustomAlert("❌ 节点熔断", cloudResult.message || "该时空密钥已被其他节点熔断，无法二次冒领！");
+            if(firstBtn) firstBtn.disabled = false;
+            if(secondBtn) secondBtn.disabled = false;
+            return;
         }
     } catch (error) {
-        console.error('云端锁单异常:', error);
-        return res.status(500).json({ success: false, message: "高维星图链接闪烁: " + error.message });
+        showCustomAlert("❌ 网络异常", "无法连接全网数据大脑，请检查网络后重新对齐！");
+        if(firstBtn) firstBtn.disabled = false;
+        if(secondBtn) secondBtn.disabled = false;
+        return;
+    }
+
+    if(firstBtn) firstBtn.disabled = false;
+    if(secondBtn) secondBtn.disabled = false;
+
+    localStorage.setItem('burnt_' + pwd, 'true');
+    localStorage.setItem('user_token_auth', type);
+    localStorage.setItem('active_pwd', pwd);
+
+    if (type === 'V') {
+        const expiryTime = Date.now() + (60 * 60 * 1000); 
+        localStorage.setItem('aiExpiry', expiryTime);
+        localStorage.setItem('currentLayer', PAGE_AI_ID);
+        showTargetLayerOnly(PAGE_AI_ID);
+        startGlobalTimer(expiryTime, 'ai');
+        showCustomAlert("✓ VIP专属通道开启", "跳过公域互信对齐，直达深度背景采集系统！\n当前安全停留时间：60分钟。");
+        return;
+    }
+
+    if (type === 'P') {
+        const expiryTime = Date.now() + (60 * 60 * 1000); 
+        localStorage.setItem('aiExpiry', expiryTime);
+        localStorage.setItem('currentLayer', PAGE_AI_ID);
+        showTargetLayerOnly(PAGE_AI_ID);
+        startGlobalTimer(expiryTime, 'ai');
+        showCustomAlert("✓ 契约达成", "3000元基础对价已核，进入深度背景采集系统。\n当前安全停留时间：60分钟。");
+        return;
+    }
+
+    if (type === 'E' || type === 'F' || type === 'W') {
+        let videoUrl = "";
+        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
+
+        const videoElement = document.querySelector('#layer-video video');
+        if (videoElement) {
+            videoElement.src = videoUrl;
+        }
+
+        startDynamicWatermark(pwd);
+
+        const expiryTime = Date.now() + (30 * 60 * 1000); 
+        localStorage.setItem('videoExpiry', expiryTime);
+        localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
+        showTargetLayerOnly(PAGE_VIDEO_ID);
+        startGlobalTimer(expiryTime, 'video');
+        
+        showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启。\n当前安全停留时间：30分钟。");
     }
 }
+
+function checkStateAndRestore() {
+    let bugExp = localStorage.getItem('videoExpiry');
+    if (bugExp && parseInt(bugExp) > Date.now() + 2 * 3600 * 1000) {
+        localStorage.removeItem('videoExpiry');
+        localStorage.removeItem('currentLayer');
+    }
+
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
+    if (isVipChannel) {
+        const currentLayer = localStorage.getItem('currentLayer');
+        if (!currentLayer || currentLayer === PAGE_INDEX_ID || currentLayer === PAGE_VIDEO_ID) {
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            hideTimerBar();
+
+            const videoLayer = document.getElementById(PAGE_VIDEO_ID);
+            if (videoLayer) {
+                const panels = videoLayer.querySelectorAll('.holo-card-panel');
+                if (panels.length >= 3) {
+                    panels[0].style.display = 'none';
+                    panels[1].style.display = 'none';
+                }
+                const mainTitle = videoLayer.querySelector('h2');
+                if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
+                const subTitle = videoLayer.querySelector('.sub-title');
+                if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
+            }
+            return; 
+        }
+    }
+
+    const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
+    const now = Date.now();
+
+    if (currentLayer === PAGE_VIDEO_ID) {
+        const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
+        if (videoExpiry && now < videoExpiry) {
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            startGlobalTimer(videoExpiry, 'video');
+            
+            const activePwd = localStorage.getItem('active_pwd');
+            const authType = localStorage.getItem('user_token_auth');
+            if (activePwd && authType) {
+                let videoUrl = "";
+                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";  
+                const videoElement = document.querySelector('#layer-video video');
+                if (videoElement) {
+                    videoElement.src = videoUrl;
+                }
+                startDynamicWatermark(activePwd);
+            }
+        } else { forceKickOut(); }
+
+    } else if (currentLayer === PAGE_AI_ID) {
+        const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
+        if (aiExpiry && now < aiExpiry) {
+            showTargetLayerOnly(PAGE_AI_ID);
+            startGlobalTimer(aiExpiry, 'ai');
+        } else { forceKickOut(); }
+
+    } else if (currentLayer === PAGE_THANKYOU_ID) {
+        showTargetLayerOnly(PAGE_THANKYOU_ID);
+        hideTimerBar();
+        const savedTime = localStorage.getItem('savedBookedTime');
+        if (savedTime) { document.getElementById('thank-time-text').innerText = savedTime; }
+
+    } else if (currentLayer === PAGE_SCHEDULE_ID) {
+        showTargetLayerOnly(PAGE_SCHEDULE_ID);
+        hideTimerBar();
+        if(typeof todayDate !== 'undefined') {
+            currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+        }
+        if(typeof renderCalendar === 'function') { renderCalendar(); }
+    } else {
+        showTargetLayerOnly(PAGE_INDEX_ID);
+        hideTimerBar();
+    }
+}
+
+function startGlobalTimer(expiry, type) {
+    clearInterval(globalTimerInterval); 
+    const timerBar = document.getElementById('global-timer-bar');
+    const timeLeftSpan = document.getElementById('global-time-left');
+    
+    timerBar.style.background = '#010614';
+    timerBar.style.borderBottom = '1px solid #10B981'; 
+    timerBar.style.color = '#10B981';
+    timerBar.style.display = 'block';
+
+    globalTimerInterval = setInterval(function() {
+        const distance = expiry - Date.now();
+        if (distance <= 0) {
+            forceKickOut(); 
+            return;
+        }
+        const minutes = Math.floor(distance / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        timeLeftSpan.innerHTML = minutes + "分 " + seconds + "秒";
+    }, 1000);
+}
+
+function showTargetLayerOnly(targetId) {
+    document.querySelectorAll('.layer').forEach(layer => {
+        layer.style.display = 'none';
+        layer.classList.remove('active');
+    });
+    const targetElem = document.getElementById(targetId);
+    if(targetElem) {
+        targetElem.style.display = 'block';
+        targetElem.classList.add('active');
+    }
+    window.scrollTo(0, 0);
+}
+
+// 【核心修复】：踢出系统时，也一并强制关闭视频声音、暂停、并关闭画中画
+function forceKickOut() {
+    // 徹底暂停并静音所有视频，关闭画中画
+    document.querySelectorAll('video').forEach(vid => {
+        vid.pause();
+        vid.muted = true;
+    });
+    
+    if (document.exitPictureInPicture) {
+        document.exitPictureInPicture();
+    }
+    
+    // 执行原本的踢出逻辑
+    clearInterval(globalTimerInterval);
+    localStorage.removeItem('currentLayer');
+    localStorage.removeItem('videoExpiry');
+    localStorage.removeItem('aiExpiry');
+    localStorage.removeItem('user_token_auth');
+    localStorage.removeItem('savedBookedTime'); 
+    localStorage.removeItem('active_pwd'); 
+    hideTimerBar();
+    showTargetLayerOnly(PAGE_INDEX_ID);
+}
+
+
+
+function hideTimerBar() {
+    const timerBar = document.getElementById('global-timer-bar');
+    if(timerBar) timerBar.style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', checkStateAndRestore);
+</script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var ua = navigator.userAgent.toLowerCase();
+        var isWeChat = ua.indexOf('micromessenger') !== -1;
+        if (isWeChat) {
+            var securityMask = document.getElementById('wechat-security-mask');
+            if (securityMask) {
+                securityMask.style.display = 'block';
+                document.body.style.overflow = 'hidden'; 
+                document.documentElement.style.overflow = 'hidden';
+                document.body.style.pointerEvents = 'none';
+                securityMask.style.pointerEvents = 'auto'; 
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
