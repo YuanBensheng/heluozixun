@@ -979,7 +979,7 @@
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
                 // 修改点2：不再复制全表明文内容，仅保留3行极简双向核对凭证
-                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n锁定场域：${chosenDate} ${chosenTime}\n溯源代号：${name}\n微信号码：${wechat}\n (全量信息已同步河洛咨询信息库)`;
+                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n锁定场域：${chosenDate} ${chosenTime}\n溯源代号：${name}\n微信号码：${wechat}\n (全量信息已同步咨询师信息库)`;
                 
                 const proceedToModal = () => {
                     submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
