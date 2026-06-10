@@ -58,7 +58,7 @@ export default async function handler(req, res) {
                         const mailOptions = {
                             from: `"河洛前置系统" <${process.env.SMTP_USER || 'burujushi@163.com'}>`,
                             to: 'heluopro@163.com',
-                            subject: `【新局锁定】`,
+                            subject: `【新局锁定】${slot.replace('_', ' ')}`,
                             html: `
 <div style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 700px; margin: 0 auto; color: #333333; line-height: 1.8; font-size: 15px; background-color: #ffffff; padding: 20px;">
     
@@ -103,12 +103,12 @@ export default async function handler(req, res) {
     <p style="margin: 8px 0;"><strong>本次推演聚焦：</strong> ${caseReport.coreFocus || '未选定'}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
-        【五、余绪微言】
+        【五、其他补充】
     </h3>
     <p style="margin: 8px 0; white-space: pre-wrap; background: #f9f9f9; padding: 10px; border: 1px solid #eeeeee;">${caseReport.extraNotes || '未留言'}</p>
     
     <div style="margin-top: 50px; padding-top: 15px; border-top: 1px solid #dddddd; text-align: center; font-size: 12px; color: #999999;">
-        此案卷由河洛前置系统自动汇总生成
+        此案卷由河洛咨询前置系统自动汇总生成
     </div>
 
 </div>
