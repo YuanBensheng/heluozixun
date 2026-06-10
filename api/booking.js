@@ -56,7 +56,7 @@ export default async function handler(req, res) {
                         const ce = caseReport.careerEdu || {};
 
                         const mailOptions = {
-                            from: `"河洛前置系统" <${process.env.SMTP_USER || 'burujushi@163.com'}>`,
+                            from: `"河洛咨询前置对齐系统" <${process.env.SMTP_USER || 'burujushi@163.com'}>`,
                             to: 'heluopro@163.com',
                             subject: `【新局锁定】${slot.replace('_', ' ')}`,
                             html: `
@@ -108,7 +108,7 @@ export default async function handler(req, res) {
     <p style="margin: 8px 0; white-space: pre-wrap; background: #f9f9f9; padding: 10px; border: 1px solid #eeeeee;">${caseReport.extraNotes || '未留言'}</p>
     
     <div style="margin-top: 50px; padding-top: 15px; border-top: 1px solid #dddddd; text-align: center; font-size: 12px; color: #999999;">
-        此案卷由河洛咨询前置系统自动汇总生成
+        此案卷由河洛咨询前置对齐系统自动汇总生成
     </div>
 
 </div>
