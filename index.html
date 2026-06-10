@@ -716,7 +716,7 @@
         <div class="modal-body">
             尊贵的 <span id="modal-user-name" style="font-weight: bold; color: #00ffcc;"></span> 阁下：<br><br>
             您的专属时空已成功锁定。为确保场域纯粹，同半天的时空场次已全自动全局熔断。<br><br>
-            您的专属「时空凭证」已生成并自动复制。请点击确认后立即前往微信，将凭证**【直接粘贴】**并发送给山长。未经微信端人工核对与双向确认的凭证，将于 24 小时后自动湮灭。
+            您的专属「时空凭证」已生成并自动复制。请点击确认后立即前往微信，将凭证**【直接粘贴】**并发送给咨询师。未经微信端人工核对与双向确认的凭证，将于 24 小时后自动湮灭。
         </div>
         <div class="modal-footer">
             <button class="btn" style="padding: 12px 40px; font-size: 14px; border-color: #00ffcc; color: #00ffcc; background: transparent; width: auto;" onclick="closeModalAndProceed()">确认</button>
@@ -796,7 +796,7 @@
         
         // 👈 核心修改3：多选状态下，校验数组长度是否为 0
         if (!selectedCaseData.rel_spouse || !selectedCaseData.rel_parentchild || selectedCaseData.focus.length === 0) {
-            showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】及【核心诉求】的磁场标签，以便山长提取精准局象。"); return;
+            showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】及【核心诉求】的磁场标签，以便咨询师提取精准局象。"); return;
         }
 
         // 打包五大模块数据契约 (严格对齐后端)
@@ -996,7 +996,7 @@
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
                 // 修改点2：不再复制全表明文内容，仅保留3行极简双向核对凭证
-                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n锁定场域：${chosenDate} ${chosenTime}\n溯源代号：${name}\n微信号码：${wechat}\n (全量信息已同步咨询师信息库)`;
+                const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n锁定场域：${chosenDate} ${chosenTime}\n溯源代号：${name}\n微信号码：${wechat}`;
                 
                 const proceedToModal = () => {
                     submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
@@ -1143,7 +1143,7 @@ async function verifyAndRouting(inputPassword) {
     }
 
     if (!isMatch) {
-        showCustomAlert("❌ 对齐失败", "密钥未与当前时空对齐，请重新核对或联系山长！");
+        showCustomAlert("❌ 对齐失败", "密钥未与当前时空对齐，请重新核对或联系咨询师！");
         return;
     }
     
