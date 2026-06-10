@@ -608,7 +608,8 @@
                 <input type="text" id="ce-edu" class="form-input-box" placeholder="如：长子初二成绩中等，长女大二法学专业" style="font-size: 14px; padding: 10px; width: 100%;">
             </div>
 
-            <div class="case-section-title">四、核心诉求</div>
+            <div class="case-section-title">四、核心诉求 <span style="font-size: 13px; color: #10b981; font-weight: normal;">(可多选)</span></div>
+
             <div class="case-grid" id="grid-focus">
                 <div class="case-option" onclick="selectCaseTag('focus', '家庭关系/认知对齐', this)">【家庭关系/认知对齐】</div>
                 <div class="case-option" onclick="selectCaseTag('focus', '子女教育/关键抉择', this)">【子女教育/关键抉择】</div>
@@ -755,23 +756,35 @@
         modal.style.display = 'flex';
     }
 
-        // ================= 📋 案卷数据核心控制 (新版 Schema) =================
+            // ================= 📋 案卷数据核心控制 (新版 Schema) =================
     let selectedCaseData = { 
         rel_spouse: "", 
         rel_parentchild: "", 
         rel_workplace: "", 
         rel_originfamily: "", 
         rel_social: "", 
-        focus: "" 
+        focus: [] // 👈 核心修改1：将 focus 设为空数组，用于容纳多个选项
     };
     
     function selectCaseTag(type, value, element) {
-        // 清除对应网格内的选中状态
-        const gridId = `grid-${type}`;
-        document.querySelectorAll(`#${gridId} .case-option`).forEach(opt => opt.classList.remove('selected'));
-        // 点亮当前
-        element.classList.add('selected');
-        selectedCaseData[type] = value;
+        if (type === 'focus') {
+            // 👈 核心修改2：专门针对【核心诉求】的多选开关逻辑
+            if (element.classList.contains('selected')) {
+                // 如果已经选中了，再次点击就取消选中，并从数组中移除
+                element.classList.remove('selected');
+                selectedCaseData.focus = selectedCaseData.focus.filter(v => v !== value);
+            } else {
+                // 如果没选中，就点亮它，并推入数组
+                element.classList.add('selected');
+                selectedCaseData.focus.push(value);
+            }
+        } else {
+            // 其他模块（五伦关系等）保持原有的单选排他逻辑
+            const gridId = `grid-${type}`;
+            document.querySelectorAll(`#${gridId} .case-option`).forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedCaseData[type] = value;
+        }
     }
 
     async function saveCaseAndProceed() {
@@ -780,7 +793,9 @@
         if (!name) {
             showCustomAlert("⚠️ 案卷未完备", "请填写【时空结构】中的“阁下称呼”"); return;
         }
-        if (!selectedCaseData.rel_spouse || !selectedCaseData.rel_parentchild || !selectedCaseData.focus) {
+        
+        // 👈 核心修改3：多选状态下，校验数组长度是否为 0
+        if (!selectedCaseData.rel_spouse || !selectedCaseData.rel_parentchild || selectedCaseData.focus.length === 0) {
             showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】及【核心诉求】的磁场标签，以便山长提取精准局象。"); return;
         }
 
@@ -803,7 +818,8 @@
                 career: document.getElementById('ce-career').value.trim(),
                 edu: document.getElementById('ce-edu').value.trim()
             },
-            coreFocus: selectedCaseData.focus,
+            // 👈 核心修改4：用 .join(' 、 ') 把选中的多项数组拼成优雅的字符串
+            coreFocus: selectedCaseData.focus.join(' 、 '), 
             extraNotes: document.getElementById('extra-notes').value.trim()
         };
 
@@ -811,6 +827,7 @@
         localStorage.setItem('heLuoCaseDataPayload', JSON.stringify(payload));
         initCalendarLayer();
     }
+
 
 
     let globalBookedSlots = {}; 
