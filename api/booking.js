@@ -58,19 +58,21 @@ export default async function handler(req, res) {
                         const mailOptions = {
                             from: `"河洛前置系统" <${process.env.SMTP_USER || 'burujushi@163.com'}>`,
                             to: 'heluopro@163.com',
-                            subject: `【新局锁定】${ts.name || user.name} 预约了 ${slot.replace('_', ' ')}`,
+                            subject: `【新局锁定】`,
                             html: `
 <div style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 700px; margin: 0 auto; color: #333333; line-height: 1.8; font-size: 15px; background-color: #ffffff; padding: 20px;">
     
     <h2 style="text-align: center; font-size: 20px; font-weight: bold; border-bottom: 2px solid #333333; padding-bottom: 15px; margin-bottom: 30px;">
-        河洛咨询 · 局象案卷
+        河洛咨询 · 局象拓扑
     </h2>
     
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 25px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【锁定凭证】
     </h3>
-    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${slot.replace('_', ' ')}</p>
+    
+    <p style="margin: 8px 0;"><strong>预约姓名：</strong> ${ts.name || user.name}</p>
     <p style="margin: 8px 0;"><strong>微信号码：</strong> ${user.wechat}</p>
+    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${slot.replace('_', ' ')}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【一、时空结构】
