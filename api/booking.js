@@ -60,47 +60,58 @@ export default async function handler(req, res) {
                             to: 'heluopro@163.com',
                             subject: `【新局锁定】${ts.name || user.name} 预约了 ${slot.replace('_', ' ')}`,
                             html: `
-                            <div style="font-family: sans-serif; max-width: 650px; margin: 0 auto; background: #010614; color: #00ffcc; padding: 30px; border: 1px solid #10b981; border-radius: 8px;">
-                                <h2 style="text-align: center; border-bottom: 1px solid rgba(16,185,129,0.3); padding-bottom: 15px; letter-spacing: 2px;">河洛咨询 · 局象案卷</h2>
-                                
-                                <h3 style="color: #10b981; margin-top: 25px; border-left: 4px solid #00ffcc; padding-left: 10px;">【锁定凭证】</h3>
-                                <p style="color: #7ebdae; font-size: 15px;">预约时空：<strong style="color: #fff;">${slot.replace('_', ' ')}</strong></p>
-                                <p style="color: #7ebdae; font-size: 15px;">微信号码：<strong style="color: #fff;">${user.wechat}</strong></p>
+<div style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 700px; margin: 0 auto; color: #333333; line-height: 1.8; font-size: 15px; background-color: #ffffff; padding: 20px;">
+    
+    <h2 style="text-align: center; font-size: 20px; font-weight: bold; border-bottom: 2px solid #333333; padding-bottom: 15px; margin-bottom: 30px;">
+        河洛咨询 · 局象案卷
+    </h2>
+    
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 25px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
+        【锁定凭证】
+    </h3>
+    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${slot.replace('_', ' ')}</p>
+    <p style="margin: 8px 0;"><strong>微信号码：</strong> ${user.wechat}</p>
 
-                                <h3 style="color: #10b981; margin-top: 25px; border-left: 4px solid #00ffcc; padding-left: 10px;">【一、时空结构】</h3>
-                                <p style="color: #7ebdae; font-size: 15px;">填表称呼：${ts.name || '未填'} <span style="color:#527a6e; font-size:12px;">(家庭身份：${ts.role || '未填'})</span></p>
-                                <p style="color: #7ebdae; font-size: 15px;">常住成员：${ts.members || '未填'}</p>
-                                <p style="color: #7ebdae; font-size: 15px;">核心生辰定格：</p>
-                                <div style="background: rgba(0,255,204,0.05); padding: 12px; border: 1px dashed #2e7a68; color: #fff; line-height: 1.6; white-space: pre-wrap;">${ts.birthInfo || '客户未留下生辰信息'}</div>
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
+        【一、时空结构】
+    </h3>
+    <p style="margin: 8px 0;"><strong>填表称呼：</strong> ${ts.name || '未填'} （家庭身份：${ts.role || '未填'}）</p>
+    <p style="margin: 8px 0;"><strong>常住成员：</strong> ${ts.members || '未填'}</p>
+    <p style="margin: 8px 0;"><strong>核心生辰：</strong></p>
+    <p style="margin: 8px 0; white-space: pre-wrap; background: #f9f9f9; padding: 10px; border: 1px solid #eeeeee;">${ts.birthInfo || '未填写'}</p>
 
-                                <h3 style="color: #10b981; margin-top: 25px; border-left: 4px solid #00ffcc; padding-left: 10px;">【二、五伦关系】</h3>
-                                <table style="width: 100%; color: #7ebdae; font-size: 14px; text-align: left; border-collapse: collapse;">
-                                    <tr><td style="padding: 6px 0; width: 35%;">夫妇有别 (伴侣)：</td><td style="color: #fff;">${fr.spouse || '未明'}</td></tr>
-                                    <tr><td style="padding: 6px 0;">父子有亲 (代际)：</td><td style="color: #fff;">${fr.parentchild || '未明'}</td></tr>
-                                    <tr><td style="padding: 6px 0;">君臣有义 (职场)：</td><td style="color: #fff;">${fr.workplace || '未明'}</td></tr>
-                                    <tr><td style="padding: 6px 0;">长幼有序 (原生)：</td><td style="color: #fff;">${fr.originfamily || '未明'}</td></tr>
-                                    <tr><td style="padding: 6px 0;">朋友有信 (社交)：</td><td style="color: #fff;">${fr.social || '未明'}</td></tr>
-                                </table>
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
+        【二、五伦关系】
+    </h3>
+    <p style="margin: 8px 0;"><strong>夫妇有别 (伴侣)：</strong> ${fr.spouse || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>父子有亲 (代际)：</strong> ${fr.parentchild || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>君臣有义 (职场)：</strong> ${fr.workplace || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>长幼有序 (原生)：</strong> ${fr.originfamily || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>朋友有信 (社交)：</strong> ${fr.social || '未明'}</p>
 
-                                <h3 style="color: #10b981; margin-top: 25px; border-left: 4px solid #00ffcc; padding-left: 10px;">【三、事业学业】</h3>
-                                <p style="color: #7ebdae; font-size: 15px;">行业职向：${ce.career || '未填'}</p>
-                                <p style="color: #7ebdae; font-size: 15px;">子女学业：${ce.edu || '未填'}</p>
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
+        【三、事业学业】
+    </h3>
+    <p style="margin: 8px 0;"><strong>行业职向：</strong> ${ce.career || '未填'}</p>
+    <p style="margin: 8px 0;"><strong>子女学业：</strong> ${ce.edu || '未填'}</p>
 
-                                <h3 style="color: #10b981; margin-top: 25px; border-left: 4px solid #00ffcc; padding-left: 10px;">【四、核心诉求】</h3>
-                                <p style="color: #f43f5e; font-size: 18px; font-weight: bold; padding: 10px; background: rgba(244, 63, 94, 0.1); border-radius: 4px;">
-                                    🎯 ${caseReport.coreFocus || '未选定'}
-                                </p>
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
+        【四、核心诉求】
+    </h3>
+    <p style="margin: 8px 0;"><strong>本次推演聚焦：</strong> ${caseReport.coreFocus || '未选定'}</p>
 
-                                <h3 style="color: #10b981; margin-top: 25px; border-left: 4px solid #00ffcc; padding-left: 10px;">【五、余绪微言】</h3>
-                                <div style="background: #000; padding: 15px; border: 1px solid #0d211c; border-radius: 4px; color: #7ebdae; line-height: 1.8;">
-                                    ${(caseReport.extraNotes || '客户未留下额外言辞').replace(/\n/g, '<br>')}
-                                </div>
-                                
-                                <p style="text-align: center; margin-top: 40px; font-size: 12px; color: #2e7a68; border-top: 1px solid #0d211c; padding-top: 20px;">
-                                    此案卷由河洛数字高维节点全自动生成 · 阅后请即妥善封存
-                                </p>
-                            </div>
-                            `
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
+        【五、余绪微言】
+    </h3>
+    <p style="margin: 8px 0; white-space: pre-wrap; background: #f9f9f9; padding: 10px; border: 1px solid #eeeeee;">${caseReport.extraNotes || '未留言'}</p>
+    
+    <div style="margin-top: 50px; padding-top: 15px; border-top: 1px solid #dddddd; text-align: center; font-size: 12px; color: #999999;">
+        此案卷由河洛前置系统自动汇总生成
+    </div>
+
+</div>
+`
+
                         };
 
                         await transporter.sendMail(mailOptions);
