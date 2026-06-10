@@ -846,7 +846,7 @@
         setTimeout(() => { 
             loaderBox.style.display = "none"; 
             localStorage.removeItem('videoExpiry'); 
-            const aiExpiry = Date.now() + (60 * 60 * 1000);
+            const aiExpiry = Date.now() + (30 * 60 * 1000);
             localStorage.setItem('aiExpiry', aiExpiry);
             localStorage.setItem('currentLayer', 'layer-ai');
             switchLayer('layer-video', 'layer-ai'); 
@@ -1164,22 +1164,22 @@ async function verifyAndRouting(inputPassword) {
     localStorage.setItem('active_pwd', pwd);
 
     if (type === 'V') {
-        const expiryTime = Date.now() + (60 * 60 * 1000); 
+        const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
         showTargetLayerOnly(PAGE_AI_ID);
         startGlobalTimer(expiryTime, 'ai');
-        showCustomAlert("✓ VIP专属通道开启", "跳过公域互信对齐，直达深度背景采集系统！\n当前安全停留时间：60分钟。");
+        showCustomAlert("✓ VIP专属通道开启", "跳过公域互信对齐，直达深度背景采集系统！\n当前安全停留时间：30分钟。");
         return;
     }
 
     if (type === 'P') {
-        const expiryTime = Date.now() + (60 * 60 * 1000); 
+        const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_AI_ID);
         showTargetLayerOnly(PAGE_AI_ID);
         startGlobalTimer(expiryTime, 'ai');
-        showCustomAlert("✓ 契约达成", "3000元基础对价已核，进入深度背景采集系统。\n当前安全停留时间：60分钟。");
+        showCustomAlert("✓ 契约达成", "3000元基础对价已核，进入深度背景采集系统。\n当前安全停留时间：30分钟。");
         return;
     }
 
