@@ -1,27 +1,4 @@
 import nodemailer from 'nodemailer';
-// 【最终修复版：修正时段映射逻辑】
-function formatTimeDisplay(slotKey) {
-    // 拆解：2026-08-29_AM 或 2026-08-29_PM
-    const parts = slotKey.split('_');
-    const datePart = parts[0];
-    const period = parts[1]; // 接收 AM 或 PM
-
-    // 获取前端传过来的具体时间字符串（在HTML中定义好的：08:00 - 10:00 等）
-    // 为了后端逻辑简洁，我们根据 period 和 原始 slotKey 来匹配
-    // 如果 slotKey 结尾已经是时间段，我们直接格式化
-    const date = new Date(datePart);
-    const weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][date.getDay()];
-    
-    // 直接匹配前端 HTML 中定义的四种具体时段字符串
-    let timeRange = "未知时段";
-    if (slotKey.includes("08:00 - 10:00")) timeRange = "08:00 - 10:00";
-    else if (slotKey.includes("10:00 - 12:00")) timeRange = "10:00 - 12:00";
-    else if (slotKey.includes("14:00 - 16:00")) timeRange = "14:00 - 16:00";
-    else if (slotKey.includes("16:00 - 18:00")) timeRange = "16:00 - 18:00";
-    
-    return `${datePart} ${weekday} ${timeRange}`;
-}
-
 
 export default async function handler(req, res) {
     const url = process.env.KV_REST_API_URL;
@@ -95,8 +72,7 @@ export default async function handler(req, res) {
     
     <p style="margin: 8px 0;"><strong>预约姓名：</strong> ${ts.name || user.name}</p>
     <p style="margin: 8px 0;"><strong>微信号码：</strong> ${user.wechat}</p>
-    ⁠<p style="margin: 8px 0;"><strong>预约时空：</strong> ${formatTimeDisplay(slot)}</p>
-    
+    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${slot.replace('_', ' ')}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【一、核心诉求】
