@@ -75,21 +75,17 @@ export default async function handler(req, res) {
     <p style="margin: 8px 0;"><strong>预约时空：</strong> ${slot.replace('_', ' ')}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
-        【一、时空结构】
+        【一、核心诉求】
+    </h3>
+    <p style="margin: 8px 0;"><strong>本次推演聚焦：</strong> ${caseReport.coreFocus || '未选定'}</p>
+    
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
+        【二、时空结构】
     </h3>
     <p style="margin: 8px 0;"><strong>填表称呼：</strong> ${ts.name || '未填'} （家庭身份：${ts.role || '未填'}）</p>
     <p style="margin: 8px 0;"><strong>常住成员：</strong> ${ts.members || '未填'}</p>
     <p style="margin: 8px 0;"><strong>核心生辰：</strong></p>
     <p style="margin: 8px 0; white-space: pre-wrap; background: #f9f9f9; padding: 10px; border: 1px solid #eeeeee;">${ts.birthInfo || '未填写'}</p>
-
-    <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
-        【二、五伦关系】
-    </h3>
-    <p style="margin: 8px 0;"><strong>夫妇有别 (伴侣)：</strong> ${fr.spouse || '未明'}</p>
-    <p style="margin: 8px 0;"><strong>父子有亲 (代际)：</strong> ${fr.parentchild || '未明'}</p>
-    <p style="margin: 8px 0;"><strong>君臣有义 (职场)：</strong> ${fr.workplace || '未明'}</p>
-    <p style="margin: 8px 0;"><strong>长幼有序 (原生)：</strong> ${fr.originfamily || '未明'}</p>
-    <p style="margin: 8px 0;"><strong>朋友有信 (社交)：</strong> ${fr.social || '未明'}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【三、事业学业】
@@ -98,9 +94,13 @@ export default async function handler(req, res) {
     <p style="margin: 8px 0;"><strong>子女学业：</strong> ${ce.edu || '未填'}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
-        【四、核心诉求】
+        【四、五伦关系】
     </h3>
-    <p style="margin: 8px 0;"><strong>本次推演聚焦：</strong> ${caseReport.coreFocus || '未选定'}</p>
+    <p style="margin: 8px 0;"><strong>夫妇有别 (伴侣)：</strong> ${fr.spouse || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>父子有亲 (亲子)：</strong> ${fr.parentchild || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>君臣有义 (尊卑)：</strong> ${fr.workplace || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>长幼有序 (长幼)：</strong> ${fr.originfamily || '未明'}</p>
+    <p style="margin: 8px 0;"><strong>朋友有信 (社交)：</strong> ${fr.social || '未明'}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【五、其他补充】
