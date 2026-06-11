@@ -408,9 +408,20 @@
             .modal-card { width: 88% !important; padding: 20px !important; }
             .holo-card-panel { padding: 25px 20px !important; }
             .final-thank-card { padding: 35px 15px !important; }
-            .case-grid { grid-template-columns: 1fr; gap: 10px; }
+            /* --- 核心修正：取消手机端单列强制折叠，保持两宫格 --- */
+            .case-grid { 
+                grid-template-columns: repeat(2, 1fr) !important; /* 强制平分两列 */
+                gap: 8px !important; /* 手机端选项间距稍微收紧，防挤压 */
+            }
+            .case-option {
+                padding: 10px 4px !important; /* 手机端适度减小左右内边距 */
+                font-size: 13px !important; /* 手机端字号微调，避免文字折行不美观 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 48px; /* 确保如果字数多折成两行，各个选项框高度依然一致 */
+            }
         }
-
         video::-webkit-media-controls-fullscreen-button { display: none !important; }
         video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button { display: none !important; }
     </style>
