@@ -1360,15 +1360,17 @@ function showTargetLayerOnly(targetId) {
 }
 
 function forceKickOut() {
+    // 1. 斩断所有正在播放的音视频能量
     document.querySelectorAll('video').forEach(vid => {
         vid.pause();
         vid.muted = true;
     });
     
     if (document.exitPictureInPicture) {
-        document.exitPictureInPicture();
+        document.exitPictureInPicture().catch(() => {});
     }
     
+    // 2. 清除云端时空和本地所有倒计时、密钥缓存
     clearInterval(globalTimerInterval);
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
@@ -1377,10 +1379,24 @@ function forceKickOut() {
     localStorage.removeItem('savedBookedTime'); 
     localStorage.removeItem('active_pwd'); 
     hideTimerBar();
+
+    // 3. --- 核心修正：不刷新页面，纯前端逻辑无痕闭环 ---
+    // 判断当前 URL 是不是 VIP 通道
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
     
-    // --- 核心修正：倒计时结束后不再单纯切换图层，而是执行全量状态刷新 ---
-    // 刷新后，系统会自动根据 URL 重新判定。是 VIP 就回到 VIP 密码页，是普通用户就回到普通首页，彻底杜绝黑屏死角。
-    window.location.reload();
+    if (isVipChannel) {
+        // 如果是 VIP 通道，清空密码框，强行留在 VIP 的那个 layer-video（已被重置为输入密码页），绝对不会闪现公域
+        const vipPwdInput1 = document.getElementById('password-input');
+        const vipPwdInput2 = document.getElementById('advanced-password-input');
+        if(vipPwdInput1) vipPwdInput1.value = "";
+        if(vipPwdInput2) vipPwdInput2.value = "";
+        
+        // 重新调用系统自带的恢复判定，它会自动把页面安全封存回 VIP 初始状态
+        checkStateAndRestore();
+    } else {
+        // 如果是普通公域通道，安全送回公域首页
+        showTargetLayerOnly(PAGE_INDEX_ID);
+    }
 }
 
 function hideTimerBar() {
