@@ -1,25 +1,27 @@
 import nodemailer from 'nodemailer';
-// 时空映射转换器
+// 【最终修复版：修正时段映射逻辑】
 function formatTimeDisplay(slotKey) {
-    // 拆解：2026-06-11_AM_1
-    const parts = slotKey.split('_'); 
-    const datePart = parts[0]; 
-    const period = parts[1]; // AM 或 PM
-    const index = parts[2];  // 1 或 2
+    // 拆解：2026-08-29_AM 或 2026-08-29_PM
+    const parts = slotKey.split('_');
+    const datePart = parts[0];
+    const period = parts[1]; // 接收 AM 或 PM
 
-    const timeMap = {
-        'AM_1': '08:00 - 10:00',
-        'AM_2': '10:00 - 12:00',
-        'PM_1': '14:00 - 16:00',
-        'PM_2': '16:00 - 18:00'
-    };
-
+    // 获取前端传过来的具体时间字符串（在HTML中定义好的：08:00 - 10:00 等）
+    // 为了后端逻辑简洁，我们根据 period 和 原始 slotKey 来匹配
+    // 如果 slotKey 结尾已经是时间段，我们直接格式化
     const date = new Date(datePart);
     const weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][date.getDay()];
-    const timeRange = timeMap[period + '_' + index] || "未知时段";
+    
+    // 直接匹配前端 HTML 中定义的四种具体时段字符串
+    let timeRange = "未知时段";
+    if (slotKey.includes("08:00 - 10:00")) timeRange = "08:00 - 10:00";
+    else if (slotKey.includes("10:00 - 12:00")) timeRange = "10:00 - 12:00";
+    else if (slotKey.includes("14:00 - 16:00")) timeRange = "14:00 - 16:00";
+    else if (slotKey.includes("16:00 - 18:00")) timeRange = "16:00 - 18:00";
     
     return `${datePart} ${weekday} ${timeRange}`;
 }
+
 
 export default async function handler(req, res) {
     const url = process.env.KV_REST_API_URL;
