@@ -776,39 +776,34 @@
         focus: [] 
     };
     
+    // 全局统一：支持无限制多选与随时反选取消
     function selectCaseTag(type, value, element) {
-        // 核心修改：全局统一！所有选项均支持多选与反选自由切换 (Toggle机制)
         if (element.classList.contains('selected')) {
-            // 如果已经选中了，再次点击就取消高亮，并从对应的数组中移除该选项
+            // 已选中则取消高亮，并从数组移除
             element.classList.remove('selected');
             selectedCaseData[type] = selectedCaseData[type].filter(v => v !== value);
         } else {
-            // 如果没选中，就点亮它，并把该选项推入对应的数组
+            // 未选中则点亮，并推入数组
             element.classList.add('selected');
             selectedCaseData[type].push(value);
-        }
-    } else {
-            // 其他模块（五伦关系等）保持原有的单选排他逻辑
-            const gridId = `grid-${type}`;
-            document.querySelectorAll(`#${gridId} .case-option`).forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedCaseData[type] = value;
         }
     }
 
     async function saveCaseAndProceed() {
-        // 校验必选项
+        // 1. 校验基础必填项
         const name = document.getElementById('ts-name').value.trim();
         if (!name) {
-            showCustomAlert("⚠️ 案卷未完备", "请填写【时空结构】中的“阁下称呼”"); return;
+            showCustomAlert("⚠️ 案卷未完备", "请填写【时空结构】中的“阁下称呼”"); 
+            return;
         }
         
-        // 核心修改：校验必填项数组的长度，只要等于0就是没选
+        // 2. 校验多选数组是否为空（必须至少选一项）
         if (selectedCaseData.rel_spouse.length === 0 || selectedCaseData.rel_parentchild.length === 0 || selectedCaseData.focus.length === 0) {
-            showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】(伴侣/亲子) 及【核心诉求】的必填磁场标签，以便咨询师提取精准局象。"); return;
+            showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】(伴侣/亲子) 及【核心诉求】的必填磁场标签，以便咨询师提取精准局象。"); 
+            return;
         }
 
-        // 打包五大模块数据契约 (严格对齐后端)
+        // 3. 打包数据契约 (后端 booking.js 无需任何修改)
         const payload = {
             timeSpace: {
                 name: name,
@@ -817,7 +812,6 @@
                 birthInfo: document.getElementById('ts-birthinfo').value.trim()
             },
             fiveRelations: {
-                // 核心修改：使用 .join(' 、 ') 把选中的多项拼成清晰的字符串发给邮箱，如果为空则显示 "未选"
                 spouse: selectedCaseData.rel_spouse.length > 0 ? selectedCaseData.rel_spouse.join(' 、 ') : "未选",
                 parentchild: selectedCaseData.rel_parentchild.length > 0 ? selectedCaseData.rel_parentchild.join(' 、 ') : "未选",
                 workplace: selectedCaseData.rel_workplace.length > 0 ? selectedCaseData.rel_workplace.join(' 、 ') : "未选",
@@ -828,11 +822,11 @@
                 career: document.getElementById('ce-career').value.trim(),
                 edu: document.getElementById('ce-edu').value.trim()
             },
-            coreFocus: selectedCaseData.focus.join(' 、 '), 
+            coreFocus: selectedCaseData.focus.length > 0 ? selectedCaseData.focus.join(' 、 ') : "未选", 
             extraNotes: document.getElementById('extra-notes').value.trim()
         };
 
-        // 存入沙盒
+        // 存入沙盒并进入日历排期层
         localStorage.setItem('heLuoCaseDataPayload', JSON.stringify(payload));
         initCalendarLayer();
     }
