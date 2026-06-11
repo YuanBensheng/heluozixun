@@ -1,4 +1,25 @@
 import nodemailer from 'nodemailer';
+// 时空映射转换器
+function formatTimeDisplay(slotKey) {
+    // 拆解：2026-06-11_AM_1
+    const parts = slotKey.split('_'); 
+    const datePart = parts[0]; 
+    const period = parts[1]; // AM 或 PM
+    const index = parts[2];  // 1 或 2
+
+    const timeMap = {
+        'AM_1': '08:00 - 10:00',
+        'AM_2': '10:00 - 12:00',
+        'PM_1': '14:00 - 16:00',
+        'PM_2': '16:00 - 18:00'
+    };
+
+    const date = new Date(datePart);
+    const weekday = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"][date.getDay()];
+    const timeRange = timeMap[period + '_' + index] || "未知时段";
+    
+    return `${datePart} ${weekday} ${timeRange}`;
+}
 
 export default async function handler(req, res) {
     const url = process.env.KV_REST_API_URL;
@@ -72,7 +93,8 @@ export default async function handler(req, res) {
     
     <p style="margin: 8px 0;"><strong>预约姓名：</strong> ${ts.name || user.name}</p>
     <p style="margin: 8px 0;"><strong>微信号码：</strong> ${user.wechat}</p>
-    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${slot.replace('_', ' ')}</p>
+    ⁠<p style="margin: 8px 0;"><strong>预约时空：</strong> ${formatTimeDisplay(slot)}</p>
+    
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【一、核心诉求】
