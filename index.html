@@ -346,9 +346,15 @@
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 15px;
-            resize: none;
+            resize: none; /* 锁死用户拖拽边框，防止乱动 */
             outline: none;
-            line-height: 1.6;
+            
+            /* 核心修正：加入这三行锁死抖动 */
+            line-height: normal !important; 
+            position: relative;
+            z-index: 2;
+            transform: translateZ(0); /* 强制开启 GPU 加速，消除重绘导致的抖动 */
+            
             transition: all 0.3s;
         }
         .case-textarea:focus {
