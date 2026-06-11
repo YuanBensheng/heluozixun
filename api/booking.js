@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     
     <p style="margin: 8px 0;"><strong>预约姓名：</strong> ${ts.name || user.name}</p>
     <p style="margin: 8px 0;"><strong>微信号码：</strong> ${user.wechat}</p>
-    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${slot.replace('_', ' ')}</p>
+    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${req.body.displayTime || slot.replace('_', ' ')}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【一、核心诉求】
