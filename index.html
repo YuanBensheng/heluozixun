@@ -988,10 +988,12 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    slot: slotKey,
-                    user: { name: name, wechat: wechat },
-                    caseReport: caseData 
-                })
+    slot: slotKey,
+    displayTime: document.getElementById('final-time-string').innerText, // 抓取弹窗里已生成的清晰文本
+    user: { name: name, wechat: wechat },
+    caseReport: caseData 
+})
+
             });
 
             const result = await response.json();
