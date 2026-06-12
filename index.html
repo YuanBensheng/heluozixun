@@ -1132,13 +1132,25 @@ async function verifyAndRouting(inputPassword) {
     const type = pwd.charAt(0); 
     const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
 
-    if (isVipChannel && (type === 'E' || type === 'F' || type === 'W')) {
-        showCustomAlert("❌ 通道不匹配", "此为 VIP 专属通道，公域密钥无法在此激活！");
+    // ⚡️ 核心修正：建立公域密钥特征库（涵盖 E, F, W, P），因 pwd 已强制大写，这里只需匹配大写
+    const isPublicPassword = ['E', 'F', 'W', 'P'].includes(type);
+
+    // === 【双向严格隔离网关】 ===
+    if (isVipChannel && isPublicPassword) {
+        showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，公域密钥无法在此激活！");
+        const firstBtn = document.querySelector('#layer-pay-399 .btn');
+        const secondBtn = document.getElementById('active-ai-btn');
+        if(firstBtn) firstBtn.disabled = false;
+        if(secondBtn) secondBtn.disabled = false;
         return;
     }
 
     if (!isVipChannel && type === 'V') {
-        showCustomAlert("❌ 凭证不匹配", "检测到 VIP 专属密钥，请通过专属链接进入！");
+        showCustomAlert("❌ 凭证不匹配", "通道错误：检测到 VIP 专属密钥，请前往专属 VIP 链接登录！");
+        const firstBtn = document.querySelector('#layer-pay-399 .btn');
+        const secondBtn = document.getElementById('active-ai-btn');
+        if(firstBtn) firstBtn.disabled = false;
+        if(secondBtn) secondBtn.disabled = false;
         return;
     }
 
