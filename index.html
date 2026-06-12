@@ -176,7 +176,16 @@
             justify-content: space-between;
             gap: 30px;
         }
-        
+        /* 👑 局部特权豁免：强行解除支付板块的防长按与防复制限制 */
+        .flex-pay-container, 
+        .flex-pay-container * {
+            -webkit-touch-callout: default !important; /* 恢复微信/支付宝长按弹出原生菜单的功能 */
+            -webkit-user-select: auto !important;      /* 恢复文字选中功能 */
+            -khtml-user-select: auto !important;
+            -moz-user-select: auto !important;
+            -ms-user-select: auto !important;
+            user-select: auto !important;
+        }
         .qrcode-box { 
             width: 200px; 
             height: 200px; 
@@ -761,7 +770,15 @@
 
 <script>
     // ================= 全局防御机制 =================
-    document.addEventListener('contextmenu', event => event.preventDefault());
+    // ================= 全局防御机制 (带局部豁免) =================
+    document.addEventListener('contextmenu', event => {
+        // 如果用户点击或长按的区域，是在包含二维码的支付板块内，则直接放行，不拦截！
+        if (event.target.closest('.flex-pay-container')) {
+            return; 
+        }
+        // 其他所有区域依然保持绝对严密防守，禁止右键和长按
+        event.preventDefault();
+    });
     document.addEventListener('keydown', function(e) {
         if (e.key === 'F12' || 
            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || 
