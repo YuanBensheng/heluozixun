@@ -50,37 +50,34 @@ export default async function handler(req, res) {
             // 若抢占成功
             if (data.result === 1) {
                 if (user && caseReport) {
+                    // 🚀 启动异步邮件推送星图 (2秒熔断赛跑机制)
                     try {
                         const transporter = nodemailer.createTransport({
                             host: 'smtp.163.com',
                             port: 465,
                             secure: true, 
                             auth: {
-                                user: process.env.SMTP_USER || 'burujushi@163.com',
+                                user: process.env.SMTP_USER, // ⚡ 彻底移除明文兜底，全量依赖 Vercel 环境变量
                                 pass: process.env.SMTP_PASS   
                             }
                         });
 
-                        // 结构化解构前端传来的新 Schema，防止 undefined
                         const ts = caseReport.timeSpace || {};
                         const fr = caseReport.fiveRelations || {};
                         const ce = caseReport.careerEdu || {};
 
                         const mailOptions = {
-                            from: `"河洛咨询前置对齐系统" <${process.env.SMTP_USER || 'burujushi@163.com'}>`,
+                            from: `"河洛咨询前置对齐系统" <${process.env.SMTP_USER}>`,
                             to: 'heluopro@163.com',
                             subject: `【新局锁定】${slot.replace('_', ' ')}`,
                             html: `
 <div style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 700px; margin: 0 auto; color: #333333; line-height: 1.8; font-size: 15px; background-color: #ffffff; padding: 20px;">
-    
     <h2 style="text-align: center; font-size: 20px; font-weight: bold; border-bottom: 2px solid #333333; padding-bottom: 15px; margin-bottom: 30px;">
         河洛咨询 · 局象拓扑
     </h2>
-    
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 25px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【锁定凭证】
     </h3>
-    
     <p style="margin: 8px 0;"><strong>预约姓名：</strong> ${ts.name || user.name}</p>
     <p style="margin: 8px 0;"><strong>微信号码：</strong> ${user.wechat}</p>
     <p style="margin: 8px 0;"><strong>预约时空：</strong> ${req.body.displayTime || slot.replace('_', ' ')}</p>
@@ -121,17 +118,25 @@ export default async function handler(req, res) {
     <div style="margin-top: 50px; padding-top: 15px; border-top: 1px solid #dddddd; text-align: center; font-size: 12px; color: #999999;">
         此案卷由河洛咨询前置对齐系统自动汇总生成
     </div>
-
 </div>
 `
-
                         };
 
-                        await transporter.sendMail(mailOptions);
-                    } catch (emailError) {
-                        console.error("邮件投递遭受干扰，但时空沙盘已锁定：", emailError);
+                        // ⚡【核心改造：Promise 赛跑机制】⚡
+                        // 赛道 1：实际发邮件的任务（抛入后台不再死等，catch 住异常防止崩溃）
+                        const sendEmailTask = transporter.sendMail(mailOptions).catch(err => {
+                            console.error("后台邮件流转缓慢或失败，但云端已固化:", err);
+                        });
+
+                        // 赛道 2：两秒死亡倒计时
+                        const timeoutTask = new Promise((resolve) => setTimeout(() => resolve('TIMEOUT'), 2000));
+
+                        // 发令枪响：两者谁先执行完（邮件秒发成功，或者2秒到了邮件还没发完），系统都将立刻往下放行
+                        await Promise.race([sendEmailTask, timeoutTask]);
+
+                    } catch (emailSetupError) {
+                        console.error("邮件配置校验未通过，熔断保护启用:", emailSetupError);
                     }
-                }
                 return res.status(200).json({ success: true, message: "时空锁定成功！" });
             } else {
                 return res.status(400).json({ success: false, message: "该时间段已被抢占！" });
