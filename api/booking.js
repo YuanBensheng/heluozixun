@@ -137,6 +137,7 @@ export default async function handler(req, res) {
                     } catch (emailSetupError) {
                         console.error("邮件配置校验未通过，熔断保护启用:", emailSetupError);
                     }
+                  }  
                 return res.status(200).json({ success: true, message: "时空锁定成功！" });
             } else {
                 return res.status(400).json({ success: false, message: "该时间段已被抢占！" });
