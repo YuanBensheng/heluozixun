@@ -44,7 +44,7 @@ export default async function handler(req, res) {
         const response = await fetch(url, {
             method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
-            body: JSON.stringify(["SET", redisKey, "activated", "NX", "EX", "7200"])
+            body: JSON.stringify(["SET", redisKey, "activated", "NX"])
         });
         
         const data = await response.json();
