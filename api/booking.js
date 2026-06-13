@@ -23,12 +23,23 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-        const { slot, user, caseReport } = req.body;
+        const { slot, user, caseReport, authKey } = req.body;
         if (!slot) {
             return res.status(400).json({ error: "未选择具体的时间段" });
         }
 
         try {
+            // 🛡️ 新增防御：去云端查验该密钥是否被合法“永久燃烧”
+            const checkKey = await fetch(url, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+                body: JSON.stringify(["EXISTS", `burnt_key:${(authKey || '').toUpperCase()}`])
+            });
+            const keyData = await checkKey.json();
+            if (!keyData.result || keyData.result !== 1) {
+                return res.status(403).json({ success: false, message: "非法请求：密钥未激活或不存在！" });
+            }
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
