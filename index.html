@@ -200,7 +200,39 @@
             box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
         }
         .qrcode-box img { width: 92%; height: 92%; object-fit: contain; }
-
+/* 👑 支付方式无缝切换引擎 */
+        .pay-toggle-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .pay-toggle-btn {
+            background: #010614;
+            border: 1px solid #0d211c;
+            color: #527a6e;
+            padding: 6px 18px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+        }
+        .pay-toggle-btn.active-wx {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: #10b981;
+            color: #10b981;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+        .pay-toggle-btn.active-ali {
+            background: rgba(0, 163, 238, 0.15); /* 支付宝专属蓝 */
+            border-color: #00a3ee;
+            color: #00a3ee;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 163, 238, 0.3);
+        }
         .pay-desc-text {
             font-size: 14px; 
             color: #7ebdae; 
@@ -510,10 +542,18 @@
         <div class="holo-card-panel">
             <div class="article-title">－ 破局契约 －</div>
             <div class="flex-pay-container">
-                <div class="qrcode-box"><img src="./images/wechat-pay.png" alt="微信收款码"></div>
+                <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; margin: 0 auto;">
+                    <div class="qrcode-box">
+                        <img id="qr-img-399" src="./images/wechat-pay.png" alt="收款码">
+                    </div>
+                    <div class="pay-toggle-group">
+                        <div class="pay-toggle-btn active-wx" onclick="document.getElementById('qr-img-399').src='./images/wechat-pay.png'; this.classList.add('active-wx'); this.nextElementSibling.classList.remove('active-ali');">微信</div>
+                        <div class="pay-toggle-btn" onclick="document.getElementById('qr-img-399').src='./images/alipay-pay.png'; this.classList.add('active-ali'); this.previousElementSibling.classList.remove('active-wx');">支付宝</div>
+                    </div>
+                </div>
                 <div class="pay-desc-text">
-                    1.扫码支付 399 元，观摩体现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。只判断，不纠缠。<br><br>
-                    2.长按二维码【存储到手机】,随后打开微信/支付宝的‘扫一扫’，选择相册中的二维码完成支付。付款后获取「时空密钥」，在下方输入激活，即刻开启高维通道，系统同步启动 30 分钟倒计时。
+                    1. 请长按上方二维码<b style="color:#00ffcc;">【存储到手机】</b>，随后打开微信/支付宝的“扫一扫”，选择相册中的二维码支付 399 元，观摩体现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。只判断，不纠缠。<br><br>
+                    2. 付款后获取「时空密钥」，在下方输入激活，即刻开启高维通道，系统同步启动 30 分钟倒计时。
                 </div>
             </div>
         </div>
@@ -544,9 +584,17 @@
         <div class="holo-card-panel">
             <div class="article-title">－ 超维接引 －</div>
             <div class="flex-pay-container">
-                <div class="qrcode-box"><img src="./images/wechat-pay.png" alt="微信收款码"></div>
+                <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; margin: 0 auto;">
+                    <div class="qrcode-box">
+                        <img id="qr-img-3000" src="./images/wechat-pay.png" alt="收款码">
+                    </div>
+                    <div class="pay-toggle-group">
+                        <div class="pay-toggle-btn active-wx" onclick="document.getElementById('qr-img-3000').src='./images/wechat-pay.png'; this.classList.add('active-wx'); this.nextElementSibling.classList.remove('active-ali');">微信</div>
+                        <div class="pay-toggle-btn" onclick="document.getElementById('qr-img-3000').src='./images/alipay-pay.png'; this.classList.add('active-ali'); this.previousElementSibling.classList.remove('active-wx');">支付宝</div>
+                    </div>
+                </div>
                 <div class="pay-desc-text">
-                    1. 若你在影像中照见了破局的可能，请在此支付 3000 元，获取「深度破局」的入场密钥。<br><br>
+                    1. 若你在影像中照见了破局的可能，请长按上方二维码<b style="color:#00ffcc;">【存储到手机】</b>，随后打开微信/支付宝的“扫一扫”，选择相册中的二维码支付 3000 元，获取「深度破局」的入场密钥。<br><br>
                     2. 这不是一次简单的咨询购买，而是对你我能量场的一次郑重结界。(以 3000 元为界，锁定 2 小时专属场域。延展部分按 1000 元/小时进行能量对价，其他特定时空产生的损耗另计。)
                 </div>
             </div>
