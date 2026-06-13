@@ -23,13 +23,12 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-        const { slot, user, caseReport, displayTime } = req.body;
+        const { slot, user, caseReport } = req.body;
         if (!slot) {
             return res.status(400).json({ error: "未选择具体的时间段" });
         }
 
         try {
-            // 1. 【核心原子锁】：优先抢占时空资源，不纠缠
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
@@ -39,35 +38,30 @@ export default async function handler(req, res) {
 
             // 若抢占成功
             if (data.result === 1) {
-                
-                // 2. 【异步并发投递】：独立封装邮件任务
                 if (user && caseReport) {
-                    const sendEmailTask = async () => {
-                        try {
-                            const transporter = nodemailer.createTransport({
-                                host: 'smtp.163.com',
-                                port: 465,
-                                secure: true, 
-                                auth: {
-                                    // ⚠️ 安全红线：彻底屏蔽明文，强制从环境变量读取
-                                    user: process.env.SMTP_USER,
-                                    pass: process.env.SMTP_PASS   
-                                }
-                            });
+                    try {
+                        const transporter = nodemailer.createTransport({
+                            host: 'smtp.163.com',
+                            port: 465,
+                            secure: true, 
+                            auth: {
+                                user: process.env.SMTP_USER || 'burujushi@163.com',
+                                pass: process.env.SMTP_PASS   
+                            }
+                        });
 
-                            const ts = caseReport.timeSpace || {};
-                            const fr = caseReport.fiveRelations || {};
-                            const ce = caseReport.careerEdu || {};
-                            // 获取更直观的显示时间，回退取 slot
-                            const finalTime = displayTime || slot.replace('_', ' ');
+                        // 结构化解构前端传来的新 Schema，防止 undefined
+                        const ts = caseReport.timeSpace || {};
+                        const fr = caseReport.fiveRelations || {};
+                        const ce = caseReport.careerEdu || {};
 
-                            const mailOptions = {
-                                from: `"河洛咨询前置对齐系统" <${process.env.SMTP_USER}>`,
-                                // 推荐将收件人也做到环境变量中，若未设置则兜底发往 heluopro@163.com
-                                to: process.env.RECEIVER_EMAIL || 'heluopro@163.com',
-                                subject: `【新局锁定】${finalTime}`,
-                                html: `
+                        const mailOptions = {
+                            from: `"河洛咨询前置对齐系统" <${process.env.SMTP_USER || 'burujushi@163.com'}>`,
+                            to: 'heluopro@163.com',
+                            subject: `【新局锁定】${slot.replace('_', ' ')}`,
+                            html: `
 <div style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 700px; margin: 0 auto; color: #333333; line-height: 1.8; font-size: 15px; background-color: #ffffff; padding: 20px;">
+    
     <h2 style="text-align: center; font-size: 20px; font-weight: bold; border-bottom: 2px solid #333333; padding-bottom: 15px; margin-bottom: 30px;">
         河洛咨询 · 局象拓扑
     </h2>
@@ -75,9 +69,10 @@ export default async function handler(req, res) {
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 25px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【锁定凭证】
     </h3>
+    
     <p style="margin: 8px 0;"><strong>预约姓名：</strong> ${ts.name || user.name}</p>
     <p style="margin: 8px 0;"><strong>微信号码：</strong> ${user.wechat}</p>
-    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${finalTime}</p>
+    <p style="margin: 8px 0;"><strong>预约时空：</strong> ${req.body.displayTime || slot.replace('_', ' ')}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 30px; border-bottom: 1px dashed #cccccc; padding-bottom: 8px;">
         【一、核心诉求】
@@ -115,22 +110,17 @@ export default async function handler(req, res) {
     <div style="margin-top: 50px; padding-top: 15px; border-top: 1px solid #dddddd; text-align: center; font-size: 12px; color: #999999;">
         此案卷由河洛咨询前置对齐系统自动汇总生成
     </div>
-</div>`
-                            };
-                            await transporter.sendMail(mailOptions);
-                        } catch (emailError) {
-                            // 错误仅抛在后台日志，不再阻断给前端的成功响应
-                            console.error("邮件投递遭受干扰，但时空沙盘已锁定：", emailError);
-                        }
-                    };
 
-                    // 3. 【极速响应赛跑】：设立 2000 毫秒的绝对超时底线
-                    // 只要超过 2 秒，不管邮件发出去没有，立刻放前端通行！
-                    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000));
-                    await Promise.race([sendEmailTask(), timeoutPromise]);
+</div>
+`
+
+                        };
+
+                        await transporter.sendMail(mailOptions);
+                    } catch (emailError) {
+                        console.error("邮件投递遭受干扰，但时空沙盘已锁定：", emailError);
+                    }
                 }
-                
-                // 彻底阻断挂起，秒级返回成功
                 return res.status(200).json({ success: true, message: "时空锁定成功！" });
             } else {
                 return res.status(400).json({ success: false, message: "该时间段已被抢占！" });
