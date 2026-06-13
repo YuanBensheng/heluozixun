@@ -1151,51 +1151,7 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-const SECRET_SALT = "HeLuoGuoxue2026#@!QuantumKeyCenter";
 
-function sha256(ascii) {
-    function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
-    var mathPow = Math.pow, maxWord = mathPow(2, 32), result = '', words = [], asciiLength = ascii.length;
-    var hash = [], k = [], primeCounter = 0, isPrime = {};
-    for (var n = 2; primeCounter < 64; n++) {
-        if (!isPrime[n]) {
-            for (var i = n * n; i < 312; i += n) isPrime[i] = true;
-            if (primeCounter < 8) hash.push((mathPow(n, 0.5) * maxWord) | 0);
-            k.push((mathPow(n, 1/3) * maxWord) | 0);
-            primeCounter++;
-        }
-    }
-    ascii += '\x80';
-    while (ascii.length % 64 - 56) ascii += '\x00';
-    for (var i = 0; i < ascii.length; i++) {
-        var j = ascii.charCodeAt(i);
-        if (j >> 8) return;
-        words[i >> 2] |= j << (24 - (i % 4) * 8);
-    }
-    words[words.length] = ((asciiLength * 8) / maxWord) | 0;
-    words[words.length] = (asciiLength * 8) | 0;
-    for (var j = 0; j < words.length; j += 16) {
-        var w = words.slice(j, j + 16), oldHash = hash.slice(0);
-        for (var i = 0; i < 64; i++) {
-            var w16 = w[i - 16], w15 = w[i - 15], w7 = w[i - 7], w2 = w[i - 2];
-            var s0 = i < 16 ? w[i] : (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3));
-            var s1 = i < 16 ? w[i] : (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10));
-            w[i] = i < 16 ? w[i] : (w16 + s0 + w7 + s1) | 0;
-            var ch = (hash[4] & hash[5]) ^ (~hash[4] & hash[6]), maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
-            var s0_h = rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22), s1_h = rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25);
-            var t1 = (hash[7] + s1_h + ch + k[i] + w[i]) | 0, t2 = (s0_h + maj) | 0;
-            hash = [(t1 + t2) | 0].concat(hash); hash[4] = (hash[4] + t1) | 0; hash.length = 8;
-        }
-        for (var i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
-    }
-    for (var i = 0; i < 8; i++) {
-        for (var j = 3; j + 1; j--) {
-            var b = (hash[i] >> (j * 8)) & 255;
-            result += (b < 16 ? '0' : '') + b.toString(16);
-        }
-    }
-    return result;
-}
 
 async function verifyAndRouting(inputPassword) {
     if (!inputPassword) {
@@ -1206,60 +1162,32 @@ async function verifyAndRouting(inputPassword) {
     const pwd = inputPassword.trim().toUpperCase();
 
     if (localStorage.getItem('burnt_' + pwd)) {
-        showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被激活使用，无法二次冒领！");
+        showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！");
         return;
     }
 
     const type = pwd.charAt(0); 
     const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
-
-    // ⚡️ 核心修正：建立公域密钥特征库（涵盖 E, F, W, P），因 pwd 已强制大写，这里只需匹配大写
     const isPublicPassword = ['E', 'F', 'W', 'P'].includes(type);
 
-    // === 【双向严格隔离网关】 ===
+    // === 【双向严格隔离网关 - 前端快速拦截】 ===
     if (isVipChannel && isPublicPassword) {
         showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，公域密钥无法在此激活！");
-        const firstBtn = document.querySelector('#layer-pay-399 .btn');
-        const secondBtn = document.getElementById('active-ai-btn');
-        if(firstBtn) firstBtn.disabled = false;
-        if(secondBtn) secondBtn.disabled = false;
         return;
     }
-
     if (!isVipChannel && type === 'V') {
         showCustomAlert("❌ 凭证不匹配", "通道错误：检测到 VIP 专属密钥，请前往专属 VIP 链接登录！");
-        const firstBtn = document.querySelector('#layer-pay-399 .btn');
-        const secondBtn = document.getElementById('active-ai-btn');
-        if(firstBtn) firstBtn.disabled = false;
-        if(secondBtn) secondBtn.disabled = false;
         return;
     }
 
-    let isMatch = false;
-    if (pwd.length === 6) {
-        let client = pwd.substring(1, 5);       
-        let providedCheckDigit = pwd.charAt(5); 
-
-        const stringToCheck = type + client + SECRET_SALT;
-        const fullHash = sha256(stringToCheck).toUpperCase();
-        let expectedCheckDigit = fullHash.charAt(0); 
-
-        if (providedCheckDigit === expectedCheckDigit) {
-            isMatch = true;
-        }
-    }
-
-    if (!isMatch) {
-        showCustomAlert("❌ 对齐失败", "密钥未与当前时空对齐，请重新核对或联系咨询师！");
-        return;
-    }
-    
+    // 锁定按钮，防止手抖狂点
     const firstBtn = document.querySelector('#layer-pay-399 .btn');
     const secondBtn = document.getElementById('active-ai-btn');
     if(firstBtn) firstBtn.disabled = true;
     if(secondBtn) secondBtn.disabled = true;
 
     try {
+        // 向云端发起验身与锁单请求
         const cloudResponse = await fetch('/api/verify-key', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1267,8 +1195,9 @@ async function verifyAndRouting(inputPassword) {
         });
         const cloudResult = await cloudResponse.json();
 
+        // 无论密码不对、还是被别人用过，云端都会拦截并返回 message
         if (!cloudResponse.ok || !cloudResult.success) {
-            showCustomAlert("❌ 节点熔断", cloudResult.message || "该时空密钥已被其他节点熔断，无法二次冒领！");
+            showCustomAlert("❌ 对齐失败", cloudResult.message || "未知能量阻断，请重试。");
             if(firstBtn) firstBtn.disabled = false;
             if(secondBtn) secondBtn.disabled = false;
             return;
@@ -1280,13 +1209,16 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
+    // 解锁按钮
     if(firstBtn) firstBtn.disabled = false;
     if(secondBtn) secondBtn.disabled = false;
 
+    // 鉴权彻底通过，记录身份特征并开始路由分发
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
     localStorage.setItem('active_pwd', pwd);
 
+    // ====== 下面的路由逻辑保持原样不变 ======
     if (type === 'V') {
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
