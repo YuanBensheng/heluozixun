@@ -1076,9 +1076,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
     slot: slotKey,
-    displayTime: document.getElementById('final-time-string').innerText, // 抓取弹窗里已生成的清晰文本
+    displayTime: document.getElementById('final-time-string').innerText, 
     user: { name: name, wechat: wechat },
-    caseReport: caseData 
+    caseReport: caseData,
+    authKey: localStorage.getItem('active_pwd') // ⚡【新增】附带刚激活的密钥发给后端验身
 })
 
             });
