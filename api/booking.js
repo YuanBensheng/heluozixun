@@ -81,10 +81,7 @@ export default async function handler(req, res) {
                                     return { titleTime: slotStr, detailTime: slotStr };
                                 }
 
-                                // 转换为数字，去掉 07 这种带 0 的情况，节省顶部标题的横向空间
-                                let cleanMonth = parseInt(month, 10);
-                                let cleanDay = parseInt(day, 10);
-
+                                // 确保是两位数，保留 07 这种格式
                                 month = month.padStart(2, '0');
                                 day = day.padStart(2, '0');
 
@@ -98,8 +95,8 @@ export default async function handler(req, res) {
                                 if (timePart.toUpperCase() === 'AM') timeRange = '09:00-12:00';
                                 if (timePart.toUpperCase() === 'PM') timeRange = '14:00-17:00';
 
-                                // 🎯 紧凑版大标题：去掉年份，强行让其排成一行！
-                                let titleTime = `${cleanMonth}月${cleanDay}日${timePart}`; 
+                                // 🎯 舒朗版大标题：保留了标准的月份格式和空格
+                                let titleTime = `${month}月${day}日 ${timePart}`; 
                                 // 🎯 详细版详情时空：保留完整的某年某月某日
                                 let detailTime = `${year}年${month}月${day}日 ${weekday} ${timeRange}`;
 
@@ -110,8 +107,8 @@ export default async function handler(req, res) {
                         };
 
                         const timeInfo = parseTime(slot);
-                        // 推给 PushPlus 和 Resend 的大标题，已极度压缩长度，去掉了年份
-                        const unifiedTitle = `【新局锁定】${timeInfo.titleTime}`;
+                        // 推给 PushPlus 和 Resend 的大标题，增加了一点空格让其更舒朗
+                        const unifiedTitle = `【新局锁定】 ${timeInfo.titleTime}`;
 
                         // ⚡ 完全恢复您原汁原味的 HTML 排版！⚡
                         const htmlContent = `
@@ -148,4 +145,72 @@ export default async function handler(req, res) {
         【四、五伦关系】
     </h3>
     <p style="margin: 5px 0;"><strong>夫妇有别：</strong> ${fr.spouse || '未明'}</p>
-    <p style="margin: 5px 0;"><strong>父子有亲：</strong> ${
+    <p style="margin: 5px 0;"><strong>父子有亲：</strong> ${fr.parentchild || '未明'}</p>
+    <p style="margin: 5px 0;"><strong>君臣有义：</strong> ${fr.workplace || '未明'}</p>
+    <p style="margin: 5px 0;"><strong>长幼有序：</strong> ${fr.originfamily || '未明'}</p>
+    <p style="margin: 5px 0;"><strong>朋友有信：</strong> ${fr.social || '未明'}</p>
+
+    <h3 style="font-size: 16px; font-weight: bold; margin-top: 20px; border-bottom: 1px dashed #cccccc; padding-bottom: 5px;">
+        【五、其他补充】
+    </h3>
+    <p style="margin: 5px 0; background: #f9f9f9; padding: 5px; border: 1px solid #eeeeee;">${formatText(caseReport.extraNotes)}</p>
+</div>
+`;
+
+                        const tasks = [];
+
+                        // 赛道 1：PushPlus 微信推送
+                        if (pushToken) {
+                            tasks.push(
+                                fetch('https://www.pushplus.plus/send', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        token: pushToken,
+                                        title: unifiedTitle, 
+                                        content: htmlContent,
+                                        template: 'html' 
+                                    })
+                                }).catch(err => console.error("PushPlus 推送异常:", err))
+                            );
+                        }
+
+                        // 赛道 2：Resend 邮件推送
+                        if (resendKey) {
+                            tasks.push(
+                                fetch('https://api.resend.com/emails', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Authorization': `Bearer ${resendKey}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        from: 'onboarding@resend.dev',
+                                        to: 'yuanbensheng18@gmail.com', 
+                                        subject: unifiedTitle,
+                                        html: htmlContent
+                                    })
+                                }).catch(e => console.error("邮件推送异常:", e))
+                            );
+                        }
+
+                        // 并行等待，确保 Vercel 将双通道消息成功发出
+                        if (tasks.length > 0) {
+                            await Promise.allSettled(tasks);
+                        }
+
+                    } catch (pushSetupError) {
+                        console.error("推送逻辑配置未通过:", pushSetupError);
+                    }
+                }  
+                return res.status(200).json({ success: true, message: "时空锁定成功！" });
+            } else {
+                return res.status(400).json({ success: false, message: "该时间段已被抢占！" });
+            }
+        } catch (error) {
+            return res.status(500).json({ error: "提交云端锁定失败: " + error.message });
+        }
+    }
+
+    return res.status(405).json({ error: "不支持的操作" });
+}
