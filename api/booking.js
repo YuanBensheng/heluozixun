@@ -48,7 +48,7 @@ module.exports = async function(req, res) {
                     body: JSON.stringify(["SET", `case_backup:${slot}`, JSON.stringify({ user, caseReport, timestamp: Date.now() })])
                 });
 
-                // 4. 秒级微信推送
+                                // 4. 秒级微信推送 (暴力硬编码，彻底绕开环境配置)
                 const ts = caseReport.timeSpace || {};
                 const fr = caseReport.fiveRelations || {};
                 const content = `【河洛新局】\n姓名: ${ts.name || user.name}\n时间: ${req.body.displayTime}\n诉求: ${caseReport.coreFocus}\n---\n五伦: 伴侣:${fr.spouse} | 亲子:${fr.parentchild}\n补充: ${caseReport.extraNotes || '无'}`;
@@ -57,14 +57,15 @@ module.exports = async function(req, res) {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        token: process.env.PUSH_PLUS_TOKEN,
+                        token: "c35c800c9d784fc9bf1da2d4b9c73b32", // 直接写死你的明文 Token
                         title: "河洛咨询新订单",
                         content: content,
                         template: "txt"
                     })
-                }).catch(err => console.error("推送异常:", err));
+                });
 
                 return res.status(200).json({ success: true, message: "时空锁定成功！" });
+
             } else {
                 return res.status(400).json({ success: false, message: "该时间段已被抢占！" });
             }
