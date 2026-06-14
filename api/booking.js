@@ -57,7 +57,7 @@ export default async function handler(req, res) {
                             port: 465,
                             secure: true, 
                             auth: {
-                                user: process.env.SMTP_USER, // ⚡ 彻底移除明文兜底，全量依赖 Vercel 环境变量
+                                user: process.env.SMTP_USER || 'burujushi@163.com',
                                 pass: process.env.SMTP_PASS   
                             }
                         });
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
                         const ce = caseReport.careerEdu || {};
 
                         const mailOptions = {
-                            from: `"河洛咨询前置对齐系统" <${process.env.SMTP_USER}>`,
+                            from: `"河洛咨询前置对齐系统" <${process.env.SMTP_USER || 'burujushi@163.com'}>`,
                             to: 'heluopro@163.com',
                             subject: `【新局锁定】${slot.replace('_', ' ')}`,
                             html: `
