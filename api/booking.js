@@ -67,8 +67,10 @@ export default async function handler(req, res) {
                                 const [y, m, d] = dateStr.split('-');
                                 const dateObj = new Date(y, m - 1, d);
                                 const week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][dateObj.getDay()];
-                                const timeRange = timeType === 'AM' ? '08:00-10:00' : '14:00-16:00';
-                                return `${y}年${m}月${d}日 (${week}) ${timeRange}`;
+                                // 修改后的逻辑
+const timeRange = timeType === 'AM' ? '08:00-10:00' : '14:00-16:00';
+return `${y}-${m}-${d} (${week}) ${timeRange}`;
+
                             } catch (e) {
                                 return slotStr;
                             }
