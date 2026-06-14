@@ -576,7 +576,22 @@
             <div class="article-title">－ 认知对齐 －</div>
             <p class="article-main-text" style="margin-bottom: 20px;">下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义。</p>
             <div class="video-wrapper-inner">
-                <video src="" controls controlsList="nodownload noplaybackrate nofullscreen" disablePictureInPicture playsinline webkit-playsinline oncontextmenu="return false;" preload="none" poster="./images/video-cover.png"></video>
+                <video 
+    id="heluo-video" 
+    src="" 
+    controls 
+    controlsList="nodownload noplaybackrate" 
+    disablePictureInPicture 
+    playsinline="true" 
+    webkit-playsinline="true" 
+    x5-video-player-type="h5" 
+    x5-video-player-fullscreen="false" 
+    x-webkit-airplay="allow" 
+    oncontextmenu="return false;" 
+    preload="none" 
+    poster="./images/video-cover.png">
+</video>
+
                 <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
             </div>
         </div>
@@ -1152,6 +1167,33 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
+// ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
+async function loadVideoAsBlob(url, videoElement) {
+    try {
+        // 如果已经存在旧的 blob，先释放内存
+        if (videoElement.src.startsWith('blob:')) {
+            URL.revokeObjectURL(videoElement.src);
+        }
+        
+        // 发起静默提取请求
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('流提取失败');
+        
+        // 转化为二进制大对象
+        const blob = await response.blob();
+        // 生成幽灵本地链接 (如 blob:https://heluo.pro/xxx)
+        const blobUrl = URL.createObjectURL(blob);
+        
+        // 喂给播放器
+        videoElement.src = blobUrl;
+        videoElement.load();
+    } catch (error) {
+        console.error("高维加密流加载异常，已启动降级直连:", error);
+        // 降级方案：如果 Blob 提取失败，恢复直连，保证视频至少能看
+        videoElement.src = url; 
+    }
+}
+// ====================================================================
 
 
 async function verifyAndRouting(inputPassword) {
@@ -1246,12 +1288,12 @@ async function verifyAndRouting(inputPassword) {
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
         else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
 
-        const videoElement = document.querySelector('#layer-video video');
+                const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
-            videoElement.src = videoUrl;
+            loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
         }
-
         startDynamicWatermark(pwd);
+
 
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
@@ -1309,11 +1351,12 @@ function checkStateAndRestore() {
                 if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
                 else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
                 else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";  
-                const videoElement = document.querySelector('#layer-video video');
+                                const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) {
-                    videoElement.src = videoUrl;
+                    loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
                 }
                 startDynamicWatermark(activePwd);
+
             }
         } else { forceKickOut(); }
 
