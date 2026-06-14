@@ -3,36 +3,23 @@ module.exports = async function(req, res) {
     const token = process.env.KV_REST_API_TOKEN;
 
     if (!url || !token) {
-        return res.status(500).json({ error: "云端数据库钥匙未配置。" });
-    }
-
-    if (req.method === 'GET') {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${token}` },
-            body: JSON.stringify(["SMEMBERS", "booked_slots"])
-        });
-        const data = await response.json();
-        return res.status(200).json({ bookedSlots: data.result || [] });
+        return res.status(500).json({ error: "数据库配置缺失" });
     }
 
     if (req.method === 'POST') {
         const { slot, user, caseReport, authKey } = req.body;
-        if (!slot) return res.status(400).json({ error: "未选择时间段" });
-
+        
         try {
-            // 1. 验证密钥是否合法
+            // 1. 验证密钥
             const checkKey = await fetch(url, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
                 body: JSON.stringify(["EXISTS", `burnt_key:${(authKey || '').toUpperCase()}`])
             });
             const keyData = await checkKey.json();
-            if (!keyData.result || keyData.result !== 1) {
-                return res.status(403).json({ success: false, message: "非法请求：密钥未激活或不存在！" });
-            }
+            if (!keyData.result || keyData.result !== 1) return res.status(403).json({ message: "无效密钥" });
 
-            // 2. 尝试抢占时空
+            // 2. 抢占时空
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
@@ -41,37 +28,33 @@ module.exports = async function(req, res) {
             const data = await response.json();
 
             if (data.result === 1) {
-                // 3. 数据持久化备份
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { Authorization: `Bearer ${token}` },
-                    body: JSON.stringify(["SET", `case_backup:${slot}`, JSON.stringify({ user, caseReport, timestamp: Date.now() })])
-                });
-
-                                // 4. 秒级微信推送 (暴力硬编码，彻底绕开环境配置)
-                const ts = caseReport.timeSpace || {};
-                const fr = caseReport.fiveRelations || {};
-                const content = `【河洛新局】\n姓名: ${ts.name || user.name}\n时间: ${req.body.displayTime}\n诉求: ${caseReport.coreFocus}\n---\n五伦: 伴侣:${fr.spouse} | 亲子:${fr.parentchild}\n补充: ${caseReport.extraNotes || '无'}`;
+                // 3. 推送逻辑 (强制捕获所有网络异常)
+                const content = `【河洛新局】姓名:${user.name} 时间:${req.body.displayTime} 诉求:${caseReport.coreFocus}`;
                 
-                await fetch('https://www.pushplus.plus/send', {
+                const pushRes = await fetch('https://www.pushplus.plus/send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        token: "c35c800c9d784fc9bf1da2d4b9c73b32", // 直接写死你的明文 Token
-                        title: "河洛咨询新订单",
-                        content: content,
-                        template: "txt"
+                        token: "c35c800c9d784fc9bf1da2d4b9c73b32",
+                        title: "新订单",
+                        content: content
                     })
                 });
+                
+                const pushStatus = await pushRes.json();
+                
+                // 返回推送结果给前端，如果推送失败，前端会弹出错误
+                if (pushStatus.code !== 200) {
+                    return res.status(500).json({ success: false, message: "推送接口拒绝: " + JSON.stringify(pushStatus) });
+                }
 
-                return res.status(200).json({ success: true, message: "时空锁定成功！" });
-
+                return res.status(200).json({ success: true, message: "时空锁定且已推送！" });
             } else {
-                return res.status(400).json({ success: false, message: "该时间段已被抢占！" });
+                return res.status(400).json({ success: false, message: "该时段已被抢占" });
             }
         } catch (error) {
             return res.status(500).json({ error: "系统异常: " + error.message });
         }
     }
-    return res.status(405).json({ error: "不支持的操作" });
+    return res.status(405).json({ error: "Method not allowed" });
 }
