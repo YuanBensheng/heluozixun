@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function(req, res) {
     const url = process.env.KV_REST_API_URL;
     const token = process.env.KV_REST_API_TOKEN;
 
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         if (!slot) return res.status(400).json({ error: "未选择时间段" });
 
         try {
-            // 1. 验证密钥是否合法 (原子锁查验)
+            // 1. 验证密钥是否合法
             const checkKey = await fetch(url, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
                     body: JSON.stringify(["SET", `case_backup:${slot}`, JSON.stringify({ user, caseReport, timestamp: Date.now() })])
                 });
 
-                // 4. 秒级微信推送 (异步执行，绝不阻塞用户)
+                // 4. 秒级微信推送
                 const ts = caseReport.timeSpace || {};
                 const fr = caseReport.fiveRelations || {};
                 const content = `【河洛新局】\n姓名: ${ts.name || user.name}\n时间: ${req.body.displayTime}\n诉求: ${caseReport.coreFocus}\n---\n五伦: 伴侣:${fr.spouse} | 亲子:${fr.parentchild}\n补充: ${caseReport.extraNotes || '无'}`;
