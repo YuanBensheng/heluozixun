@@ -50,17 +50,19 @@ export default async function handler(req, res) {
             if (data.result === 1) {
                 if (user && caseReport) {
                     // 🚀 启动异步微信推送星图 (2秒熔断赛跑机制)
-                    try {
-                        // 【请确保 Vercel 中的环境变量名称为 PUSHPLUS_TOKEN】
-                        const pushToken = process.env.PUSHPLUS_TOKEN; 
+                    // 🚀 启动异步微信推送 (处理好换行符的逻辑)
+                            try {
+                                const pushToken = process.env.PUSHPLUS_TOKEN; 
 
-                        if (pushToken) {
-                            const ts = caseReport.timeSpace || {};
-                            const fr = caseReport.fiveRelations || {};
-                            const ce = caseReport.careerEdu || {};
+                                if (pushToken) {
+                                    const ts = caseReport.timeSpace || {};
+                                    const fr = caseReport.fiveRelations || {};
+                                    const ce = caseReport.careerEdu || {};
+                                    
+                                    // 【核心修改】定义换行处理函数，将文本中的 \n 替换为 HTML 换行标签 <br>
+                                    const formatText = (text) => (text || '').replace(/\n/g, '<br>');
 
-                            // 复用原有的极简排版，PushPlus 完美支持 HTML 渲染
-                            const htmlContent = `
+                                    const htmlContent = `
 <div style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #333333; line-height: 1.8; font-size: 15px; padding: 10px;">
     <h2 style="text-align: center; font-size: 18px; font-weight: bold; border-bottom: 2px solid #333333; padding-bottom: 10px; margin-bottom: 20px;">
         河洛咨询 · 局象拓扑
@@ -82,7 +84,7 @@ export default async function handler(req, res) {
     </h3>
     <p style="margin: 5px 0;"><strong>填表称呼：</strong> ${ts.name || '未填'} （身份：${ts.role || '未填'}）</p>
     <p style="margin: 5px 0;"><strong>常住成员：</strong> ${ts.members || '未填'}</p>
-    <p style="margin: 5px 0;"><strong>核心生辰：</strong><br><span style="background: #f9f9f9; padding: 5px; display: block; border: 1px solid #eeeeee;">${ts.birthInfo || '未填写'}</span></p>
+    <p style="margin: 5px 0;"><strong>核心生辰：</strong><br><span style="background: #f9f9f9; padding: 5px; display: block; border: 1px solid #eeeeee;">${formatText(ts.birthInfo)}</span></p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 20px; border-bottom: 1px dashed #cccccc; padding-bottom: 5px;">
         【三、事业学业】
@@ -102,7 +104,7 @@ export default async function handler(req, res) {
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 20px; border-bottom: 1px dashed #cccccc; padding-bottom: 5px;">
         【五、其他补充】
     </h3>
-    <p style="margin: 5px 0; background: #f9f9f9; padding: 5px; border: 1px solid #eeeeee;">${caseReport.extraNotes || '未留言'}</p>
+    <p style="margin: 5px 0; background: #f9f9f9; padding: 5px; border: 1px solid #eeeeee;">${formatText(caseReport.extraNotes)}</p>
 </div>
 `;
 
