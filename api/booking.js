@@ -53,7 +53,7 @@ module.exports = async function(req, res) {
                 const fr = caseReport.fiveRelations || {};
                 const content = `【河洛新局】\n姓名: ${ts.name || user.name}\n时间: ${req.body.displayTime}\n诉求: ${caseReport.coreFocus}\n---\n五伦: 伴侣:${fr.spouse} | 亲子:${fr.parentchild}\n补充: ${caseReport.extraNotes || '无'}`;
                 
-                fetch('http://www.pushplus.plus/send', {
+                fetch('https://www.pushplus.plus/send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
