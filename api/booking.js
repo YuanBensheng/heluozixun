@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-        const { slot, user, caseReport, authKey, displayTime } = req.body;
+        const { slot, user, caseReport, authKey } = req.body;
         if (!slot) {
             return res.status(400).json({ error: "未选择具体的时间段" });
         }
@@ -53,30 +53,72 @@ export default async function handler(req, res) {
                         const pushToken = process.env.PUSHPLUS_TOKEN; 
                         const resendKey = process.env.RESEND_API_KEY;
 
-                        // 提取您的原版深层嵌套数据
+                        // 提取原版深层嵌套数据
                         const ts = caseReport.timeSpace || {};
                         const fr = caseReport.fiveRelations || {};
                         const ce = caseReport.careerEdu || {};
                         
-                        // 换行处理函数
                         const formatText = (text) => (text || '').replace(/\n/g, '<br>');
 
-                        // 统一使用您原本清爽的标题
-                        const timeString = displayTime || slot.replace('_', ' ');
-                        const unifiedTitle = `【新局锁定】${timeString}`;
+                        // ⚡ 核心新增：自动时空推算引擎 ⚡
+                        const parseTime = (slotStr) => {
+                            try {
+                                let currentYear = new Date().getFullYear();
+                                let datePart = slotStr.split('_')[0] || ''; 
+                                let timePart = slotStr.split('_')[1] || ''; 
 
-                        // ⚡ 完美照搬您原本的排版设计 ⚡
+                                let year = currentYear, month = '', day = '';
+                                let parts = datePart.split('-');
+                                
+                                if (parts.length === 3) {
+                                    year = parts[0];
+                                    month = parts[1];
+                                    day = parts[2];
+                                } else if (parts.length === 2) {
+                                    month = parts[0];
+                                    day = parts[1];
+                                } else {
+                                    return { titleTime: slotStr, detailTime: slotStr };
+                                }
+
+                                // 确保两位数
+                                month = month.padStart(2, '0');
+                                day = day.padStart(2, '0');
+
+                                // 推算周几
+                                let dateObj = new Date(`${year}-${month}-${day}`);
+                                let days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+                                let weekday = days[dateObj.getDay()];
+
+                                // 推算时间段
+                                let timeRange = timePart;
+                                if (timePart.toUpperCase() === 'AM') timeRange = '09:00-12:00';
+                                if (timePart.toUpperCase() === 'PM') timeRange = '14:00-17:00';
+
+                                let titleTime = `${year}年${month}月${day}日 ${timePart}`;
+                                let detailTime = `${year}年${month}月${day}日 ${weekday} ${timeRange}`;
+
+                                return { titleTime, detailTime };
+                            } catch (e) {
+                                return { titleTime: slotStr, detailTime: slotStr };
+                            }
+                        };
+
+                        const timeInfo = parseTime(slot);
+                        const unifiedTitle = `【新局锁定】${timeInfo.titleTime}`;
+
+                        // ⚡ 完美照搬您原本的排版设计，仅将顶部替换为极简大标题和详细时空 ⚡
                         const htmlContent = `
 <div style="font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #333333; line-height: 1.8; font-size: 15px; padding: 10px;">
     <h2 style="text-align: center; font-size: 18px; font-weight: bold; border-bottom: 2px solid #333333; padding-bottom: 10px; margin-bottom: 20px;">
-        河洛咨询 · 局象拓扑
+        ${unifiedTitle}
     </h2>
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 15px; border-bottom: 1px dashed #cccccc; padding-bottom: 5px;">
         【锁定凭证】
     </h3>
     <p style="margin: 5px 0;"><strong>预约姓名：</strong> ${ts.name || user.name || '未填'}</p>
     <p style="margin: 5px 0;"><strong>微信号码：</strong> ${user.wechat || '未填'}</p>
-    <p style="margin: 5px 0;"><strong>预约时空：</strong> ${timeString}</p>
+    <p style="margin: 5px 0;"><strong>预约时空：</strong> ${timeInfo.detailTime}</p>
 
     <h3 style="font-size: 16px; font-weight: bold; margin-top: 20px; border-bottom: 1px dashed #cccccc; padding-bottom: 5px;">
         【一、核心诉求】
