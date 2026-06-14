@@ -113,7 +113,7 @@ export default async function handler(req, res) {
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
                                     token: pushToken,
-                                    title: `【新局锁定】${slot.replace('_', ' ')} - ${ts.name || user.name}`,
+                                    title: `【新局锁定】${slot.replace('_', ' ')} `,
                                     content: htmlContent,
                                     template: 'html' // 明确告诉 PushPlus 这是 HTML 格式
                                 })
