@@ -1225,7 +1225,8 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-        if (type === 'E' || type === 'F' || type === 'W') {
+            // 替换区域开始
+    if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
         const videoElement = document.querySelector('#layer-video video');
 
@@ -1245,7 +1246,9 @@ async function verifyAndRouting(inputPassword) {
             }
         }
         startDynamicWatermark(pwd);
-    }
+    } // 这是一个对应 if (type === 'E'...) 的大括号
+    // 替换区域结束
+
 
 
 function checkStateAndRestore() {
