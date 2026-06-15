@@ -582,11 +582,9 @@
     controls 
     controlsList="nodownload noplaybackrate" 
     disablePictureInPicture 
-    playsinline="true" 
-    webkit-playsinline="true" 
-    x5-video-player-type="h5" 
-    x5-video-player-fullscreen="false" 
-    x-webkit-airplay="allow" 
+    playsinline 
+    webkit-playsinline 
+    x5-playsinline="true" 
     oncontextmenu="return false;" 
     preload="none" 
     poster="./images/video-cover.png">
@@ -1168,29 +1166,35 @@ const PAGE_THANKYOU_ID  = 'layer-thankyou';
 
 let globalTimerInterval = null;
 // ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
+// ================= 视频流安全加载引擎 (智能分流版) =================
 async function loadVideoAsBlob(url, videoElement) {
+    // 👑 核心修正：嗅探物理设备环境
+    const ua = navigator.userAgent.toLowerCase();
+    const isMobile = /iphone|ipad|ipod|android/.test(ua);
+
+    // 遵循“大道至简”：如果是移动端，直接斩断吃内存的 Blob 逻辑，启动原生直连
+    if (isMobile) {
+        console.log("河洛系统预判：移动端物理内存保护启动，开启原生极速直连");
+        videoElement.src = url;
+        return; // 提前结束，绝不走底层的下载消耗
+    }
+
+    // PC端：内存充足，继续执行高维的 Blob 幽灵加密防御
     try {
-        // 如果已经存在旧的 blob，先释放内存
         if (videoElement.src.startsWith('blob:')) {
             URL.revokeObjectURL(videoElement.src);
         }
-        
-        // 发起静默提取请求
         const response = await fetch(url);
         if (!response.ok) throw new Error('流提取失败');
         
-        // 转化为二进制大对象
         const blob = await response.blob();
-        // 生成幽灵本地链接 (如 blob:https://heluo.pro/xxx)
         const blobUrl = URL.createObjectURL(blob);
         
-        // 喂给播放器
         videoElement.src = blobUrl;
         videoElement.load();
     } catch (error) {
         console.error("高维加密流加载异常，已启动降级直连:", error);
-        // 降级方案：如果 Blob 提取失败，恢复直连，保证视频至少能看
-        videoElement.src = url; 
+        videoElement.src = url;
     }
 }
 // ====================================================================
