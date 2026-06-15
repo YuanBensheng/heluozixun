@@ -1225,25 +1225,28 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    if (type === 'E' || type === 'F' || type === 'W') {
+        if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        // 🚀 更换为全新的 HLS 物理切片防御链接！
-        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-E.m3u8"; 
-        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-F.m3u8";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8";        
+        const videoElement = document.querySelector('#layer-video video');
 
-        // 启动 DPlayer 加载流媒体
-        initHlsPlayer(videoUrl, pwd);
-
-        const expiryTime = Date.now() + (30 * 60 * 1000); 
-        localStorage.setItem('videoExpiry', expiryTime);
-        localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
-        showTargetLayerOnly(PAGE_VIDEO_ID);
-        startGlobalTimer(expiryTime, 'video');
-        
-        showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启。\n当前安全停留时间：30分钟。");
+        if (type === 'W') {
+            // 🚀 W 已切片，启用工业级 HLS 防盗流
+            videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8";
+            // 这里调用我们之前定义好的 HLS 播放器初始化函数
+            initHlsPlayer(videoUrl, pwd); 
+        } else {
+            // E/F 暂时走旧 MP4 直连
+            if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+            else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+            
+            if (videoElement) {
+                videoElement.src = videoUrl;
+                videoElement.load();
+            }
+        }
+        startDynamicWatermark(pwd);
     }
-}
+
 
 function checkStateAndRestore() {
     let bugExp = localStorage.getItem('videoExpiry');
