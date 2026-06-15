@@ -648,7 +648,7 @@
                 <div class="case-option" onclick="selectCaseTag('focus', '工作事业/重大决策', this)">【工作事业/重大决策】</div>
                 <div class="case-option" onclick="selectCaseTag('focus', '个人烦恼/精神修行', this)">【个人烦恼/精神修行】</div>
             </div>
-            
+    
             <div class="case-section-title">二、时空结构（必填）</div>
             <div class="input-row-container" style="margin-top: 10px;">
                 <div class="form-group-half">
@@ -1168,41 +1168,31 @@ let globalTimerInterval = null;
 // ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
 // ================= 视频流安全加载引擎 (智能分流版) =================
 async function loadVideoAsBlob(url, videoElement) {
-    // 🚀 精准切换逻辑：如果检测到是 m3u8，直接赋予 src，跳过 Blob 幽灵加密（兼容 HLS 原生流）
-    if (url.includes('.m3u8')) {
+    // 👑 核心修正：如果是 m3u8，直接赋予 src 给 video 标签，原生播放，绝不进入 Blob 逻辑
+    if (url.endsWith('.m3u8')) {
         videoElement.src = url;
         videoElement.load();
         return; 
     }
 
-    // 原有的 Blob 保护逻辑，仅在 MP4 时生效
+    // 以下是原来的 MP4 处理逻辑，保持不变
     const ua = navigator.userAgent.toLowerCase();
     const isMobile = /iphone|ipad|ipod|android/.test(ua);
     if (isMobile) {
-        console.log("河洛系统预判：移动端物理内存保护启动，开启原生极速直连");
         videoElement.src = url;
         return;
     }
 
-
-    // PC端：内存充足，继续执行高维的 Blob 幽灵加密防御
     try {
-        if (videoElement.src.startsWith('blob:')) {
-            URL.revokeObjectURL(videoElement.src);
-        }
         const response = await fetch(url);
-        if (!response.ok) throw new Error('流提取失败');
-        
         const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        
-        videoElement.src = blobUrl;
+        videoElement.src = URL.createObjectURL(blob);
         videoElement.load();
-    } catch (error) {
-        console.error("高维加密流加载异常，已启动降级直连:", error);
+    } catch (e) {
         videoElement.src = url;
     }
 }
+
 // ====================================================================
 
 
