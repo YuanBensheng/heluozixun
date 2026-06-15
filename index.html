@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>河洛咨询前置对齐系统</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js"></script>
+
     <script>
         // 在浏览器开始画网页前瞬间判断，如果是 VIP，给根节点打个标签
         if (window.location.search.toLowerCase().includes('type=vip')) {
@@ -200,7 +204,8 @@
             box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
         }
         .qrcode-box img { width: 92%; height: 92%; object-fit: contain; }
-/* 👑 支付方式无缝切换引擎 */
+        
+        /* 👑 支付方式无缝切换引擎 */
         .pay-toggle-group {
             display: flex;
             justify-content: center;
@@ -256,11 +261,18 @@
             position: relative; 
         }
         
+        /* 适配 DPlayer 内核 */
         .video-wrapper-inner video { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
             pointer-events: auto;
+        }
+        
+        /* DPlayer 右键菜单等底层界面的颜色微调 */
+        .dplayer-menu, .dplayer-setting {
+            background: rgba(1, 5, 18, 0.95) !important;
+            border: 1px solid rgba(16, 185, 129, 0.3) !important;
         }
         
         .auth-section { 
@@ -361,7 +373,6 @@
             font-size: 14px;
             box-sizing: border-box;
         }
-        /* 核心修正：利用媒体查询斩断手机端的“粘滞悬停”错觉，并使用翠绿色区分“悬停”与青色“选中”状态 */
         @media (hover: hover) {
             .case-option:hover {
                 border-color: #10b981; 
@@ -387,15 +398,12 @@
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 15px;
-            resize: none; /* 锁死用户拖拽边框，防止乱动 */
+            resize: none; 
             outline: none;
-            
-            /* 核心修正：加入这三行锁死抖动 */
             line-height: normal !important; 
             position: relative;
             z-index: 2;
-            transform: translateZ(0); /* 强制开启 GPU 加速，消除重绘导致的抖动 */
-            
+            transform: translateZ(0); 
             transition: all 0.3s;
         }
         .case-textarea:focus {
@@ -458,61 +466,39 @@
             .modal-card { width: 88% !important; padding: 20px !important; }
             .holo-card-panel { padding: 25px 20px !important; }
             .final-thank-card { padding: 35px 15px !important; }
-            /* --- 核心修正：取消手机端单列强制折叠，保持两宫格 --- */
-            .case-grid { 
-                grid-template-columns: repeat(2, 1fr) !important; /* 强制平分两列 */
-                gap: 8px !important; /* 手机端选项间距稍微收紧，防挤压 */
-            }
-            .case-option {
-                padding: 10px 4px !important; /* 手机端适度减小左右内边距 */
-                font-size: 13px !important; /* 手机端字号微调，避免文字折行不美观 */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 48px; /* 确保如果字数多折成两行，各个选项框高度依然一致 */
-            }
+            .case-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+            .case-option { padding: 10px 4px !important; font-size: 13px !important; display: flex; align-items: center; justify-content: center; min-height: 48px; }
         }
-        video::-webkit-media-controls-fullscreen-button { display: none !important; }
-        video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button { display: none !important; }
     </style>
 </head>
 <body class="noselect" ondragstart="return false">
 
 <div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(165deg, #000000 0%, #010614 50%, #020c24 100%); z-index: 9999999; color: #7ebdae; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
-    
     <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 80% 50% at 20% 80%, rgba(1, 6, 20, 0.95) 0%, transparent 50%), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 45%); pointer-events: none;"></div>
-
     <style>
-        /* ⚡ 修正：严格锁定在45度黄金对角线上，且幅度收敛为微调的 5px，增加缓入缓出的生命力 */
         @keyframes maskBounceRight {
             0%, 100% { transform: translate(0, 0); }
             50% { transform: translate(5px, -5px); }
         }
     </style>
-
     <div style="position: absolute; top: 30px; right: 30px; z-index: 99; animation: maskBounceRight 1.5s infinite ease-in-out;">
         <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px rgba(0, 255, 204, 0.6));">
             <line x1="7" y1="17" x2="17" y2="7"></line>
             <polyline points="7 7 17 7 17 17"></polyline>
         </svg>
     </div>
-
     <div style="position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 420px; background: rgba(1, 5, 18, 0.85); border: none; border-radius: 12px; padding: 40px 25px; box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(16,185,129,0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; box-sizing: border-box; z-index: 10;">
-
         <div style="margin-bottom: 20px;">
             <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
             </svg>
         </div>
-
         <h2 style="font-size: 22px; font-weight: 600; color: #00ffcc; letter-spacing: 2px; margin: 0 0 15px 0; text-shadow: 0 0 15px rgba(0, 255, 204, 0.5);">河洛咨询 · 温馨提示</h2>
         <div style="width: 40px; height: 2px; background: #10b981; margin: 0 auto 20px auto; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);"></div>
-
         <p style="font-size: 15px; color: #7ebdae; line-height: 1.8; text-align: justify; text-align-last: center; margin-bottom: 30px;">
             为保障您的咨询数据隐私与浏览体验，请不要在第三方社交软件内直接加载。
         </p>
-
         <div style="background: #010614; border: 1px solid #0d211c; border-radius: 8px; padding: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
             <p style="font-size: 15px; color: #10b981; margin: 0 0 12px 0; font-weight: bold; letter-spacing: 1px;">
                 请点击右上角 <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px; vertical-align: middle; color: #00ffcc; text-shadow: 0 0 8px rgba(0,255,204,0.4);">···</span>
@@ -522,10 +508,10 @@
                 <span style="background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; font-size: 14px; font-weight: bold; padding: 6px 14px; border-radius: 4px; letter-spacing: 1px; box-shadow: 0 0 10px rgba(0,255,204,0.2);">在浏览器打开</span>
             </div>
         </div>
-
         <p style="font-size: 10px; color: #2e7a68; margin-top: 30px; margin-bottom: 0; letter-spacing: 1.2px; text-transform: uppercase; white-space: nowrap;">SECURE ENVIRONMENT• HELUO CONSULTING</p>
     </div>
 </div>
+
 <div class="container">
 
     <div id="layer-pay-399" class="layer">
@@ -575,22 +561,10 @@
         <div class="holo-card-panel">
             <div class="article-title">－ 认知对齐 －</div>
             <p class="article-main-text" style="margin-bottom: 20px;">下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义。</p>
-            <div class="video-wrapper-inner">
-                <video 
-    id="heluo-video" 
-    src="" 
-    controls 
-    controlsList="nodownload noplaybackrate" 
-    disablePictureInPicture 
-    playsinline 
-    webkit-playsinline 
-    x5-playsinline="true" 
-    oncontextmenu="return false;" 
-    preload="none" 
-    poster="./images/video-cover.png">
-</video>
-
-                <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
+            
+            <div class="video-wrapper-inner" id="dplayer-container">
+                <div id="dplayer" style="width: 100%; height: 100%; background: #000000;"></div>
+                <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 9999; display: none;"></div>
             </div>
         </div>
 
@@ -628,7 +602,7 @@
         </div>
     </div>
 
-        <div id="layer-ai" class="layer">
+    <div id="layer-ai" class="layer">
         <h2>前置研判 · 局象拓扑</h2>
         <div class="sub-title">河洛智慧 · 高维咨询</div>
         
@@ -831,13 +805,10 @@
 
 <script>
     // ================= 全局防御机制 =================
-    // ================= 全局防御机制 (带局部豁免) =================
     document.addEventListener('contextmenu', event => {
-        // 如果用户点击或长按的区域，是在包含二维码的支付板块内，则直接放行，不拦截！
         if (event.target.closest('.flex-pay-container')) {
             return; 
         }
-        // 其他所有区域依然保持绝对严密防守，禁止右键和长按
         event.preventDefault();
     });
     document.addEventListener('keydown', function(e) {
@@ -869,7 +840,7 @@
         modal.style.display = 'flex';
     }
 
-            // ================= 📋 案卷数据核心控制 (新版 Schema) =================
+    // ================= 📋 案卷数据核心控制 =================
     let selectedCaseData = { 
         rel_spouse: [], 
         rel_parentchild: [], 
@@ -879,34 +850,27 @@
         focus: [] 
     };
     
-    // 全局统一：支持无限制多选与随时反选取消
     function selectCaseTag(type, value, element) {
         if (element.classList.contains('selected')) {
-            // 已选中则取消高亮，并从数组移除
             element.classList.remove('selected');
             selectedCaseData[type] = selectedCaseData[type].filter(v => v !== value);
         } else {
-            // 未选中则点亮，并推入数组
             element.classList.add('selected');
             selectedCaseData[type].push(value);
         }
     }
 
     async function saveCaseAndProceed() {
-        // 1. 校验基础必填项
         const name = document.getElementById('ts-name').value.trim();
         if (!name) {
             showCustomAlert("⚠️ 案卷未完备", "请填写【时空结构】中的“阁下称呼”"); 
             return;
         }
-        
-        // 2. 校验多选数组是否为空（必须至少选一项）
         if (selectedCaseData.rel_spouse.length === 0 || selectedCaseData.rel_parentchild.length === 0 || selectedCaseData.focus.length === 0) {
             showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】(伴侣/亲子) 及【核心诉求】的必填磁场标签，以便咨询师提取精准局象。"); 
             return;
         }
 
-        // 3. 打包数据契约 (后端 booking.js 无需任何修改)
         const payload = {
             timeSpace: {
                 name: name,
@@ -929,12 +893,9 @@
             extraNotes: document.getElementById('extra-notes').value.trim()
         };
 
-        // 存入沙盒并进入日历排期层
         localStorage.setItem('heLuoCaseDataPayload', JSON.stringify(payload));
         initCalendarLayer();
     }
-
-
 
     let globalBookedSlots = {}; 
 
@@ -958,8 +919,6 @@
 
     window.addEventListener('DOMContentLoaded', () => { syncSlotsFromCloud(); });
 
-    const P_A_S_S = "2468"; const P_A_S_S_ADV = "1357"; 
-
     function triggerEnergySync() {
         const btn = document.getElementById('active-ai-btn'); const loaderBox = document.getElementById('loader-box'); const statusText = document.getElementById('sync-status-text');
         btn.disabled = true; loaderBox.style.display = "block";
@@ -977,7 +936,7 @@
         }, 1200);
     }
 
-    let currentDisplayDate = new Date(); const todayDate = new Date(); const maxFutureDate = new Date(new Date().setFullYear(todayDate.getFullYear() + 1)); 
+    let currentDisplayDate = new Date(); const todayDate = new Date(); 
     let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
 
     async function initCalendarLayer() {
@@ -1076,25 +1035,22 @@
         const slotKey = `${chosenDateKey}_${chosenPeriod}`; 
 
         try {
-            // 提取前面缓存的案卷全量数据
             let caseData = {};
             const cachedCase = localStorage.getItem('heLuoCaseDataPayload');
             if (cachedCase) {
                 caseData = JSON.parse(cachedCase);
             }
 
-            // 修改点1：触发后台 API 进行同步，顺带把前置案卷作为 caseReport 发送给后台
             const response = await fetch('/api/booking', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-    slot: slotKey,
-    displayTime: document.getElementById('final-time-string').innerText, 
-    user: { name: name, wechat: wechat },
-    caseReport: caseData,
-    authKey: localStorage.getItem('active_pwd') // ⚡【新增】附带刚激活的密钥发给后端验身
-})
-
+                    slot: slotKey,
+                    displayTime: document.getElementById('final-time-string').innerText, 
+                    user: { name: name, wechat: wechat },
+                    caseReport: caseData,
+                    authKey: localStorage.getItem('active_pwd') 
+                })
             });
 
             const result = await response.json();
@@ -1104,7 +1060,6 @@
                 finalTimeStrGlobal = chosenDate + " " + chosenTime;
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
-                // 修改点2：不再复制全表明文内容，仅保留3行极简双向核对凭证
                 const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n锁定场域：${chosenDate} ${chosenTime}\n溯源代号：${name}\n微信号码：${wechat}`;
                 
                 const proceedToModal = () => {
@@ -1138,13 +1093,10 @@
     }
     
     function switchLayer(fromId, toId) { 
-        document.querySelectorAll('video').forEach(vid => {
-            vid.pause();    
-            vid.muted = true; 
-        });
+        if (window.dp) window.dp.pause();
 
         if (document.exitPictureInPicture) {
-            document.exitPictureInPicture();
+            document.exitPictureInPicture().catch(() => {});
         }
 
         document.getElementById(fromId).style.display = 'none'; 
@@ -1165,40 +1117,34 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-// ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
-// ================= 视频流安全加载引擎 (智能分流版) =================
-async function loadVideoAsBlob(url, videoElement) {
-    // 👑 核心修正：嗅探物理设备环境
-    const ua = navigator.userAgent.toLowerCase();
-    const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
-    // 遵循“大道至简”：如果是移动端，直接斩断吃内存的 Blob 逻辑，启动原生直连
-    if (isMobile) {
-        console.log("河洛系统预判：移动端物理内存保护启动，开启原生极速直连");
-        videoElement.src = url;
-        return; // 提前结束，绝不走底层的下载消耗
+// ================= 视频流安全加载引擎 (HLS + AES-128 工业级防盗版) =================
+window.dp = null; // 初始化 DPlayer 实例全局变量
+
+function initHlsPlayer(url, pwd) {
+    const container = document.getElementById('dplayer');
+    
+    // 如果之前已有播放器在运行，先将其彻底销毁，防止内存泄漏和声音叠加
+    if (window.dp) {
+        window.dp.destroy();
     }
 
-    // PC端：内存充足，继续执行高维的 Blob 幽灵加密防御
-    try {
-        if (videoElement.src.startsWith('blob:')) {
-            URL.revokeObjectURL(videoElement.src);
-        }
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('流提取失败');
-        
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        
-        videoElement.src = blobUrl;
-        videoElement.load();
-    } catch (error) {
-        console.error("高维加密流加载异常，已启动降级直连:", error);
-        videoElement.src = url;
-    }
+    // 正式激活 DPlayer，填入您的加密切片链接
+    window.dp = new DPlayer({
+        container: container,
+        theme: '#00ffcc', // 完美融合您的东方未来主义主题色
+        video: {
+            url: url,
+            type: 'hls' // 声明底层为 HLS M3U8 切片流
+        },
+        contextmenu: [], // 彻底禁用右键菜单，阻断普通白嫖党下载
+        preventClickToggle: false // 允许点击画面暂停/播放
+    });
+
+    // 依然挂载动态溯源水印
+    startDynamicWatermark(pwd);
 }
 // ====================================================================
-
 
 async function verifyAndRouting(inputPassword) {
     if (!inputPassword) {
@@ -1217,7 +1163,6 @@ async function verifyAndRouting(inputPassword) {
     const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
     const isPublicPassword = ['E', 'F', 'W', 'P'].includes(type);
 
-    // === 【双向严格隔离网关 - 前端快速拦截】 ===
     if (isVipChannel && isPublicPassword) {
         showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，公域密钥无法在此激活！");
         return;
@@ -1227,14 +1172,12 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 锁定按钮，防止手抖狂点
     const firstBtn = document.querySelector('#layer-pay-399 .btn');
     const secondBtn = document.getElementById('active-ai-btn');
     if(firstBtn) firstBtn.disabled = true;
     if(secondBtn) secondBtn.disabled = true;
 
     try {
-        // 向云端发起验身与锁单请求
         const cloudResponse = await fetch('/api/verify-key', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1242,7 +1185,6 @@ async function verifyAndRouting(inputPassword) {
         });
         const cloudResult = await cloudResponse.json();
 
-        // 无论密码不对、还是被别人用过，云端都会拦截并返回 message
         if (!cloudResponse.ok || !cloudResult.success) {
             showCustomAlert("❌ 对齐失败", cloudResult.message || "未知能量阻断，请重试。");
             if(firstBtn) firstBtn.disabled = false;
@@ -1256,16 +1198,13 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 解锁按钮
     if(firstBtn) firstBtn.disabled = false;
     if(secondBtn) secondBtn.disabled = false;
 
-    // 鉴权彻底通过，记录身份特征并开始路由分发
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
     localStorage.setItem('active_pwd', pwd);
 
-    // ====== 下面的路由逻辑保持原样不变 ======
     if (type === 'V') {
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
@@ -1288,16 +1227,13 @@ async function verifyAndRouting(inputPassword) {
 
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
+        // 🚀 更换为全新的 HLS 物理切片防御链接！
+        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-E.m3u8"; 
+        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-F.m3u8";      
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8";        
 
-                const videoElement = document.querySelector('#layer-video video');
-        if (videoElement) {
-            loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
-        }
-        startDynamicWatermark(pwd);
-
+        // 启动 DPlayer 加载流媒体
+        initHlsPlayer(videoUrl, pwd);
 
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
@@ -1352,15 +1288,12 @@ function checkStateAndRestore() {
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
                 let videoUrl = "";
-                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";  
-                                const videoElement = document.querySelector('#layer-video video');
-                if (videoElement) {
-                    loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
-                }
-                startDynamicWatermark(activePwd);
-
+                // 🚀 恢复状态时同样换成新的 m3u8 链接
+                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-E.m3u8"; 
+                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-F.m3u8";      
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8";  
+                
+                initHlsPlayer(videoUrl, activePwd);
             }
         } else { forceKickOut(); }
 
@@ -1413,10 +1346,7 @@ function startGlobalTimer(expiry, type) {
 }
 
 function showTargetLayerOnly(targetId) {
-    document.querySelectorAll('video').forEach(vid => {
-        vid.pause();
-        vid.muted = true;
-    });
+    if (window.dp) window.dp.pause();
     
     if (document.pictureInPictureElement && document.exitPictureInPicture) {
         document.exitPictureInPicture().catch(() => {}); 
@@ -1435,17 +1365,12 @@ function showTargetLayerOnly(targetId) {
 }
 
 function forceKickOut() {
-    // 1. 斩断所有正在播放的音视频能量
-    document.querySelectorAll('video').forEach(vid => {
-        vid.pause();
-        vid.muted = true;
-    });
+    if (window.dp) window.dp.pause();
     
     if (document.exitPictureInPicture) {
         document.exitPictureInPicture().catch(() => {});
     }
     
-    // 2. 清除云端时空和本地所有倒计时、密钥缓存
     clearInterval(globalTimerInterval);
     localStorage.removeItem('currentLayer');
     localStorage.removeItem('videoExpiry');
@@ -1455,21 +1380,16 @@ function forceKickOut() {
     localStorage.removeItem('active_pwd'); 
     hideTimerBar();
 
-    // 3. --- 核心修正：不刷新页面，纯前端逻辑无痕闭环 ---
-    // 判断当前 URL 是不是 VIP 通道
     const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
     
     if (isVipChannel) {
-        // 如果是 VIP 通道，清空密码框，强行留在 VIP 的那个 layer-video（已被重置为输入密码页），绝对不会闪现公域
         const vipPwdInput1 = document.getElementById('password-input');
         const vipPwdInput2 = document.getElementById('advanced-password-input');
         if(vipPwdInput1) vipPwdInput1.value = "";
         if(vipPwdInput2) vipPwdInput2.value = "";
         
-        // 重新调用系统自带的恢复判定，它会自动把页面安全封存回 VIP 初始状态
         checkStateAndRestore();
     } else {
-        // 如果是普通公域通道，安全送回公域首页
         showTargetLayerOnly(PAGE_INDEX_ID);
     }
 }
