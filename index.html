@@ -1168,16 +1168,22 @@ let globalTimerInterval = null;
 // ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
 // ================= 视频流安全加载引擎 (智能分流版) =================
 async function loadVideoAsBlob(url, videoElement) {
-    // 👑 核心修正：嗅探物理设备环境
+    // 🚀 精准切换逻辑：如果检测到是 m3u8，直接赋予 src，跳过 Blob 幽灵加密（兼容 HLS 原生流）
+    if (url.includes('.m3u8')) {
+        videoElement.src = url;
+        videoElement.load();
+        return; 
+    }
+
+    // 原有的 Blob 保护逻辑，仅在 MP4 时生效
     const ua = navigator.userAgent.toLowerCase();
     const isMobile = /iphone|ipad|ipod|android/.test(ua);
-
-    // 遵循“大道至简”：如果是移动端，直接斩断吃内存的 Blob 逻辑，启动原生直连
     if (isMobile) {
         console.log("河洛系统预判：移动端物理内存保护启动，开启原生极速直连");
         videoElement.src = url;
-        return; // 提前结束，绝不走底层的下载消耗
+        return;
     }
+
 
     // PC端：内存充足，继续执行高维的 Blob 幽灵加密防御
     try {
@@ -1288,9 +1294,10 @@ async function verifyAndRouting(inputPassword) {
 
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8"; 
+      
 
                 const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
