@@ -648,7 +648,7 @@
                 <div class="case-option" onclick="selectCaseTag('focus', '工作事业/重大决策', this)">【工作事业/重大决策】</div>
                 <div class="case-option" onclick="selectCaseTag('focus', '个人烦恼/精神修行', this)">【个人烦恼/精神修行】</div>
             </div>
-    
+            
             <div class="case-section-title">二、时空结构（必填）</div>
             <div class="input-row-container" style="margin-top: 10px;">
                 <div class="form-group-half">
@@ -1168,31 +1168,35 @@ let globalTimerInterval = null;
 // ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
 // ================= 视频流安全加载引擎 (智能分流版) =================
 async function loadVideoAsBlob(url, videoElement) {
-    // 👑 核心修正：如果是 m3u8，直接赋予 src 给 video 标签，原生播放，绝不进入 Blob 逻辑
-    if (url.endsWith('.m3u8')) {
-        videoElement.src = url;
-        videoElement.load();
-        return; 
-    }
-
-    // 以下是原来的 MP4 处理逻辑，保持不变
+    // 👑 核心修正：嗅探物理设备环境
     const ua = navigator.userAgent.toLowerCase();
     const isMobile = /iphone|ipad|ipod|android/.test(ua);
+
+    // 遵循“大道至简”：如果是移动端，直接斩断吃内存的 Blob 逻辑，启动原生直连
     if (isMobile) {
+        console.log("河洛系统预判：移动端物理内存保护启动，开启原生极速直连");
         videoElement.src = url;
-        return;
+        return; // 提前结束，绝不走底层的下载消耗
     }
 
+    // PC端：内存充足，继续执行高维的 Blob 幽灵加密防御
     try {
+        if (videoElement.src.startsWith('blob:')) {
+            URL.revokeObjectURL(videoElement.src);
+        }
         const response = await fetch(url);
+        if (!response.ok) throw new Error('流提取失败');
+        
         const blob = await response.blob();
-        videoElement.src = URL.createObjectURL(blob);
+        const blobUrl = URL.createObjectURL(blob);
+        
+        videoElement.src = blobUrl;
         videoElement.load();
-    } catch (e) {
+    } catch (error) {
+        console.error("高维加密流加载异常，已启动降级直连:", error);
         videoElement.src = url;
     }
 }
-
 // ====================================================================
 
 
@@ -1284,10 +1288,9 @@ async function verifyAndRouting(inputPassword) {
 
     if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-                if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8"; 
-      
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
 
                 const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
