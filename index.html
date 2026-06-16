@@ -1167,14 +1167,14 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-// ================= 智能视频流驱动引擎 (完美懒加载版：恢复封面与点击) =================
+// ================= 智能视频流驱动引擎 (对齐 EF 视频：静默预载，手动秒开) =================
 function smartLoadVideo(url, videoElement) {
     setTimeout(async () => {
         const isM3U8 = url.toLowerCase().includes('.m3u8');
         const ua = navigator.userAgent.toLowerCase();
         const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
-        // 1. 彻底清理上一局的战场
+        // 1. 彻底清空上一局的残留
         if (window.heluoHlsInstance) {
             window.heluoHlsInstance.destroy();
             window.heluoHlsInstance = null;
@@ -1187,35 +1187,22 @@ function smartLoadVideo(url, videoElement) {
         if (isM3U8) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
                 
-                // 👑 核心修正 1：彻底关闭自动拉取，让视频安静地展示您的封面图！
-                window.heluoHlsInstance = new Hls({
-                    autoStartLoad: false 
-                });
+                // 👑 终极修正：去掉懒加载，恢复 HLS 引擎默认的“静默预载”能力！
+                // 它会在后台安静地拉取前几个切片，但【绝对不】替客户点击播放。
+                window.heluoHlsInstance = new Hls(); 
                 
+                window.heluoHlsInstance.loadSource(url);
                 window.heluoHlsInstance.attachMedia(videoElement);
-                window.heluoHlsInstance.on(Hls.Events.MEDIA_ATTACHED, function () {
-                    window.heluoHlsInstance.loadSource(url); // 仅读取剧本，绝对不下载视频画面
-                });
-
-                // 👑 核心修正 2：监听真实客户的点击动作
-                const playHandler = function() {
-                    if (window.heluoHlsInstance) {
-                        console.log("河洛系统：客户已点击，开始拉取切片...");
-                        window.heluoHlsInstance.startLoad(); // 只有客户真点击了，才开始拉流
-                    }
-                    // 触发一次后立刻移除监听
-                    videoElement.removeEventListener('play', playHandler);
-                };
                 
-                // 绑定点击监听器
-                videoElement.addEventListener('play', playHandler);
+                // (注：这里删除了所有的 play() 代码和各种复杂的点击监听)
+                // 就让它像 EF 视频一样，准备好数据，安静地等待客户的那一次神圣点击。
 
                 window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) console.error("HLS引擎报错:", data);
+                    if (data.fatal) console.error("HLS引擎底层报错:", data);
                 });
 
             } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                // 苹果设备原生支持，天然自带封面图和点击播放逻辑
+                // 苹果设备原生直连
                 videoElement.src = url;
             }
             return;
@@ -1224,7 +1211,6 @@ function smartLoadVideo(url, videoElement) {
         // 3. 普通 MP4 视频逻辑 (E / F密码)
         if (isMobile) {
             videoElement.src = url;
-            // (注：已删掉激进的 play() 代码，恢复 E/F 视频的封面图状态)
             return;
         }
 
@@ -1236,13 +1222,13 @@ function smartLoadVideo(url, videoElement) {
             if (!response.ok) throw new Error('流提取失败');
             const blob = await response.blob();
             videoElement.src = URL.createObjectURL(blob);
-            // (注：同样删掉了激进的 play()，安静等待客户点击)
         } catch (error) {
             videoElement.src = url; 
         }
     }, 100); 
 }
 // ====================================================================
+
 
 
 
