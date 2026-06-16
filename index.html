@@ -1325,7 +1325,7 @@ async function verifyAndRouting(inputPassword) {
         let videoUrl = "";
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output_noenc.m3u8";        
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";        
 
                         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
@@ -1389,7 +1389,7 @@ function checkStateAndRestore() {
                 let videoUrl = "";
                                 if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
                 else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output_noenc.m3u8"; // 👑 修正为正确的 M3U8 切片地址
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8"; // 👑 修正为正确的 M3U8 切片地址
                 
                 const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) {
