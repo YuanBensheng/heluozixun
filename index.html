@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>河洛咨询前置对齐系统</title>
-    
+    <script>
+        // 在浏览器开始画网页前瞬间判断，如果是 VIP，给根节点打个标签
+        if (window.location.search.toLowerCase().includes('type=vip')) {
+            document.documentElement.classList.add('is-vip-mode');
+        }
+    </script>
+
     <style>
         /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
         /* ================= 防闪烁补丁 ================= */
@@ -1159,46 +1165,38 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-// ================= 视频流安全加载引擎 (HLS 切片加密版) =================
-function loadHlsVideo(url, videoElement) {
-    // 1. 现代浏览器（安卓/PC）通过 Hls.js 引擎接管切片解密与播放
-    if (Hls.isSupported()) {
-        const hls = new Hls({
-            debug: false, 
-            enableWorker: true,
-            maxBufferLength: 30, // 控制最大缓存，防止切片被过度预加载而暴露
-        });
-        hls.loadSource(url);
-        hls.attachMedia(videoElement);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            console.log("河洛系统：HLS 切片引擎已接管防盗底座");
-        });
-        hls.on(Hls.Events.ERROR, function (event, data) {
-            if (data.fatal) {
-                switch (data.type) {
-                    case Hls.ErrorTypes.NETWORK_ERROR:
-                        hls.startLoad(); // 网络波动自愈
-                        break;
-                    case Hls.ErrorTypes.MEDIA_ERROR:
-                        hls.recoverMediaError(); // 媒体解码异常自愈
-                        break;
-                    default:
-                        hls.destroy();
-                        break;
-                }
-            }
-        });
-    } 
-    // 2. 苹果设备（iPhone/Safari）拥有系统级原生 HLS 支持，直接赋予源，其底层自带极强的防盗与同层渲染逻辑
-    else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+// ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
+// ================= 视频流安全加载引擎 (智能分流版) =================
+async function loadVideoAsBlob(url, videoElement) {
+    // 👑 核心修正：嗅探物理设备环境
+    const ua = navigator.userAgent.toLowerCase();
+    const isMobile = /iphone|ipad|ipod|android/.test(ua);
+
+    // 遵循“大道至简”：如果是移动端，直接斩断吃内存的 Blob 逻辑，启动原生直连
+    if (isMobile) {
+        console.log("河洛系统预判：移动端物理内存保护启动，开启原生极速直连");
         videoElement.src = url;
-    } 
-    // 3. 极端老旧环境阻断
-    else {
-        showCustomAlert("⚠️ 环境不支持", "当前浏览器环境过于老旧，无法解析高维安全流，请更换最新版微信或系统原生浏览器重试。");
+        return; // 提前结束，绝不走底层的下载消耗
+    }
+
+    // PC端：内存充足，继续执行高维的 Blob 幽灵加密防御
+    try {
+        if (videoElement.src.startsWith('blob:')) {
+            URL.revokeObjectURL(videoElement.src);
+        }
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('流提取失败');
+        
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        
+        videoElement.src = blobUrl;
+        videoElement.load();
+    } catch (error) {
+        console.error("高维加密流加载异常，已启动降级直连:", error);
+        videoElement.src = url;
     }
 }
-
 // ====================================================================
 
 
@@ -1288,19 +1286,18 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-        if (type === 'E' || type === 'F' || type === 'W') {
+    if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        
-        // 🚀 核心修正：全部指向腾讯云切片文件夹中的 .m3u8 文件
-        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4";  
-        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-F.m3u8";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";        
+        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";        
 
-        const videoElement = document.querySelector('#layer-video video');
+                const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
-            loadHlsVideo(videoUrl, videoElement); // 🚀 接入 HLS 切片引擎
+            loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
         }
         startDynamicWatermark(pwd);
+
 
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
@@ -1310,7 +1307,6 @@ async function verifyAndRouting(inputPassword) {
         
         showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启。\n当前安全停留时间：30分钟。");
     }
-
 }
 
 function checkStateAndRestore() {
@@ -1352,23 +1348,20 @@ function checkStateAndRestore() {
             showTargetLayerOnly(PAGE_VIDEO_ID);
             startGlobalTimer(videoExpiry, 'video');
             
-                        const activePwd = localStorage.getItem('active_pwd');
+            const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
                 let videoUrl = "";
-                
-                // 🚀 核心修正：同步指向 .m3u8 文件
-                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-E.m3u8"; 
-                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-F.m3u8";      
-                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8";  
-                
-                const videoElement = document.querySelector('#layer-video video');
+                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";  
+                                const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) {
-                    loadHlsVideo(videoUrl, videoElement); // 🚀 接入 HLS 切片引擎
+                    loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
                 }
                 startDynamicWatermark(activePwd);
-            }
 
+            }
         } else { forceKickOut(); }
 
     } else if (currentLayer === PAGE_AI_ID) {
