@@ -576,34 +576,22 @@
             <div class="article-title">－ 认知对齐 －</div>
             <p class="article-main-text" style="margin-bottom: 20px;">下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义。</p>
             <div class="video-wrapper-inner">
-    <video 
-        id="heluo-video" 
-        controls 
-        playsinline 
-        webkit-playsinline="true" 
-        x5-playsinline="true" 
-        controlsList="nodownload noremoteplayback" 
-        disablePictureInPicture 
-        oncontextmenu="return false;" 
-        preload="none" 
-        poster="./images/video-cover.png"
-        style="width: 100%; height: 100%; object-fit: cover;">
-    </video>
-    <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
-</div>
+                <video 
+    id="heluo-video" 
+    src="" 
+    controls 
+    controlsList="nodownload noplaybackrate" 
+    disablePictureInPicture 
+    playsinline 
+    webkit-playsinline 
+    x5-playsinline="true" 
+    oncontextmenu="return false;" 
+    preload="none" 
+    poster="./images/video-cover.png">
+</video>
 
-<script>
-    // 给视频播放按钮增加“防黑屏”缓冲逻辑
-    document.getElementById('heluo-video').addEventListener('play', function() {
-        const video = this;
-        // 苹果端特殊处理，点击播放时强制确认流状态
-        if (!video.src && video.dataset.src) {
-            video.src = video.dataset.src;
-            video.load();
-        }
-    });
-</script>
-
+                <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
+            </div>
         </div>
 
         <div class="holo-card-panel">
@@ -1298,19 +1286,19 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-        if (type === 'E' || type === 'F' || type === 'W') {
-        const video = document.getElementById('heluo-video');
-        
-        // 1. 设置视频地址到缓存空间，绝不直接赋值 src
-        if (type === 'E') video.dataset.src = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4";
-        else if (type === 'F') video.dataset.src = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";
-        else if (type === 'W') video.dataset.src = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";
+    if (type === 'E' || type === 'F' || type === 'W') {
+        let videoUrl = "";
+        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";        
 
-        // 2. 清理环境，确保看到封面图
-        video.removeAttribute('src');
-        video.load();
+                const videoElement = document.querySelector('#layer-video video');
+        if (videoElement) {
+            loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
+        }
+        startDynamicWatermark(pwd);
 
-        // 3. 路由跳转
+
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
@@ -1319,7 +1307,7 @@ async function verifyAndRouting(inputPassword) {
         
         showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启。\n当前安全停留时间：30分钟。");
     }
-
+}
 
 function checkStateAndRestore() {
     let bugExp = localStorage.getItem('videoExpiry');
@@ -1495,7 +1483,6 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
 
 <script>
-    // 1. 微信环境安全遮罩逻辑
     window.addEventListener('DOMContentLoaded', function() {
         var ua = navigator.userAgent.toLowerCase();
         var isWeChat = ua.indexOf('micromessenger') !== -1;
@@ -1510,33 +1497,7 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
             }
         }
     });
-
-    // 2. 视频点击播放守护逻辑 (修复 iOS 首次点击黑屏/报错)
-    document.getElementById('heluo-video').addEventListener('play', function() {
-        const video = this;
-        const url = video.dataset.src;
-        
-        // 只有当存在预设地址且当前未加载时，才进行初始化
-        if (url && !video.src) {
-            // 如果是 m3u8 切片流，走 Hls.js 引擎
-            if (url.includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
-                if (window.hlsInstance) window.hlsInstance.destroy();
-                window.hlsInstance = new Hls({
-                    startPosition: 0,
-                    debug: false
-                });
-                window.hlsInstance.loadSource(url);
-                window.hlsInstance.attachMedia(video);
-            } 
-            // 如果是普通 MP4 或 iOS 原生支持流
-            else {
-                video.src = url;
-                video.load();
-            }
-        }
-    }, { once: true });
 </script>
-
 
 </body>
 </html>
