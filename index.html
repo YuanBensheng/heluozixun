@@ -1495,6 +1495,7 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
 
 <script>
+    // 1. 微信环境安全遮罩逻辑
     window.addEventListener('DOMContentLoaded', function() {
         var ua = navigator.userAgent.toLowerCase();
         var isWeChat = ua.indexOf('micromessenger') !== -1;
@@ -1509,26 +1510,33 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
             }
         }
     });
-    // 监听播放事件，这是触发 iOS 视频流加载的唯一正确时机
+
+    // 2. 视频点击播放守护逻辑 (修复 iOS 首次点击黑屏/报错)
     document.getElementById('heluo-video').addEventListener('play', function() {
         const video = this;
         const url = video.dataset.src;
-        // 只有当有候补地址且还没加载过时才触发
+        
+        // 只有当存在预设地址且当前未加载时，才进行初始化
         if (url && !video.src) {
+            // 如果是 m3u8 切片流，走 Hls.js 引擎
             if (url.includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
                 if (window.hlsInstance) window.hlsInstance.destroy();
-                window.hlsInstance = new Hls({ startPosition: 0, debug: false });
+                window.hlsInstance = new Hls({
+                    startPosition: 0,
+                    debug: false
+                });
                 window.hlsInstance.loadSource(url);
                 window.hlsInstance.attachMedia(video);
-            } else {
+            } 
+            // 如果是普通 MP4 或 iOS 原生支持流
+            else {
                 video.src = url;
                 video.load();
             }
         }
     }, { once: true });
-
-
 </script>
+
 
 </body>
 </html>
