@@ -1167,36 +1167,66 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-// ================= 智能视频流驱动引擎 (包含 HLS 与 DOM 缓冲锁) =================
+// ================= 智能视频流驱动引擎 (增强版：防死锁、防重叠) =================
 function smartLoadVideo(url, videoElement) {
-    // 核心锁：给 DOM 强制保留 100 毫秒的渲染时间
     setTimeout(async () => {
         const isM3U8 = url.toLowerCase().includes('.m3u8');
-        
-        // 【分支 A】如果是 M3U8 切片视频 (W密码)
+        const ua = navigator.userAgent.toLowerCase();
+        const isMobile = /iphone|ipad|ipod|android/.test(ua);
+
+        // 👑 关键动作 1：彻底清理战场！
+        // 如果之前已经有 HLS 引擎在运行，必须先摧毁它，否则会多个引擎互相抢夺画面导致卡死
+        if (window.heluoHlsInstance) {
+            window.heluoHlsInstance.destroy();
+            window.heluoHlsInstance = null;
+        }
+        // 强行抽干原生视频标签里的残留水分
+        videoElement.pause();
+        videoElement.removeAttribute('src');
+        videoElement.load();
+
+        // 👑 关键动作 2：M3U8 切片视频逻辑 (W密码)
         if (isM3U8) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(videoElement);
+                window.heluoHlsInstance = new Hls({
+                    autoStartLoad: true // 强制破壁：无视 video 标签的 preload="none"，强行开始预加载切片
+                });
+                window.heluoHlsInstance.loadSource(url);
+                window.heluoHlsInstance.attachMedia(videoElement);
+                
+                // 监听：一旦剧本解析完成，立刻尝试激活播放器，斩断“无限转圈”
+                window.heluoHlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                    let playPromise = videoElement.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(() => {
+                            // 即使浏览器禁止自动播放，这一步也足以让转圈消失，露出居中的播放按钮
+                            console.log("河洛系统：HLS底层已就绪，等待客户点击播放。");
+                        });
+                    }
+                });
+                
+                // 隐藏的错误探针：如果还有暗坑，直接在控制台亮起红灯
+                window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) console.error("河洛HLS探针报错:", data);
+                });
+
             } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                // 兼容苹果 Safari 原生支持
+                // 苹果设备原生直连
                 videoElement.src = url;
+                let playPromise = videoElement.play();
+                if (playPromise !== undefined) playPromise.catch(() => {});
             }
             return;
         }
 
-        // 【分支 B】如果是普通的 MP4 视频 (E / F密码)
-        const ua = navigator.userAgent.toLowerCase();
-        const isMobile = /iphone|ipad|ipod|android/.test(ua);
-
+        // 👑 关键动作 3：普通 MP4 视频逻辑 (E / F密码)
         if (isMobile) {
-            // 移动端：原生极速直连
             videoElement.src = url;
+            let playPromise = videoElement.play();
+            if (playPromise !== undefined) playPromise.catch(() => {});
             return;
         }
 
-        // PC 端 MP4：执行原有的 Blob 幽灵加密
         try {
             if (videoElement.src.startsWith('blob:')) {
                 URL.revokeObjectURL(videoElement.src);
@@ -1205,12 +1235,15 @@ function smartLoadVideo(url, videoElement) {
             if (!response.ok) throw new Error('流提取失败');
             const blob = await response.blob();
             videoElement.src = URL.createObjectURL(blob);
+            let playPromise = videoElement.play();
+            if (playPromise !== undefined) playPromise.catch(() => {});
         } catch (error) {
-            videoElement.src = url; // 降级直连
+            videoElement.src = url; 
         }
-    }, 100); // 100毫秒延迟锁
+    }, 100); 
 }
 // ====================================================================
+
 
 
 
