@@ -1304,11 +1304,24 @@ async function verifyAndRouting(inputPassword) {
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
         else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";        
 
-                const videoElement = document.querySelector('#layer-video video');
-        if (videoElement) {
-            loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
-        }
-        startDynamicWatermark(pwd);
+                // ====== 这里是修改后的精确代码块 ======
+const videoElement = document.querySelector('#layer-video video');
+if (videoElement) {
+    // 1. 先彻底清空，防止浏览器缓存旧的播放状态
+    videoElement.removeAttribute('src');
+    videoElement.load();
+    
+    // 2. 根据类型分配地址
+    let videoUrl = "";
+    if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+    else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+    else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";
+
+    // 3. 核心：不直接 play()，只赋值给 dataset 留存
+    videoElement.dataset.src = videoUrl;
+    // 只有用户点击播放时，由浏览器自带的事件去触发播放，这样 iOS 就不会报错
+}
+// ====== 结束 ======
 
 
         const expiryTime = Date.now() + (30 * 60 * 1000); 
@@ -1509,6 +1522,15 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
             }
         }
     });
+    // 在 script 底部添加这段监听
+document.getElementById('heluo-video').addEventListener('play', function() {
+    // 当用户点击播放按钮时，才真正把 src 赋给 video，并开始加载
+    if (!this.src && this.dataset.src) {
+        this.src = this.dataset.src;
+        this.load();
+    }
+}, { once: true });
+
 </script>
 
 </body>
