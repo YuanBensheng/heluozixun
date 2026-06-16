@@ -1165,15 +1165,18 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-// ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
+
 // ================= 视频流安全加载引擎 (智能分流版) =================
 async function loadVideoAsBlob(url, videoElement) {
     const ua = navigator.userAgent.toLowerCase();
     const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
+    // 1. 移除旧的错误监听，防止重复绑定
+    videoElement.onerror = null;
+
     if (isMobile) {
         videoElement.src = url;
-        videoElement.load(); // 强制加载
+        videoElement.load();
         return;
     }
 
@@ -1181,6 +1184,7 @@ async function loadVideoAsBlob(url, videoElement) {
         if (videoElement.src && videoElement.src.startsWith('blob:')) {
             URL.revokeObjectURL(videoElement.src);
         }
+        
         const response = await fetch(url);
         if (!response.ok) throw new Error('流提取失败');
         
@@ -1188,13 +1192,22 @@ async function loadVideoAsBlob(url, videoElement) {
         const blobUrl = URL.createObjectURL(blob);
         
         videoElement.src = blobUrl;
-        videoElement.load(); // 核心修正：确保 Blob 地址赋值后立即调用加载逻辑
-    } catch (error) {
-        console.error("加载异常，降级处理:", error);
-        videoElement.src = url;
+        
+        // 2. 添加一个智能恢复逻辑
+        // 如果视频加载报错，自动尝试重置 src 并重新 load
+        videoElement.onerror = function() {
+            console.log("视频流连接中断，尝试自动重连...");
+            videoElement.src = blobUrl; // 重新触发赋值
+            videoElement.load();
+        };
+
         videoElement.load();
+    } catch (error) {
+        console.error("加载异常:", error);
+        videoElement.src = url;
     }
 }
+
 
 // ====================================================================
 
