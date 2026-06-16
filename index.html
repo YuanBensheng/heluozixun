@@ -474,8 +474,10 @@
         }
         video::-webkit-media-controls-fullscreen-button { display: none !important; }
         video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button { display: none !important; }
-    </style>
+        </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
+
 <body class="noselect" ondragstart="return false">
 
 <div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(165deg, #000000 0%, #010614 50%, #020c24 100%); z-index: 9999999; color: #7ebdae; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
@@ -1165,39 +1167,52 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-// ================= 视频流安全加载引擎 (Blob 幽灵加密) =================
-// ================= 视频流安全加载引擎 (智能分流版) =================
-async function loadVideoAsBlob(url, videoElement) {
-    // 👑 核心修正：嗅探物理设备环境
-    const ua = navigator.userAgent.toLowerCase();
-    const isMobile = /iphone|ipad|ipod|android/.test(ua);
-
-    // 遵循“大道至简”：如果是移动端，直接斩断吃内存的 Blob 逻辑，启动原生直连
-    if (isMobile) {
-        console.log("河洛系统预判：移动端物理内存保护启动，开启原生极速直连");
-        videoElement.src = url;
-        return; // 提前结束，绝不走底层的下载消耗
-    }
-
-    // PC端：内存充足，继续执行高维的 Blob 幽灵加密防御
-    try {
-        if (videoElement.src.startsWith('blob:')) {
-            URL.revokeObjectURL(videoElement.src);
+// ================= 智能视频流驱动引擎 (包含 HLS 与 DOM 缓冲锁) =================
+function smartLoadVideo(url, videoElement) {
+    // 核心锁：给 DOM 强制保留 100 毫秒的渲染时间
+    setTimeout(async () => {
+        const isM3U8 = url.toLowerCase().includes('.m3u8');
+        
+        // 【分支 A】如果是 M3U8 切片视频 (W密码)
+        if (isM3U8) {
+            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(videoElement);
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                // 兼容苹果 Safari 原生支持
+                videoElement.src = url;
+            }
+            return;
         }
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('流提取失败');
-        
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        
-        videoElement.src = blobUrl;
-        videoElement.load();
-    } catch (error) {
-        console.error("高维加密流加载异常，已启动降级直连:", error);
-        videoElement.src = url;
-    }
+
+        // 【分支 B】如果是普通的 MP4 视频 (E / F密码)
+        const ua = navigator.userAgent.toLowerCase();
+        const isMobile = /iphone|ipad|ipod|android/.test(ua);
+
+        if (isMobile) {
+            // 移动端：原生极速直连
+            videoElement.src = url;
+            return;
+        }
+
+        // PC 端 MP4：执行原有的 Blob 幽灵加密
+        try {
+            if (videoElement.src.startsWith('blob:')) {
+                URL.revokeObjectURL(videoElement.src);
+            }
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('流提取失败');
+            const blob = await response.blob();
+            videoElement.src = URL.createObjectURL(blob);
+        } catch (error) {
+            videoElement.src = url; // 降级直连
+        }
+    }, 100); // 100毫秒延迟锁
 }
 // ====================================================================
+
+
 
 
 async function verifyAndRouting(inputPassword) {
@@ -1292,9 +1307,9 @@ async function verifyAndRouting(inputPassword) {
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
         else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";        
 
-                const videoElement = document.querySelector('#layer-video video');
+                        const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
-            loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
+            smartLoadVideo(videoUrl, videoElement); // 🚀 接入带时空锁的智能缓冲引擎
         }
         startDynamicWatermark(pwd);
 
@@ -1352,14 +1367,16 @@ function checkStateAndRestore() {
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
                 let videoUrl = "";
-                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
                 else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-W.mp4";  
-                                const videoElement = document.querySelector('#layer-video video');
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8"; // 👑 修正为正确的 M3U8 切片地址
+                
+                const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) {
-                    loadVideoAsBlob(videoUrl, videoElement); // 🚀 接入 Blob 加密引擎
+                    smartLoadVideo(videoUrl, videoElement); // 🚀 接入带时空锁的智能缓冲引擎
                 }
                 startDynamicWatermark(activePwd);
+
 
             }
         } else { forceKickOut(); }
