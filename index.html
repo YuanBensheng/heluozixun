@@ -1294,7 +1294,7 @@ async function verifyAndRouting(inputPassword) {
         // 🚀 核心修正：全部指向腾讯云切片文件夹中的 .m3u8 文件
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-E.m3u8"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-F.m3u8";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W.m3u8";        
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";        
 
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) {
