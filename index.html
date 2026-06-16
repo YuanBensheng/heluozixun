@@ -1167,63 +1167,64 @@ const PAGE_SCHEDULE_ID  = 'layer-schedule';
 const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
 let globalTimerInterval = null;
-// ================= 智能视频流驱动引擎 (增强版：防死锁、防重叠) =================
+// ================= 智能视频流驱动引擎 (完美懒加载版：恢复封面与点击) =================
 function smartLoadVideo(url, videoElement) {
     setTimeout(async () => {
         const isM3U8 = url.toLowerCase().includes('.m3u8');
         const ua = navigator.userAgent.toLowerCase();
         const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
-        // 👑 关键动作 1：彻底清理战场！
-        // 如果之前已经有 HLS 引擎在运行，必须先摧毁它，否则会多个引擎互相抢夺画面导致卡死
+        // 1. 彻底清理上一局的战场
         if (window.heluoHlsInstance) {
             window.heluoHlsInstance.destroy();
             window.heluoHlsInstance = null;
         }
-        // 强行抽干原生视频标签里的残留水分
         videoElement.pause();
         videoElement.removeAttribute('src');
         videoElement.load();
 
-        // 👑 关键动作 2：M3U8 切片视频逻辑 (W密码)
+        // 2. M3U8 切片视频逻辑 (W密码)
         if (isM3U8) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                
+                // 👑 核心修正 1：彻底关闭自动拉取，让视频安静地展示您的封面图！
                 window.heluoHlsInstance = new Hls({
-                    autoStartLoad: true // 强制破壁：无视 video 标签的 preload="none"，强行开始预加载切片
+                    autoStartLoad: false 
                 });
-                window.heluoHlsInstance.loadSource(url);
+                
                 window.heluoHlsInstance.attachMedia(videoElement);
-                
-                // 监听：一旦剧本解析完成，立刻尝试激活播放器，斩断“无限转圈”
-                window.heluoHlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
-                    let playPromise = videoElement.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(() => {
-                            // 即使浏览器禁止自动播放，这一步也足以让转圈消失，露出居中的播放按钮
-                            console.log("河洛系统：HLS底层已就绪，等待客户点击播放。");
-                        });
-                    }
+                window.heluoHlsInstance.on(Hls.Events.MEDIA_ATTACHED, function () {
+                    window.heluoHlsInstance.loadSource(url); // 仅读取剧本，绝对不下载视频画面
                 });
+
+                // 👑 核心修正 2：监听真实客户的点击动作
+                const playHandler = function() {
+                    if (window.heluoHlsInstance) {
+                        console.log("河洛系统：客户已点击，开始拉取切片...");
+                        window.heluoHlsInstance.startLoad(); // 只有客户真点击了，才开始拉流
+                    }
+                    // 触发一次后立刻移除监听
+                    videoElement.removeEventListener('play', playHandler);
+                };
                 
-                // 隐藏的错误探针：如果还有暗坑，直接在控制台亮起红灯
+                // 绑定点击监听器
+                videoElement.addEventListener('play', playHandler);
+
                 window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) console.error("河洛HLS探针报错:", data);
+                    if (data.fatal) console.error("HLS引擎报错:", data);
                 });
 
             } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                // 苹果设备原生直连
+                // 苹果设备原生支持，天然自带封面图和点击播放逻辑
                 videoElement.src = url;
-                let playPromise = videoElement.play();
-                if (playPromise !== undefined) playPromise.catch(() => {});
             }
             return;
         }
 
-        // 👑 关键动作 3：普通 MP4 视频逻辑 (E / F密码)
+        // 3. 普通 MP4 视频逻辑 (E / F密码)
         if (isMobile) {
             videoElement.src = url;
-            let playPromise = videoElement.play();
-            if (playPromise !== undefined) playPromise.catch(() => {});
+            // (注：已删掉激进的 play() 代码，恢复 E/F 视频的封面图状态)
             return;
         }
 
@@ -1235,14 +1236,14 @@ function smartLoadVideo(url, videoElement) {
             if (!response.ok) throw new Error('流提取失败');
             const blob = await response.blob();
             videoElement.src = URL.createObjectURL(blob);
-            let playPromise = videoElement.play();
-            if (playPromise !== undefined) playPromise.catch(() => {});
+            // (注：同样删掉了激进的 play()，安静等待客户点击)
         } catch (error) {
             videoElement.src = url; 
         }
     }, 100); 
 }
 // ====================================================================
+
 
 
 
