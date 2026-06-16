@@ -1298,32 +1298,19 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    if (type === 'E' || type === 'F' || type === 'W') {
-        let videoUrl = "";
-        if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";        
+        if (type === 'E' || type === 'F' || type === 'W') {
+        const video = document.getElementById('heluo-video');
+        
+        // 1. 设置视频地址到缓存空间，绝不直接赋值 src
+        if (type === 'E') video.dataset.src = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4";
+        else if (type === 'F') video.dataset.src = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";
+        else if (type === 'W') video.dataset.src = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";
 
-                // ====== 这里是修改后的精确代码块 ======
-const videoElement = document.querySelector('#layer-video video');
-if (videoElement) {
-    // 1. 先彻底清空，防止浏览器缓存旧的播放状态
-    videoElement.removeAttribute('src');
-    videoElement.load();
-    
-    // 2. 根据类型分配地址
-    let videoUrl = "";
-    if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-    else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-    else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/video-W_i206ea69968af11f1aa1452540022bd7c.m3u8";
+        // 2. 清理环境，确保看到封面图
+        video.removeAttribute('src');
+        video.load();
 
-    // 3. 核心：不直接 play()，只赋值给 dataset 留存
-    videoElement.dataset.src = videoUrl;
-    // 只有用户点击播放时，由浏览器自带的事件去触发播放，这样 iOS 就不会报错
-}
-// ====== 结束 ======
-
-
+        // 3. 路由跳转
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
@@ -1332,7 +1319,7 @@ if (videoElement) {
         
         showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启。\n当前安全停留时间：30分钟。");
     }
-}
+
 
 function checkStateAndRestore() {
     let bugExp = localStorage.getItem('videoExpiry');
@@ -1522,14 +1509,24 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
             }
         }
     });
-    // 在 script 底部添加这段监听
-document.getElementById('heluo-video').addEventListener('play', function() {
-    // 当用户点击播放按钮时，才真正把 src 赋给 video，并开始加载
-    if (!this.src && this.dataset.src) {
-        this.src = this.dataset.src;
-        this.load();
-    }
-}, { once: true });
+    // 监听播放事件，这是触发 iOS 视频流加载的唯一正确时机
+    document.getElementById('heluo-video').addEventListener('play', function() {
+        const video = this;
+        const url = video.dataset.src;
+        // 只有当有候补地址且还没加载过时才触发
+        if (url && !video.src) {
+            if (url.includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
+                if (window.hlsInstance) window.hlsInstance.destroy();
+                window.hlsInstance = new Hls({ startPosition: 0, debug: false });
+                window.hlsInstance.loadSource(url);
+                window.hlsInstance.attachMedia(video);
+            } else {
+                video.src = url;
+                video.load();
+            }
+        }
+    }, { once: true });
+
 
 </script>
 
