@@ -1222,12 +1222,19 @@ function smartLoadVideo(url, videoElement) {
             // 5. 替换密钥 URI：在原有的 #EXT-X-KEY 行末尾追加 ?token=xxx
             // 原始行形如：#EXT-X-KEY:METHOD=AES-128,URI="https://www.heluo.pro/api/get-video-key"
             // 我们替换 URI 部分，添加 token 参数
-            if (token) {
-                m3u8Content = m3u8Content.replace(
-                    /URI="([^"]*)"/,
-                    `URI="$1?token=${token}"`
-                );
-            }
+            // 获取 COS 基础路径（m3u8 文件所在的文件夹地址）
+const basePath = url.substring(0, url.lastIndexOf('/') + 1);
+
+// 替换所有 .ts 分片路径为绝对路径
+m3u8Content = m3u8Content.replace(/(segment_\d+\.ts)/g, basePath + '$1');
+
+// 替换密钥 URI，追加 token 参数
+if (token) {
+    m3u8Content = m3u8Content.replace(
+        /URI="([^"]*)"/,
+        `URI="$1?token=${token}"`
+    );
+}
 
             // 6. 创建 Blob URL 传给 hls.js
             const blob = new Blob([m3u8Content], { type: 'application/vnd.apple.mpegurl' });
