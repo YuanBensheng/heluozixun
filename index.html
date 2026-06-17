@@ -474,7 +474,24 @@
         }
         video::-webkit-media-controls-fullscreen-button { display: none !important; }
         video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button { display: none !important; }
-        </style>
+       video:fullscreen {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+video:-webkit-full-screen {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+video:-moz-full-screen {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 
@@ -582,7 +599,7 @@
     id="heluo-video" 
     src="" 
     controls 
-    controlsList="nodownload noplaybackrate" 
+    controlsList="nodownload" 
     disablePictureInPicture 
     playsinline 
     webkit-playsinline 
