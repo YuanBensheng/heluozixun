@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>河洛咨询前置对齐系统</title>
     <script>
         // 在浏览器开始画网页前瞬间判断，如果是 VIP，给根节点打个标签
@@ -595,11 +595,10 @@ video:-moz-full-screen {
             <div class="article-title">－ 认知对齐 －</div>
             <p class="article-main-text" style="margin-bottom: 20px;">下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义。</p>
             <div class="video-wrapper-inner">
-                <video 
+<video 
     id="heluo-video" 
     src="" 
     controls 
-    controlsList="nodownload" 
     disablePictureInPicture 
     playsinline 
     webkit-playsinline 
@@ -608,7 +607,20 @@ video:-moz-full-screen {
     preload="none" 
     poster="./images/video-cover.png">
 </video>
-
+<button id="manual-fullscreen-btn" style="
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 200;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(0,255,204,0.5);
+    color: #00ffcc;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+" title="全屏观看">⛶ 全屏</button>
                 <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
             </div>
         </div>
@@ -1170,6 +1182,36 @@ video:-moz-full-screen {
         document.getElementById(toId).style.display = 'block'; 
         window.scrollTo(0, 0); 
     }
+    // 防止视频被右键/长按下载（配合 HLS 加密）
+(function() {
+    const video = document.getElementById('heluo-video');
+    if (!video) return;
+
+    // 阻止右键菜单（已在标签上用 oncontextmenu="return false;" 了，这里再加一层保险）
+    video.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // 阻止长按事件（移动端可能会弹出下载菜单）
+    video.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+            // 记录长按
+            video._touchStartTime = Date.now();
+        }
+    });
+    video.addEventListener('touchend', function(e) {
+        if (Date.now() - video._touchStartTime > 500) {
+            // 长按超过 500ms，阻止默认行为
+            e.preventDefault();
+        }
+    });
+
+    // 禁止拖动视频（部分浏览器拖动视频会触发下载）
+    video.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+    });
+})();
 </script>
 
 <div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
@@ -1566,7 +1608,42 @@ function hideTimerBar() {
 
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
+(function() {
+    const video = document.getElementById('heluo-video');
+    const btn = document.getElementById('manual-fullscreen-btn');
+    if (!video || !btn) return;
 
+    // 在安卓设备上显示全屏按钮（因为百度、360等可能没有全屏按钮）
+    if (/android/.test(navigator.userAgent.toLowerCase())) {
+        btn.style.display = 'inline-block';
+    }
+
+    // 点击按钮主动全屏
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (video.requestFullscreen) {
+            video.requestFullscreen();
+        } else if (video.webkitRequestFullscreen) {
+            video.webkitRequestFullscreen();
+        } else if (video.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen(); // iOS Safari
+        } else if (video.msRequestFullscreen) {
+            video.msRequestFullscreen();
+        }
+    });
+
+    // 监听屏幕方向变化，横屏时自动尝试全屏（针对不会自动全屏的浏览器）
+    window.addEventListener('orientationchange', function() {
+        if (window.orientation === 90 || window.orientation === -90) {
+            // 已横屏，尝试全屏
+            if (video.requestFullscreen) {
+                video.requestFullscreen().catch(function(){});
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            }
+        }
+    });
+})();
 <script>
     window.addEventListener('DOMContentLoaded', function() {
         var ua = navigator.userAgent.toLowerCase();
