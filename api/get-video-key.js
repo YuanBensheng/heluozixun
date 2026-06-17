@@ -1,6 +1,4 @@
-import crypto from 'crypto';
-
-export default function handler(req, res) {
+export default async function handler(req, res) {
     const referer = req.headers.referer || '';
     if (!referer.includes('heluo.pro')) {
         return res.status(403).send('Forbidden');
@@ -16,13 +14,19 @@ export default function handler(req, res) {
         return res.status(500).send('Server config error');
     }
 
-    // 验证 token 签名和有效期
     const [payloadBase64, signature] = token.split('.');
     if (!payloadBase64 || !signature) {
         return res.status(403).send('Invalid token format');
     }
 
-    const expectedSig = crypto.createHmac('sha256', secret).update(payloadBase64).digest('hex');
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(secret);
+    const cryptoKey = await crypto.subtle.importKey(
+        'raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    const sigBuf = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(payloadBase64));
+    const expectedSig = Array.from(new Uint8Array(sigBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
     if (expectedSig !== signature) {
         return res.status(403).send('Invalid token signature');
     }
@@ -38,8 +42,7 @@ export default function handler(req, res) {
         return res.status(403).send('Token expired');
     }
 
-    // 密钥本体
-    const KEY = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6'; // 你的密钥
+    const KEY = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6';
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Cache-Control', 'no-store');
     res.send(Buffer.from(KEY, 'hex'));
