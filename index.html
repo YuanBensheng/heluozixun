@@ -1608,6 +1608,23 @@ function hideTimerBar() {
 
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var ua = navigator.userAgent.toLowerCase();
+        var isWeChat = ua.indexOf('micromessenger') !== -1;
+        if (isWeChat) {
+            var securityMask = document.getElementById('wechat-security-mask');
+            if (securityMask) {
+                securityMask.style.display = 'block';
+                document.body.style.overflow = 'hidden'; 
+                document.documentElement.style.overflow = 'hidden';
+                document.body.style.pointerEvents = 'none';
+                securityMask.style.pointerEvents = 'auto'; 
+            }
+        }
+    });
+</script>
 (function() {
     const video = document.getElementById('heluo-video');
     const btn = document.getElementById('manual-fullscreen-btn');
@@ -1644,22 +1661,5 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
         }
     });
 })();
-<script>
-    window.addEventListener('DOMContentLoaded', function() {
-        var ua = navigator.userAgent.toLowerCase();
-        var isWeChat = ua.indexOf('micromessenger') !== -1;
-        if (isWeChat) {
-            var securityMask = document.getElementById('wechat-security-mask');
-            if (securityMask) {
-                securityMask.style.display = 'block';
-                document.body.style.overflow = 'hidden'; 
-                document.documentElement.style.overflow = 'hidden';
-                document.body.style.pointerEvents = 'none';
-                securityMask.style.pointerEvents = 'auto'; 
-            }
-        }
-    });
-</script>
-
 </body>
 </html>
