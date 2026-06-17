@@ -1201,60 +1201,21 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
-        // 3. M3U8 逻辑：先获取动态 Token
-        let token = '';
-        try {
-            const tokenResp = await fetch('/api/generate-token');
-            if (tokenResp.ok) {
-                const data = await tokenResp.json();
-                token = data.token;
-            }
-        } catch (e) {
-            console.warn('Token 获取失败，将使用无 Token 链接（可能无法播放）');
-        }
+        // 3. M3U8 逻辑：使用后端代理，一切处理在服务端完成
+        const proxyUrl = '/api/get-m3u8';
 
-        // 4. 拉取原始 m3u8 内容
-        try {
-            const m3u8Resp = await fetch(url);
-            if (!m3u8Resp.ok) throw new Error('M3U8 加载失败');
-            let m3u8Content = await m3u8Resp.text();
+        if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+            window.heluoHlsInstance = new Hls();
+            window.heluoHlsInstance.loadSource(proxyUrl);
+            window.heluoHlsInstance.attachMedia(videoElement);
 
-            // 5. 替换密钥 URI：在原有的 #EXT-X-KEY 行末尾追加 ?token=xxx
-            // 原始行形如：#EXT-X-KEY:METHOD=AES-128,URI="https://www.heluo.pro/api/get-video-key"
-            // 我们替换 URI 部分，添加 token 参数
-            // 获取 COS 基础路径（m3u8 文件所在的文件夹地址）
-const basePath = url.substring(0, url.lastIndexOf('/') + 1);
-
-// 替换所有 .ts 分片路径为绝对路径
-m3u8Content = m3u8Content.replace(/(segment_\d+\.ts)/g, basePath + '$1');
-
-// 替换密钥 URI，追加 token 参数
-if (token) {
-    m3u8Content = m3u8Content.replace(
-        /URI="([^"]*)"/,
-        `URI="$1?token=${token}"`
-    );
-}
-
-            // 6. 创建 Blob URL 传给 hls.js
-            const blob = new Blob([m3u8Content], { type: 'application/vnd.apple.mpegurl' });
-            const blobUrl = URL.createObjectURL(blob);
-
-            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                window.heluoHlsInstance = new Hls();
-                window.heluoHlsInstance.loadSource(blobUrl);
-                window.heluoHlsInstance.attachMedia(videoElement);
-
-                window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        console.error('HLS引擎底层报错:', data);
-                    }
-                });
-            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                videoElement.src = blobUrl;
-            }
-        } catch (e) {
-            console.error('动态 M3U8 处理失败:', e);
+            window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
+                if (data.fatal) {
+                    console.error('HLS引擎底层报错:', data);
+                }
+            });
+        } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+            videoElement.src = proxyUrl;
         }
     }, 100);
 }
