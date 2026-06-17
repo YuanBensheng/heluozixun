@@ -1,3 +1,5 @@
+
+```javascript
 export default async function handler(req, res) {
     const referer = req.headers.referer || '';
     if (!referer.includes('heluo.pro')) {
@@ -31,9 +33,11 @@ export default async function handler(req, res) {
         return res.status(403).send('Invalid token signature');
     }
 
+    // 不用 Buffer，手动 base64 解码
     let payload;
     try {
-        payload = JSON.parse(Buffer.from(payloadBase64, 'base64').toString());
+        const jsonStr = decodeURIComponent(escape(atob(payloadBase64)));
+        payload = JSON.parse(jsonStr);
     } catch {
         return res.status(403).send('Invalid token payload');
     }
@@ -42,8 +46,10 @@ export default async function handler(req, res) {
         return res.status(403).send('Token expired');
     }
 
-    const KEY = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6';
+    // 返回密钥（hex 转二进制不用 Buffer）
+    const KEY_HEX = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6';
+    const keyBytes = new Uint8Array(KEY_HEX.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Cache-Control', 'no-store');
-    res.send(Buffer.from(KEY, 'hex'));
+    res.send(keyBytes);
 }
