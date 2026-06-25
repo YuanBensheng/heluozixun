@@ -3,279 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>河洛咨询 HeLuo Consulting | 洞见时空局象</title>
+    <title>河洛咨询 - 时空研判与认知对齐</title>
     <style>
-        /* =========================================
-           全局能量场设定：剔除一切“金（白）”元素
-           主背景：深邃时空黑（水）
-           面板底色：深渊幽蓝（水）
-           点缀与文字：竹青、翠绿、浅青（木）
-           ========================================= */
         :root {
-            --bg-deep-black: #030505;       /* 极暗背景色 */
-            --panel-deep-blue: #061118;     /* 面板深蓝 */
-            --text-primary-cyan: #c2eae0;   /* 极浅青色（替代纯白）作为正文阅读色 */
-            --text-neon-cyan: #00ffcc;      /* 高亮荧光青 */
-            --text-bamboo-green: #7ebdae;   /* 原站经典竹青色 */
-            --border-dark-green: #0a2e24;   /* 极暗绿边框 */
+            --bg-deep-blue: #010512;
+            --border-dark-green: #0d211c;
+            --text-primary-cyan: #00ffcc;
+            --text-bamboo-green: #10b981;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-deep-black);
-            color: var(--text-primary-cyan);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 0%, #061f23 0%, transparent 50%),
-                radial-gradient(circle at 50% 100%, #021411 0%, transparent 50%);
-        }
-
-        /* 核心内容区 */
-        .main-container {
-            flex: 1;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 60px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Logo 与 Slogan */
-        .hero-section {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .brand-title {
-            font-size: 2.5rem;
-            color: var(--text-neon-cyan);
-            letter-spacing: 4px;
-            font-weight: 300;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
-        }
-
-        .brand-subtitle {
-            font-size: 1rem;
-            color: var(--text-bamboo-green);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .brand-desc {
-            margin-top: 20px;
-            font-size: 0.95rem;
-            color: var(--text-primary-cyan);
-            opacity: 0.8;
-            max-width: 600px;
-        }
-
-        /* 业务大类与参考价格 */
-        .services-grid {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-bottom: 50px;
-        }
-
-        .service-card {
-            background: var(--panel-deep-blue);
-            border: 1px solid var(--border-dark-green);
-            border-radius: 8px;
-            padding: 25px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            border-color: var(--text-bamboo-green);
-            box-shadow: 0 0 15px rgba(126, 189, 174, 0.1);
-        }
-
-        .service-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .service-name {
-            font-size: 1.1rem;
-            color: var(--text-neon-cyan);
-            margin-bottom: 5px;
-        }
-
-        .service-name-en {
-            font-size: 0.8rem;
-            color: var(--text-bamboo-green);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .service-price {
-            font-size: 1.2rem;
-            color: var(--text-primary-cyan);
-            text-align: right;
-            font-family: monospace;
-        }
-
-        /* 意向收集表单区 */
-        .contact-section {
-            width: 100%;
-            background: var(--panel-deep-blue);
-            border: 1px solid var(--border-dark-green);
-            border-radius: 8px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .contact-title {
-            color: var(--text-neon-cyan);
-            margin-bottom: 20px;
-            font-weight: 400;
-            letter-spacing: 1px;
-        }
-
+        body { margin: 0; background-color: var(--bg-deep-blue); color: #fff; font-family: sans-serif; }
+        
+        /* 页面基础架构 */
+        .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; text-align: center; }
+        .title { color: var(--text-primary-cyan); font-size: 2rem; margin-bottom: 20px; }
+        .description { color: var(--text-bamboo-green); line-height: 1.8; margin-bottom: 40px; }
+        
         .contact-btn {
-            display: inline-block;
             background: transparent;
-            color: var(--text-neon-cyan);
+            color: var(--text-primary-cyan);
             border: 1px solid var(--text-bamboo-green);
             padding: 15px 40px;
-            font-size: 1rem;
-            text-decoration: none;
-            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 2px;
-            margin-top: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
+        .contact-btn:hover { background: var(--text-bamboo-green); color: var(--bg-deep-blue); }
 
-        .contact-btn:hover {
-            background: rgba(126, 189, 174, 0.1);
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+        /* 弹窗核心样式 */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
+            z-index: 9999; justify-content: center; align-items: center;
         }
-
-        /* 国际合规尾部 */
-        .footer {
-            width: 100%;
-            padding: 30px 20px;
-            border-top: 1px solid var(--border-dark-green);
-            text-align: center;
+        .modal-content {
+            background: var(--bg-deep-blue); border: 1px solid var(--border-dark-green);
+            padding: 35px; width: 90%; max-width: 450px; border-radius: 8px; position: relative;
         }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 15px;
+        .close-btn { position: absolute; top: 10px; right: 15px; color: var(--text-bamboo-green); background: none; border: none; font-size: 20px; cursor: pointer; }
+        .modal-title { color: var(--text-primary-cyan); font-size: 18px; margin-bottom: 25px; text-align: center; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { color: var(--text-bamboo-green); font-size: 13px; margin-bottom: 8px; display: block; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; background: #000; border: 1px solid var(--border-dark-green);
+            color: var(--text-primary-cyan); padding: 12px; border-radius: 4px; box-sizing: border-box;
         }
-
-        .footer-links a {
-            color: var(--text-bamboo-green);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--text-neon-cyan);
-        }
-
-        .footer-copyright {
-            color: var(--text-bamboo-green);
-            font-size: 0.75rem;
-            opacity: 0.6;
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 600px) {
-            .service-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            .service-price {
-                text-align: left;
-            }
-            .contact-section {
-                padding: 30px 20px;
-            }
-            .footer-links {
-                flex-direction: column;
-                gap: 15px;
-            }
+        .submit-btn {
+            width: 100%; padding: 14px; background: #000; color: var(--text-primary-cyan);
+            border: 1px solid var(--text-bamboo-green); cursor: pointer; border-radius: 6px; margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <main class="main-container">
-        <header class="hero-section">
-            <h1 class="brand-title">河洛咨询</h1>
-            <div class="brand-subtitle">HeLuo Consulting | Insight into the Matrix</div>
-            <p class="brand-desc">致力于传统国学文化与高维商业决策研判，构建跨越周期的时空战略指引。</p>
-        </header>
+<div class="container">
+    <h1 class="title">河洛咨询系统</h1>
+    <p class="description">基于传统数术与系统论的前置研判服务。</p>
+    <button id="open-contact-btn" class="contact-btn">立即沟通 (Initiate Request)</button>
+</div>
 
-        <section class="services-grid">
-            <div class="service-card">
-                <div class="service-info">
-                    <div class="service-name">前置研判对齐</div>
-                    <div class="service-name-en">Preliminary Alignment</div>
-                </div>
-                <div class="service-price">¥ 399</div>
+<div id="contact-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button id="close-modal-btn" class="close-btn">&times;</button>
+        <h3 class="modal-title">时空对接意向登记</h3>
+        <form id="public-contact-form">
+            <div class="form-group"><label>如何称呼您</label><input type="text" id="contact-name" required></div>
+            <div class="form-group"><label>联络方式 (Email/WeChat)</label><input type="text" id="contact-info" required></div>
+            <div class="form-group"><label>核心诉求</label>
+                <select id="contact-intent" required>
+                    <option value="咨询研判">咨询研判</option>
+                    <option value="关键抉择">关键抉择</option>
+                    <option value="专业学习">专业学习</option>
+                </select>
             </div>
+            <div class="form-group"><label>背景简述</label><textarea id="contact-message" rows="3"></textarea></div>
+            <button type="submit" id="submit-btn" class="submit-btn">提交意向</button>
+        </form>
+        <div id="submit-status" style="margin-top: 15px; text-align: center; font-size: 0.9rem;"></div>
+    </div>
+</div>
 
-            <div class="service-card">
-                <div class="service-info">
-                    <div class="service-name">深度局象推演</div>
-                    <div class="service-name-en">Deep Matrix Deduction</div>
-                </div>
-                <div class="service-price">¥ 3,000 / Session</div>
-            </div>
+<script>
+    const modal = document.getElementById('contact-modal');
+    document.getElementById('open-contact-btn').onclick = () => modal.style.display = 'flex';
+    document.getElementById('close-modal-btn').onclick = () => modal.style.display = 'none';
 
-            <div class="service-card">
-                <div class="service-info">
-                    <div class="service-name">海外专项课程</div>
-                    <div class="service-name-en">Overseas Curriculum</div>
-                </div>
-                <div class="service-price">Inquire</div>
-            </div>
-        </section>
+    document.getElementById('public-contact-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submit-btn');
+        const status = document.getElementById('submit-status');
+        btn.disabled = true; btn.textContent = '正在发送...';
 
-        <section class="contact-section">
-            <h2 class="contact-title">开启时空对接通道</h2>
-            <p style="color: var(--text-bamboo-green); font-size: 0.9rem; margin-bottom: 20px;">
-                高维决策需双向筛选。请提交您的核心诉求，我们将在评估后发送专属会话密钥。
-            </p>
-            <a href="mailto:您的邮箱地址" class="contact-btn">Initiate Request (立即沟通)</a>
-        </section>
+        const payload = {
+            name: document.getElementById('contact-name').value,
+            contact: document.getElementById('contact-info').value,
+            intent: document.getElementById('contact-intent').value,
+            message: document.getElementById('contact-message').value
+        };
 
-    </main>
-
-    <footer class="footer">
-        <div class="footer-links">
-            <a href="#" onclick="alert('Digital Goods & Services: No refunds are provided after the consultation session has commenced or digital access has been granted.')">Refund Policy</a>
-            <a href="#" onclick="alert('Strict Confidentiality: We apply enterprise-grade data protection to your birth details and commercial strategy data.')">Privacy Policy</a>
-            <a href="#" onclick="alert('HeLuo Consulting provides strategic and cultural analysis. It does not replace professional legal or financial advice.')">Terms of Service</a>
-        </div>
-        <div class="footer-copyright">
-            &copy; 2026 HeLuo Consulting. All Rights Reserved.
-        </div>
-    </footer>
+        try {
+            const res = await fetch('/api/public-contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                status.textContent = '意向已提交，稍后将与您联络。';
+                document.getElementById('public-contact-form').reset();
+            } else {
+                status.textContent = '发送波动，请稍后再试。';
+            }
+        } catch { status.textContent = '系统异常，请稍后再试。'; }
+        btn.disabled = false; btn.textContent = '提交意向';
+    };
+</script>
 
 </body>
 </html>
