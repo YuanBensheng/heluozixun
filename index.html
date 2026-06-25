@@ -3,118 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>河洛咨询 - 时空研判与认知对齐</title>
+    <title>河洛咨询 - 时空研判与认知对齐 | Heluo Consulting</title>
     <style>
-        :root {
-            --bg-deep-blue: #010512;
-            --border-dark-green: #0d211c;
-            --text-primary-cyan: #00ffcc;
-            --text-bamboo-green: #10b981;
-        }
-        body { margin: 0; background-color: var(--bg-deep-blue); color: #fff; font-family: sans-serif; }
+        :root { --bg: #010512; --cyan: #00ffcc; --bamboo: #10b981; --border: #0d211c; }
+        body { margin: 0; background-color: var(--bg); color: #fff; font-family: sans-serif; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .section { margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        h1, h2 { color: var(--cyan); }
+        .price-item { display: flex; justify-content: space-between; margin: 10px 0; color: #ddd; }
+        .lang-en { color: var(--bamboo); font-size: 0.9em; margin-bottom: 10px; }
         
-        /* 页面基础架构 */
-        .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; text-align: center; }
-        .title { color: var(--text-primary-cyan); font-size: 2rem; margin-bottom: 20px; }
-        .description { color: var(--text-bamboo-green); line-height: 1.8; margin-bottom: 40px; }
-        
-        .contact-btn {
-            background: transparent;
-            color: var(--text-primary-cyan);
-            border: 1px solid var(--text-bamboo-green);
-            padding: 15px 40px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        .contact-btn:hover { background: var(--text-bamboo-green); color: var(--bg-deep-blue); }
-
-        /* 弹窗核心样式 */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
-            z-index: 9999; justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: var(--bg-deep-blue); border: 1px solid var(--border-dark-green);
-            padding: 35px; width: 90%; max-width: 450px; border-radius: 8px; position: relative;
-        }
-        .close-btn { position: absolute; top: 10px; right: 15px; color: var(--text-bamboo-green); background: none; border: none; font-size: 20px; cursor: pointer; }
-        .modal-title { color: var(--text-primary-cyan); font-size: 18px; margin-bottom: 25px; text-align: center; }
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { color: var(--text-bamboo-green); font-size: 13px; margin-bottom: 8px; display: block; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; background: #000; border: 1px solid var(--border-dark-green);
-            color: var(--text-primary-cyan); padding: 12px; border-radius: 4px; box-sizing: border-box;
-        }
-        .submit-btn {
-            width: 100%; padding: 14px; background: #000; color: var(--text-primary-cyan);
-            border: 1px solid var(--text-bamboo-green); cursor: pointer; border-radius: 6px; margin-top: 10px;
-        }
+        /* 按钮与弹窗逻辑 */
+        .btn-action { background: transparent; color: var(--cyan); border: 1px solid var(--bamboo); padding: 12px 25px; cursor: pointer; transition: 0.3s; }
+        .btn-action:hover { background: var(--bamboo); color: var(--bg); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg); border: 1px solid var(--border); padding: 30px; width: 90%; max-width: 450px; border-radius: 8px; position: relative; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 class="title">河洛咨询系统</h1>
-    <p class="description">基于传统数术与系统论的前置研判服务。</p>
-    <button id="open-contact-btn" class="contact-btn">立即沟通 (Initiate Request)</button>
+    <div class="section">
+        <h1>河洛咨询 | Heluo Consulting</h1>
+        <p>基于传统数术与系统论的前置研判服务。<br><span class="lang-en">Forecasting and alignment services based on traditional number-based divination and system theory.</span></p>
+    </div>
+
+    <div class="section">
+        <h2>服务项目 | Service Items</h2>
+        <div class="price-item"><span>高端咨询研判 (Consultation)</span> <span>$150</span></div>
+        <div class="price-item"><span>玄学课程学习 (Course)</span> <span>$3000</span></div>
+    </div>
+
+    <button id="open-btn" class="btn-action">立即沟通 | Initiate Communication</button>
+
+    <div style="margin-top: 50px; font-size: 0.8em; color: #666;">
+        <a href="#" style="color:var(--bamboo)">隐私政策 (Privacy Policy)</a> | 
+        <a href="#" style="color:var(--bamboo)">退款政策 (Refund Policy)</a> | 
+        <span>联系邮箱: burujushi@gmail.com</span>
+    </div>
 </div>
 
 <div id="contact-modal" class="modal-overlay">
     <div class="modal-content">
-        <button id="close-modal-btn" class="close-btn">&times;</button>
-        <h3 class="modal-title">时空对接意向登记</h3>
-        <form id="public-contact-form">
-            <div class="form-group"><label>如何称呼您</label><input type="text" id="contact-name" required></div>
-            <div class="form-group"><label>联络方式 (Email/WeChat)</label><input type="text" id="contact-info" required></div>
-            <div class="form-group"><label>核心诉求</label>
-                <select id="contact-intent" required>
-                    <option value="咨询研判">咨询研判</option>
-                    <option value="关键抉择">关键抉择</option>
-                    <option value="专业学习">专业学习</option>
-                </select>
-            </div>
-            <div class="form-group"><label>背景简述</label><textarea id="contact-message" rows="3"></textarea></div>
-            <button type="submit" id="submit-btn" class="submit-btn">提交意向</button>
+        <button onclick="document.getElementById('contact-modal').style.display='none'" style="float:right; background:none; border:none; color:var(--bamboo); cursor:pointer;">&times;</button>
+        <h3 style="color:var(--cyan)">意向登记 | Registration</h3>
+        <form id="public-form">
+            <input type="text" placeholder="称呼 | Name" style="width:100%; padding:10px; margin:5px 0; background:#000; border:1px solid var(--border); color:#fff;" required>
+            <textarea placeholder="核心诉求 | Requirement" style="width:100%; padding:10px; margin:5px 0; background:#000; border:1px solid var(--border); color:#fff;" rows="3"></textarea>
+            <button type="submit" class="btn-action" style="width:100%;">提交 | Submit</button>
         </form>
-        <div id="submit-status" style="margin-top: 15px; text-align: center; font-size: 0.9rem;"></div>
     </div>
 </div>
 
 <script>
-    const modal = document.getElementById('contact-modal');
-    document.getElementById('open-contact-btn').onclick = () => modal.style.display = 'flex';
-    document.getElementById('close-modal-btn').onclick = () => modal.style.display = 'none';
-
-    document.getElementById('public-contact-form').onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submit-btn');
-        const status = document.getElementById('submit-status');
-        btn.disabled = true; btn.textContent = '正在发送...';
-
-        const payload = {
-            name: document.getElementById('contact-name').value,
-            contact: document.getElementById('contact-info').value,
-            intent: document.getElementById('contact-intent').value,
-            message: document.getElementById('contact-message').value
-        };
-
-        try {
-            const res = await fetch('/api/public-contact', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (res.ok) {
-                status.textContent = '意向已提交，稍后将与您联络。';
-                document.getElementById('public-contact-form').reset();
-            } else {
-                status.textContent = '发送波动，请稍后再试。';
-            }
-        } catch { status.textContent = '系统异常，请稍后再试。'; }
-        btn.disabled = false; btn.textContent = '提交意向';
-    };
+    document.getElementById('open-btn').onclick = () => document.getElementById('contact-modal').style.display = 'flex';
+    document.getElementById('public-form').onsubmit = (e) => { e.preventDefault(); alert('意向已记录 | Submitted'); };
 </script>
 
 </body>
