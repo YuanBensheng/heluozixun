@@ -3,26 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>河洛咨询 - 时空研判 | Heluo Consulting</title>
+    <title>河洛咨询 | Heluo Consulting</title>
     <style>
-        /* 复刻您原有的深色、科技感 UI 基调 */
         body { background-color: #010512; color: #d1d5db; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 20px; line-height: 1.6; }
         .container { max-width: 700px; margin: 0 auto; }
-        
-        h1, h2 { color: #00ffcc; text-align: center; }
-        .service-block { border: 1px solid #0d211c; padding: 20px; margin: 20px 0; border-radius: 8px; background: #000; }
-        .price-row { display: flex; justify-content: space-between; border-bottom: 1px solid #0d211c; padding: 10px 0; }
+        h1 { color: #00ffcc; text-align: center; }
         .en-text { color: #10b981; font-size: 0.85em; display: block; margin-top: 2px; }
-        
-        /* 弹窗样式：保持您认可的简洁与高级感 */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-content { background: #010512; border: 1px solid #0d211c; padding: 30px; width: 90%; max-width: 500px; border-radius: 12px; position: relative; }
-        
+        .service-block { border: 1px solid #0d211c; padding: 20px; margin: 20px 0; border-radius: 8px; background: #000; }
+        .price-row { display: flex; justify-content: space-between; border-bottom: 1px solid #0d211c; padding: 12px 0; }
         .btn-main { background: #000; color: #00ffcc; border: 1px solid #10b981; padding: 15px 30px; cursor: pointer; width: 100%; font-size: 16px; margin: 20px 0; }
         .btn-main:hover { background: #10b981; color: #000; }
-        
-        .policy-links { text-align: center; font-size: 0.8em; margin-top: 40px; }
+        .policy-links { text-align: center; font-size: 0.8em; margin-top: 40px; color: #666; }
         .policy-links a { color: #10b981; text-decoration: none; margin: 0 10px; }
+        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; }
+        .modal-content { background: #010512; border: 1px solid #0d211c; padding: 30px; width: 90%; max-width: 500px; border-radius: 12px; position: relative; }
     </style>
 </head>
 <body>
@@ -57,7 +52,7 @@
         <h3 style="color:#00ffcc; text-align:center;">意向登记 | Intent Registration</h3>
         <form id="contact-form">
             <input type="text" placeholder="称呼 | Name" style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid #0d211c; color:#fff;" required>
-            <input type="text" placeholder="联络方式 | Contact (Email/WeChat)" style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid #0d211c; color:#fff;" required>
+            <input type="text" placeholder="联络方式 | Contact" style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid #0d211c; color:#fff;" required>
             <textarea placeholder="核心诉求 | Core Requirement" style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid #0d211c; color:#fff;" rows="3" required></textarea>
             <button type="submit" class="btn-main">发送 | Send</button>
         </form>
@@ -66,8 +61,7 @@
 
 <script>
     document.getElementById('open-modal').onclick = () => document.getElementById('contact-modal').style.display = 'flex';
-    // 这里保留您原有的表单逻辑，提交后仅给反馈，不跳转
-    document.getElementById('contact-form').onsubmit = (e) => { e.preventDefault(); alert('已收到，稍后联络 | Received'); };
+    document.getElementById('contact-form').onsubmit = (e) => { e.preventDefault(); alert('意向已登记 | Submitted'); };
 </script>
 
 </body>
