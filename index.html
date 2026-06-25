@@ -3,61 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>河洛咨询 - 时空研判与认知对齐 | Heluo Consulting</title>
+    <title>河洛咨询 - 时空研判 | Heluo Consulting</title>
     <style>
-        :root { --bg: #010512; --cyan: #00ffcc; --bamboo: #10b981; --border: #0d211c; }
-        body { margin: 0; background-color: var(--bg); color: #fff; font-family: sans-serif; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-        .section { margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-        h1, h2 { color: var(--cyan); }
-        .price-item { display: flex; justify-content: space-between; margin: 10px 0; color: #ddd; }
-        .lang-en { color: var(--bamboo); font-size: 0.9em; margin-bottom: 10px; }
+        /* 复刻您原有的深色、科技感 UI 基调 */
+        body { background-color: #010512; color: #d1d5db; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 700px; margin: 0 auto; }
         
-        /* 按钮与弹窗逻辑 */
-        .btn-action { background: transparent; color: var(--cyan); border: 1px solid var(--bamboo); padding: 12px 25px; cursor: pointer; transition: 0.3s; }
-        .btn-action:hover { background: var(--bamboo); color: var(--bg); }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-content { background: var(--bg); border: 1px solid var(--border); padding: 30px; width: 90%; max-width: 450px; border-radius: 8px; position: relative; }
+        h1, h2 { color: #00ffcc; text-align: center; }
+        .service-block { border: 1px solid #0d211c; padding: 20px; margin: 20px 0; border-radius: 8px; background: #000; }
+        .price-row { display: flex; justify-content: space-between; border-bottom: 1px solid #0d211c; padding: 10px 0; }
+        .en-text { color: #10b981; font-size: 0.85em; display: block; margin-top: 2px; }
+        
+        /* 弹窗样式：保持您认可的简洁与高级感 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center; }
+        .modal-content { background: #010512; border: 1px solid #0d211c; padding: 30px; width: 90%; max-width: 500px; border-radius: 12px; position: relative; }
+        
+        .btn-main { background: #000; color: #00ffcc; border: 1px solid #10b981; padding: 15px 30px; cursor: pointer; width: 100%; font-size: 16px; margin: 20px 0; }
+        .btn-main:hover { background: #10b981; color: #000; }
+        
+        .policy-links { text-align: center; font-size: 0.8em; margin-top: 40px; }
+        .policy-links a { color: #10b981; text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="section">
-        <h1>河洛咨询 | Heluo Consulting</h1>
-        <p>基于传统数术与系统论的前置研判服务。<br><span class="lang-en">Forecasting and alignment services based on traditional number-based divination and system theory.</span></p>
+    <h1>河洛咨询 | Heluo Consulting</h1>
+    <p style="text-align:center;">认知对齐与时空研判服务<br><span class="en-text">Cognitive Alignment & Temporal Forecasting Services</span></p>
+
+    <div class="service-block">
+        <div class="price-row">
+            <span>高端咨询研判<br><span class="en-text">Premium Consultation</span></span>
+            <span>$150 USD</span>
+        </div>
+        <div class="price-row">
+            <span>玄学课程体系学习<br><span class="en-text">Metaphysical Course System</span></span>
+            <span>$3000 USD</span>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>服务项目 | Service Items</h2>
-        <div class="price-item"><span>高端咨询研判 (Consultation)</span> <span>$150</span></div>
-        <div class="price-item"><span>玄学课程学习 (Course)</span> <span>$3000</span></div>
-    </div>
+    <button id="open-modal" class="btn-main">立即沟通 | Initiate Communication</button>
 
-    <button id="open-btn" class="btn-action">立即沟通 | Initiate Communication</button>
-
-    <div style="margin-top: 50px; font-size: 0.8em; color: #666;">
-        <a href="#" style="color:var(--bamboo)">隐私政策 (Privacy Policy)</a> | 
-        <a href="#" style="color:var(--bamboo)">退款政策 (Refund Policy)</a> | 
-        <span>联系邮箱: burujushi@gmail.com</span>
+    <div class="policy-links">
+        <a href="#">隐私政策 | Privacy Policy</a> | 
+        <a href="#">退款政策 | Refund Policy</a> | 
+        <a href="mailto:burujushi@gmail.com">联系我们 | Contact Us</a>
     </div>
 </div>
 
 <div id="contact-modal" class="modal-overlay">
     <div class="modal-content">
-        <button onclick="document.getElementById('contact-modal').style.display='none'" style="float:right; background:none; border:none; color:var(--bamboo); cursor:pointer;">&times;</button>
-        <h3 style="color:var(--cyan)">意向登记 | Registration</h3>
-        <form id="public-form">
-            <input type="text" placeholder="称呼 | Name" style="width:100%; padding:10px; margin:5px 0; background:#000; border:1px solid var(--border); color:#fff;" required>
-            <textarea placeholder="核心诉求 | Requirement" style="width:100%; padding:10px; margin:5px 0; background:#000; border:1px solid var(--border); color:#fff;" rows="3"></textarea>
-            <button type="submit" class="btn-action" style="width:100%;">提交 | Submit</button>
+        <button onclick="document.getElementById('contact-modal').style.display='none'" style="position:absolute; top:10px; right:15px; background:none; border:none; color:#10b981; cursor:pointer; font-size:20px;">&times;</button>
+        <h3 style="color:#00ffcc; text-align:center;">意向登记 | Intent Registration</h3>
+        <form id="contact-form">
+            <input type="text" placeholder="称呼 | Name" style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid #0d211c; color:#fff;" required>
+            <input type="text" placeholder="联络方式 | Contact (Email/WeChat)" style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid #0d211c; color:#fff;" required>
+            <textarea placeholder="核心诉求 | Core Requirement" style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid #0d211c; color:#fff;" rows="3" required></textarea>
+            <button type="submit" class="btn-main">发送 | Send</button>
         </form>
     </div>
 </div>
 
 <script>
-    document.getElementById('open-btn').onclick = () => document.getElementById('contact-modal').style.display = 'flex';
-    document.getElementById('public-form').onsubmit = (e) => { e.preventDefault(); alert('意向已记录 | Submitted'); };
+    document.getElementById('open-modal').onclick = () => document.getElementById('contact-modal').style.display = 'flex';
+    // 这里保留您原有的表单逻辑，提交后仅给反馈，不跳转
+    document.getElementById('contact-form').onsubmit = (e) => { e.preventDefault(); alert('已收到，稍后联络 | Received'); };
 </script>
 
 </body>
