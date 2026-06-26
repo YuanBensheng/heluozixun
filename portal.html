@@ -950,6 +950,12 @@ function smartLoadVideo(url, videoElement) {
     }, 100);
 }
 
+// 👑 【核心安全补丁：升级为全局顶层判定函数，彻底粉碎 ReferenceError 卡死空白漏洞】
+function checkIsCourseKey(firstLetter) {
+    const isVip = (firstLetter === 'V');
+    const isPublic = ['E', 'F', 'W', 'P'].includes(firstLetter);
+    return (!isVip && !isPublic);
+}
 
 // ================= 🚀 核心身份鉴权与三通道调度路由 =================
 async function verifyAndRouting(inputPassword) {
@@ -960,14 +966,10 @@ async function verifyAndRouting(inputPassword) {
         showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！"); return;
     }
 
-        const type = pwd.charAt(0); 
+    const type = pwd.charAt(0); 
     const isVipPassword = (type === 'V');
     const isPublicPassword = ['E', 'F', 'W', 'P'].includes(type);
-    
-    // 💡 降维打击算法：只要不是 VIP 专属的 V，也不是公域的 E/F/W/P，
-    // 剩下的所有 21 个字母，统统自动识别为海外课程通道！
-    const isCoursePassword = !isVipPassword && !isPublicPassword; 
-
+    const isCoursePassword = checkIsCourseKey(type); // 调用全局顶层函数验证
 
     // === 【三通道严格物理隔离网关】 ===
     if (window.PORTAL_TYPE === 'vip' && !isVipPassword) {
@@ -1020,18 +1022,14 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 2. 视频资源路由 (公域 E/F/W 或 课程 B/S/C)
-        // ====== 🚀 【新代码：全矩阵弹性接应防线】 ======
-    const isPublicVideo = ['E', 'F', 'W'].includes(type);
-    
-    // 只要不是 VIP(V)，不是公域微课(E/F/W)，也不是深度破局(P)，剩下的21个随机字母统统是海外课程！
-    if (isPublicVideo || isCoursePassword) {
+    // 2. 视频资源路由 (公域 E/F/W 或 21字母随机海外课程)
+    if (['E', 'F', 'W'].includes(type) || isCoursePassword) {
         let videoUrl = "";
         
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
         else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-        // 💡 降维打击：如果是任意随机课程字母，如果没有单独配制特定链接，一律全自动配发海外通用通用课程流！
+        // 🚀 降维弹性接应：只要是通过了哈希校验的任意新课程前缀字母，统一发发海外通用多媒体流
         else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
 
         const videoElement = document.querySelector('#layer-video video');
@@ -1060,36 +1058,6 @@ async function verifyAndRouting(inputPassword) {
         
         showCustomAlert("✓ 契约达成", isCoursePassword ? "专属课程认证成功，高维播放通道已加密开启。" : "初次认知对齐契约达成，高维时空已开启.");
     }
-
-
-        const videoElement = document.querySelector('#layer-video video');
-        if (videoElement) smartLoadVideo(videoUrl, videoElement); 
-        startDynamicWatermark(pwd);
-
-        // 🚀 核心 UI 清洗：如果是课程通道，降维借用 layer-video，但隐藏所有引导与升级付费模块
-        const videoLayer = document.getElementById('layer-video');
-        if (videoLayer && window.PORTAL_TYPE.startsWith('course_')) {
-            const panels = videoLayer.querySelectorAll('.holo-card-panel');
-            if (panels.length >= 3) {
-                panels[0].style.display = 'none'; // 隐藏上方“认知对齐”引导
-                panels[2].style.display = 'none'; // 隐藏下方“超维接引”打赏框
-            }
-            const mainTitle = videoLayer.querySelector('h2');
-            if (mainTitle) mainTitle.innerHTML = window.PORTAL_TYPE === 'course_bazi' ? '八字课程 · 专属交付' : '风水堪舆 · 专属交付';
-            const subTitle = videoLayer.querySelector('.sub-title');
-            if (subTitle) subTitle.innerHTML = '河洛智慧 · 闭门造境';
-        }
-
-        // 课程观看时间通常较长，自动将销毁时间提额至 120 分钟
-        const duration = isCoursePassword ? (120 * 60 * 1000) : (30 * 60 * 1000);
-        const expiryTime = Date.now() + duration; 
-        localStorage.setItem('videoExpiry', expiryTime);
-        localStorage.setItem('currentLayer', 'layer-video');
-        showTargetLayerOnly('layer-video');
-        startGlobalTimer(expiryTime, 'video');
-        
-        showCustomAlert("✓ 契约达成", isCoursePassword ? "专属课程认证成功，高维播放通道已加密开启。" : "初次认知对齐契约达成，高维时空已开启。");
-    }
 }
 
 // ================= 状态恢复与路由重定位 =================
@@ -1106,13 +1074,10 @@ function checkStateAndRestore() {
     let defaultLayer = 'layer-pay-399';
     if (window.PORTAL_TYPE === 'vip') {
         defaultLayer = 'layer-video';
-        // 对 VIP 的降落区 UI 洗牌
         const videoLayer = document.getElementById('layer-video');
         if (videoLayer) {
             const panels = videoLayer.querySelectorAll('.holo-card-panel');
-            if (panels.length >= 3) {
-                panels[0].style.display = 'none'; panels[1].style.display = 'none'; panels[2].style.display = 'block'; 
-            }
+            if (panels.length >= 3) { panels[0].style.display = 'none'; panels[1].style.display = 'none'; panels[2].style.display = 'block'; }
             const mainTitle = videoLayer.querySelector('h2');
             if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
             const subTitle = videoLayer.querySelector('.sub-title');
@@ -1120,7 +1085,6 @@ function checkStateAndRestore() {
         }
     } else if (window.PORTAL_TYPE.startsWith('course_')) {
         defaultLayer = 'layer-course';
-        // 课程通道 UI 文案按需洗牌
         if (window.PORTAL_TYPE === 'course_bazi') {
             document.getElementById('course-title').innerText = "八字破局 · 核心课程";
             document.getElementById('course-desc').innerText = "本视界承载八字底层逻辑与实战心法，为海外学员专属封闭交付通道。";
@@ -1129,7 +1093,6 @@ function checkStateAndRestore() {
             document.getElementById('course-desc').innerText = "本视界承载高维风水布局与时空能量阵法，为海外学员专属封闭交付通道。";
         }
     } else {
-        // 公域，复原 layer-video UI
         const videoLayer = document.getElementById('layer-video');
         if (videoLayer) {
             const panels = videoLayer.querySelectorAll('.holo-card-panel');
@@ -1141,43 +1104,33 @@ function checkStateAndRestore() {
         }
     }
 
-    // 2. 如果没有任何记忆，降落至默认通道层
     if (!currentLayer || currentLayer === 'layer-pay-399' || currentLayer === 'layer-course') {
         showTargetLayerOnly(defaultLayer); hideTimerBar(); return; 
     }
 
-    // 3. 有记忆缓存，进行深层穿透重绘
     if (currentLayer === 'layer-video') {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
             showTargetLayerOnly('layer-video');
             startGlobalTimer(videoExpiry, 'video');
             
-            // 如果是在播课程期间刷新，确保保持 UI 洗牌状态，防闪出公域内容
             if (window.PORTAL_TYPE.startsWith('course_')) {
                 const videoLayer = document.getElementById('layer-video');
                 const panels = videoLayer.querySelectorAll('.holo-card-panel');
                 if (panels.length >= 3) { panels[0].style.display = 'none'; panels[2].style.display = 'none'; }
                 const mainTitle = videoLayer.querySelector('h2');
-                if (mainTitle) mainTitle.innerHTML = window.PORTAL_TYPE === 'course_bazi' ? '八字课程 · 专属交付' : '风水堪舆 · 专属交付';
+                if (mainTitle) mainTitle.innerHTML = '专属高维课程 · 闭门交付';
             }
             
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
-                        // ====== 🚀 【新代码状态记忆：全自动兼容刷新】 ======
             if (activePwd && authType) {
                 let videoUrl = "";
                 if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
                 else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
                 else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-                // 💡 记忆恢复降维：只要不是公域这三个，剩下的21个随机字母刷新时统一全自动重载通用课程流！
+                // 🚀 刷新状态弹性接应：只要不是公域引流前缀，刷新时自动安全复原海外加密流
                 else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
-                
-                const videoElement = document.querySelector('#layer-video video');
-                if (videoElement) smartLoadVideo(videoUrl, videoElement);
-                startDynamicWatermark(activePwd);
-            }
-
                 
                 const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) smartLoadVideo(videoUrl, videoElement);
@@ -1232,7 +1185,6 @@ function forceKickOut() {
     localStorage.removeItem('user_token_auth'); localStorage.removeItem('savedBookedTime'); localStorage.removeItem('active_pwd'); 
     hideTimerBar();
 
-    // 根据不同通道安全封存回去，绝不泄露公域
     if (document.getElementById('password-input')) document.getElementById('password-input').value = "";
     if (document.getElementById('advanced-password-input')) document.getElementById('advanced-password-input').value = "";
     if (document.getElementById('course-password-input')) document.getElementById('course-password-input').value = "";
@@ -1261,7 +1213,6 @@ function forceKickOut() {
     
 function hideTimerBar() { const timerBar = document.getElementById('global-timer-bar'); if(timerBar) timerBar.style.display = 'none'; }
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
-
 </script>
 
 <script>
