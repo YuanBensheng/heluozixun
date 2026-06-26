@@ -83,7 +83,7 @@
             margin-right: auto;
         }
 
-        /* 业务大类与参考价格 (电脑端双列网格布局) */
+        /* 业务大类与参考价格 (坚决左右对齐，绝不换行) */
         .services-grid {
             width: 100%;
             display: grid;
@@ -96,13 +96,12 @@
             background: var(--panel-deep-blue);
             border: 1px solid var(--border-dark-green);
             border-radius: 8px;
-            padding: 25px 30px;
+            padding: 25px 20px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* 强制左右排布 */
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             transition: all 0.3s ease;
-            gap: 15px;
         }
 
         .service-card:hover {
@@ -110,38 +109,50 @@
             box-shadow: 0 0 15px rgba(126, 189, 174, 0.1);
         }
 
+        /* 左侧名字区域 */
         .service-info {
             display: flex;
             flex-direction: column;
-            width: 100%;
+            flex: 1 1 auto;
+            padding-right: 15px;
+            min-width: 0;
         }
 
         .service-name {
             font-size: 1.1rem;
             color: var(--text-neon-cyan);
-            margin-bottom: 5px;
+            margin-bottom: 2px;
+            white-space: nowrap; /* 强制中文名绝不换行 */
         }
 
         .service-name-en {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-bamboo-green);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0px;
+            line-height: 1.2;
         }
 
+        /* 右侧价格区域 */
         .service-price {
-            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; /* 右对齐 */
+            flex-shrink: 0; /* 【核心防挤压】：无论左边多空，右边绝对不许被压缩 */
+        }
+
+        .price-zh {
+            font-size: 1.15rem;
             color: var(--text-primary-cyan);
-            text-align: left;
             font-family: monospace;
-            line-height: 1.4;
+            white-space: nowrap; /* 【核心防折行】：强制3000元/次起 锁死在一行 */
         }
 
         .price-en {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-bamboo-green);
-            display: block;
             margin-top: 2px;
+            white-space: nowrap; /* 【核心防折行】：强制英文价格 锁死在一行 */
         }
 
         /* 意向收集表单区 */
@@ -173,8 +184,9 @@
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s ease;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             margin-top: 10px;
+            white-space: nowrap; /* 【核心防折行】：强制按钮里的字绝对不许掉下去 */
         }
 
         .contact-btn:hover {
@@ -214,22 +226,10 @@
             opacity: 0.6;
         }
 
-        /* 移动端适配 (彻底解决挤压问题) */
-        @media (max-width: 600px) {
+        /* 移动端适配：屏幕变窄时直接变成单列，给左右腾出绝对足够的空间 */
+        @media (max-width: 750px) {
             .services-grid {
-                grid-template-columns: 1fr; /* 手机端强制单列，释放横向空间 */
-                gap: 15px;
-            }
-            .service-card {
-                flex-direction: row; /* 手机端信息和价格左右排布 */
-                align-items: center;
-                padding: 20px;
-            }
-            .service-price {
-                text-align: right;
-            }
-            .price-en {
-                text-align: right;
+                grid-template-columns: 1fr;
             }
             .contact-section {
                 padding: 30px 20px;
@@ -237,17 +237,6 @@
             .footer-links {
                 flex-direction: column;
                 gap: 15px;
-            }
-        }
-        
-        /* 极小屏幕(如iPhone SE)防爆板兜底 */
-        @media (max-width: 380px) {
-             .service-card {
-                flex-direction: column; /* 屏幕极小时改为上下排布 */
-                align-items: flex-start;
-            }
-            .service-price, .price-en {
-                text-align: left;
             }
         }
     </style>
@@ -268,8 +257,8 @@
                     <div class="service-name-en">High-Dimensional Consulting</div>
                 </div>
                 <div class="service-price">
-                    ¥ 3,000 / 次起
-                    <span class="price-en">From $420 / Session</span>
+                    <div class="price-zh">¥ 3,000 / 次起</div>
+                    <div class="price-en">From $420 / Session</div>
                 </div>
             </div>
 
@@ -279,8 +268,8 @@
                     <div class="service-name-en">Specialized Courses</div>
                 </div>
                 <div class="service-price">
-                    价格面议
-                    <span class="price-en">Price Negotiable</span>
+                    <div class="price-zh">价格面议</div>
+                    <div class="price-en">Price Negotiable</div>
                 </div>
             </div>
         </section>
@@ -291,7 +280,6 @@
                 高维决策需双向筛选。请提交您的核心诉求，我们将在评估后发送专属会话密钥。
             </p>
             <button id="open-contact-btn" class="contact-btn">Initiate Request (立即沟通)</button>
-
         </section>
 
     </main>
