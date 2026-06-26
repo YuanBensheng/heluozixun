@@ -109,6 +109,13 @@
             .footer-links a { font-size: 0.75rem; }
             .modal-content { padding: 30px 20px; }
         }
+                /* 专属解除提交按钮的宽度封印 */
+        #submit-btn {
+            white-space: normal !important; /* 允许文字优雅折行 */
+            line-height: 1.4;               /* 拉开多行文字的呼吸间距 */
+            padding: 12px 20px;             /* 稍微调整内边距，防挤压 */
+        }
+
     </style>
 </head>
 <body>
@@ -291,10 +298,13 @@
         const statusDiv = document.getElementById('submit-status');
         const submitBtn = document.getElementById('submit-btn');
 
-        form.addEventListener('submit', async (e) => {
+                form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
-            submitBtn.textContent = '正在加密传输... (Encrypting & Transmitting...)';
+            
+            // 修正点：使用 innerHTML 将中英文强行拆分为上下两行，英文使用竹青色并缩小字号
+            submitBtn.innerHTML = '正在加密传输...<br><span style="font-size: 0.75rem; color: var(--text-bamboo-green); letter-spacing: 0; font-weight: normal;">Encrypting & Transmitting...</span>';
+            
             statusDiv.innerHTML = '';
             statusDiv.style.color = 'var(--text-primary-cyan)';
 
@@ -325,9 +335,11 @@
                 statusDiv.innerHTML = '系统能量波动，提交失败，请稍后重试。<br><span style="font-size: 0.75rem; color: #ff9999; display: block; margin-top: 4px;">System energy fluctuation. Submission failed, please try again later.</span>';
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = '提交意向 (Submit)';
+                // 恢复默认按钮状态
+                submitBtn.innerHTML = '提交意向 (Submit)';
             }
         });
+
     </script>
 
 </body>
