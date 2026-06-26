@@ -960,10 +960,14 @@ async function verifyAndRouting(inputPassword) {
         showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！"); return;
     }
 
-    const type = pwd.charAt(0); 
+        const type = pwd.charAt(0); 
     const isVipPassword = (type === 'V');
-    const isCoursePassword = ['B', 'S', 'C'].includes(type); // 假定B=八字课, S=风水课, C=通用海外课
     const isPublicPassword = ['E', 'F', 'W', 'P'].includes(type);
+    
+    // 💡 降维打击算法：只要不是 VIP 专属的 V，也不是公域的 E/F/W/P，
+    // 剩下的所有 21 个字母，统统自动识别为海外课程通道！
+    const isCoursePassword = !isVipPassword && !isPublicPassword; 
+
 
     // === 【三通道严格物理隔离网关】 ===
     if (window.PORTAL_TYPE === 'vip' && !isVipPassword) {
