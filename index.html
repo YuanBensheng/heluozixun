@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>河洛咨询 HeLuo Consulting | 洞见时空局象</title>
+    <title>河洛时空 HeLuo Studio | 洞见时空局象</title>
     <style>
         /* =========================================
            全局能量场设定：剔除一切“金（白）”元素
@@ -51,7 +51,7 @@
             align-items: center;
         }
 
-        /* Logo 与 Slogan */
+        /* Logo 与 Slogan (严格居中对齐) */
         .hero-section {
             text-align: center;
             margin-bottom: 60px;
@@ -67,9 +67,9 @@
         }
 
         .brand-subtitle {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: var(--text-bamboo-green);
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
         }
 
@@ -79,13 +79,15 @@
             color: var(--text-primary-cyan);
             opacity: 0.8;
             max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* 业务大类与参考价格 */
+        /* 业务大类与参考价格 (电脑端双列网格布局) */
         .services-grid {
             width: 100%;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-bottom: 50px;
         }
@@ -96,9 +98,11 @@
             border-radius: 8px;
             padding: 25px 30px;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             transition: all 0.3s ease;
+            gap: 15px;
         }
 
         .service-card:hover {
@@ -109,6 +113,7 @@
         .service-info {
             display: flex;
             flex-direction: column;
+            width: 100%;
         }
 
         .service-name {
@@ -125,10 +130,18 @@
         }
 
         .service-price {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--text-primary-cyan);
-            text-align: right;
+            text-align: left;
             font-family: monospace;
+            line-height: 1.4;
+        }
+
+        .price-en {
+            font-size: 0.85rem;
+            color: var(--text-bamboo-green);
+            display: block;
+            margin-top: 2px;
         }
 
         /* 意向收集表单区 */
@@ -201,15 +214,22 @@
             opacity: 0.6;
         }
 
-        /* 移动端适配 */
+        /* 移动端适配 (彻底解决挤压问题) */
         @media (max-width: 600px) {
-            .service-card {
-                flex-direction: column;
-                align-items: flex-start;
+            .services-grid {
+                grid-template-columns: 1fr; /* 手机端强制单列，释放横向空间 */
                 gap: 15px;
             }
+            .service-card {
+                flex-direction: row; /* 手机端信息和价格左右排布 */
+                align-items: center;
+                padding: 20px;
+            }
             .service-price {
-                text-align: left;
+                text-align: right;
+            }
+            .price-en {
+                text-align: right;
             }
             .contact-section {
                 padding: 30px 20px;
@@ -219,34 +239,49 @@
                 gap: 15px;
             }
         }
+        
+        /* 极小屏幕(如iPhone SE)防爆板兜底 */
+        @media (max-width: 380px) {
+             .service-card {
+                flex-direction: column; /* 屏幕极小时改为上下排布 */
+                align-items: flex-start;
+            }
+            .service-price, .price-en {
+                text-align: left;
+            }
+        }
     </style>
 </head>
 <body>
 
     <main class="main-container">
         <header class="hero-section">
-            <h1 class="brand-title">河洛咨询</h1>
-            <div class="brand-subtitle">HeLuo Consulting | Insight into the Matrix</div>
+            <h1 class="brand-title">河洛时空</h1>
+            <div class="brand-subtitle">HeLuo Studio</div>
             <p class="brand-desc">致力于传统国学文化与高维商业决策研判，构建跨越周期的时空战略指引。</p>
         </header>
 
         <section class="services-grid">
-            
-
             <div class="service-card">
                 <div class="service-info">
-                    <div class="service-name">深度局象推演</div>
-                    <div class="service-name-en">Deep Matrix Deduction</div>
+                    <div class="service-name">高维咨询</div>
+                    <div class="service-name-en">High-Dimensional Consulting</div>
                 </div>
-                <div class="service-price">¥ 3,000 / Session</div>
+                <div class="service-price">
+                    ¥ 3,000 / 次起
+                    <span class="price-en">From $420 / Session</span>
+                </div>
             </div>
 
             <div class="service-card">
                 <div class="service-info">
-                    <div class="service-name">海外专项课程</div>
-                    <div class="service-name-en">Overseas Curriculum</div>
+                    <div class="service-name">专项课程</div>
+                    <div class="service-name-en">Specialized Courses</div>
                 </div>
-                <div class="service-price">Inquire</div>
+                <div class="service-price">
+                    价格面议
+                    <span class="price-en">Price Negotiable</span>
+                </div>
             </div>
         </section>
 
@@ -263,14 +298,15 @@
 
     <footer class="footer">
         <div class="footer-links">
-            <a href="#" onclick="alert('Digital Goods & Services: No refunds are provided after the consultation session has commenced or digital access has been granted.')">Refund Policy</a>
-            <a href="#" onclick="alert('Strict Confidentiality: We apply enterprise-grade data protection to your birth details and commercial strategy data.')">Privacy Policy</a>
-            <a href="#" onclick="alert('HeLuo Consulting provides strategic and cultural analysis. It does not replace professional legal or financial advice.')">Terms of Service</a>
+            <a href="/refund-policy">Refund Policy</a>
+            <a href="/privacy-policy">Privacy Policy</a>
+            <a href="/terms-of-service">Terms of Service</a>
         </div>
         <div class="footer-copyright">
-            &copy; 2026 HeLuo Consulting. All Rights Reserved.
+            &copy; 2026 HeLuo Studio. All Rights Reserved.
         </div>
     </footer>
+    
     <div id="contact-modal" class="modal-overlay">
         <div class="modal-content">
             <button id="close-modal-btn" class="close-btn">&times;</button>
