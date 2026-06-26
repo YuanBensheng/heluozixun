@@ -439,7 +439,7 @@
                 if (response.ok) {
                     statusDiv.style.color = 'var(--text-neon-cyan)';
                     // 成功反馈全量双语
-                    statusDiv.innerHTML = '意向已提交。若契机相合，我们将在48小时内通过邮件/微信与您联络。<br><span style="font-size: 0.75rem; color: var(--text-bamboo-green); display: block; margin-top: 4px;">Intent submitted. If aligned, we will contact you via email/WeChat within 48 hours.</span>';
+                    statusDiv.innerHTML = '意向已提交。我们将在48小时内通过邮件/微信与您联络。<br><span style="font-size: 0.75rem; color: var(--text-bamboo-green); display: block; margin-top: 4px;">Intent submitted. If aligned, we will contact you via email/WeChat within 48 hours.</span>';
                     form.reset();
                     setTimeout(() => { modal.style.display = 'none'; statusDiv.innerHTML = ''; }, 5000);
                 } else {
