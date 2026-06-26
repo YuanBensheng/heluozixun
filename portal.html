@@ -1021,16 +1021,46 @@ async function verifyAndRouting(inputPassword) {
     }
 
     // 2. 视频资源路由 (公域 E/F/W 或 课程 B/S/C)
-    if (['E', 'F', 'W', 'B', 'S', 'C'].includes(type)) {
+        // ====== 🚀 【新代码：全矩阵弹性接应防线】 ======
+    const isPublicVideo = ['E', 'F', 'W'].includes(type);
+    
+    // 只要不是 VIP(V)，不是公域微课(E/F/W)，也不是深度破局(P)，剩下的21个随机字母统统是海外课程！
+    if (isPublicVideo || isCoursePassword) {
         let videoUrl = "";
-        // -- 公域体验课 --
+        
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
         else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-        // -- 海外专属课 (这里的链接为架构占位，后续后端直接配发) --
-        else if (type === 'B') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_bazi/output.m3u8";
-        else if (type === 'S') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_fengshui/output.m3u8";
-        else if (type === 'C') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+        // 💡 降维打击：如果是任意随机课程字母，如果没有单独配制特定链接，一律全自动配发海外通用通用课程流！
+        else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+
+        const videoElement = document.querySelector('#layer-video video');
+        if (videoElement) smartLoadVideo(videoUrl, videoElement); 
+        startDynamicWatermark(pwd);
+
+        const videoLayer = document.getElementById('layer-video');
+        if (videoLayer && window.PORTAL_TYPE.startsWith('course_')) {
+            const panels = videoLayer.querySelectorAll('.holo-card-panel');
+            if (panels.length >= 3) {
+                panels[0].style.display = 'none'; 
+                panels[2].style.display = 'none'; 
+            }
+            const mainTitle = videoLayer.querySelector('h2');
+            if (mainTitle) mainTitle.innerHTML = '专属高维课程 · 闭门交付';
+            const subTitle = videoLayer.querySelector('.sub-title');
+            if (subTitle) subTitle.innerHTML = '河洛智慧 · 闭门造境';
+        }
+
+        const duration = isCoursePassword ? (120 * 60 * 1000) : (30 * 60 * 1000);
+        const expiryTime = Date.now() + duration; 
+        localStorage.setItem('videoExpiry', expiryTime);
+        localStorage.setItem('currentLayer', 'layer-video');
+        showTargetLayerOnly('layer-video');
+        startGlobalTimer(expiryTime, 'video');
+        
+        showCustomAlert("✓ 契约达成", isCoursePassword ? "专属课程认证成功，高维播放通道已加密开启。" : "初次认知对齐契约达成，高维时空已开启.");
+    }
+
 
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) smartLoadVideo(videoUrl, videoElement); 
@@ -1134,14 +1164,20 @@ function checkStateAndRestore() {
             
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
+                        // ====== 🚀 【新代码状态记忆：全自动兼容刷新】 ======
             if (activePwd && authType) {
                 let videoUrl = "";
                 if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
                 else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
                 else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-                else if (authType === 'B') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_bazi/output.m3u8";
-                else if (authType === 'S') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_fengshui/output.m3u8";
-                else if (authType === 'C') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+                // 💡 记忆恢复降维：只要不是公域这三个，剩下的21个随机字母刷新时统一全自动重载通用课程流！
+                else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+                
+                const videoElement = document.querySelector('#layer-video video');
+                if (videoElement) smartLoadVideo(videoUrl, videoElement);
+                startDynamicWatermark(activePwd);
+            }
+
                 
                 const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) smartLoadVideo(videoUrl, videoElement);
