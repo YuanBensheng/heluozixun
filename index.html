@@ -77,10 +77,21 @@
             margin-top: 20px;
             font-size: 0.95rem;
             color: var(--text-primary-cyan);
-            opacity: 0.8;
+            opacity: 0.9;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            margin-bottom: 2px;
+        }
+        
+        /* 新增：全局英文对照统一样式 */
+        .en-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-bamboo-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            line-height: 1.3;
         }
 
         /* 业务大类与参考价格 (坚决左右对齐，绝不换行) */
@@ -98,7 +109,7 @@
             border-radius: 8px;
             padding: 25px 20px;
             display: flex;
-            flex-direction: row; /* 强制左右排布 */
+            flex-direction: row; 
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s ease;
@@ -109,7 +120,6 @@
             box-shadow: 0 0 15px rgba(126, 189, 174, 0.1);
         }
 
-        /* 左侧名字区域 */
         .service-info {
             display: flex;
             flex-direction: column;
@@ -122,7 +132,7 @@
             font-size: 1.1rem;
             color: var(--text-neon-cyan);
             margin-bottom: 2px;
-            white-space: nowrap; /* 强制中文名绝不换行 */
+            white-space: nowrap; 
         }
 
         .service-name-en {
@@ -133,26 +143,25 @@
             line-height: 1.2;
         }
 
-        /* 右侧价格区域 */
         .service-price {
             display: flex;
             flex-direction: column;
-            align-items: flex-end; /* 右对齐 */
-            flex-shrink: 0; /* 【核心防挤压】：无论左边多空，右边绝对不许被压缩 */
+            align-items: flex-end; 
+            flex-shrink: 0; 
         }
 
         .price-zh {
             font-size: 1.15rem;
             color: var(--text-primary-cyan);
             font-family: monospace;
-            white-space: nowrap; /* 【核心防折行】：强制3000元/次起 锁死在一行 */
+            white-space: nowrap; 
         }
 
         .price-en {
             font-size: 0.8rem;
             color: var(--text-bamboo-green);
             margin-top: 2px;
-            white-space: nowrap; /* 【核心防折行】：强制英文价格 锁死在一行 */
+            white-space: nowrap; 
         }
 
         /* 意向收集表单区 */
@@ -168,9 +177,9 @@
 
         .contact-title {
             color: var(--text-neon-cyan);
-            margin-bottom: 20px;
             font-weight: 400;
             letter-spacing: 1px;
+            margin-bottom: 4px;
         }
 
         .contact-btn {
@@ -185,8 +194,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             letter-spacing: 1px;
-            margin-top: 10px;
-            white-space: nowrap; /* 【核心防折行】：强制按钮里的字绝对不许掉下去 */
+            margin-top: 15px;
+            white-space: nowrap; 
         }
 
         .contact-btn:hover {
@@ -234,10 +243,65 @@
             .contact-section {
                 padding: 30px 20px;
             }
+            /* 修正点一：手机端底部链接强制横向排列 */
             .footer-links {
-                flex-direction: column;
-                gap: 15px;
+                flex-direction: row !important; /* 强制横排 */
+                flex-wrap: wrap; /* 允许极窄屏幕下优雅折行，但不强制 */
+                gap: 12px; /* 稍微缩小间距防止拥挤 */
             }
+            .footer-links a {
+                font-size: 0.75rem; /* 稍微缩小字号确保一行放得下 */
+            }
+        }
+
+        /* 弹窗核心样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 5, 5, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--panel-deep-blue);
+            border: 1px solid var(--border-dark-green);
+            border-radius: 8px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(10, 46, 36, 0.8);
+            max-height: 90vh; /* 防止手机端超长 */
+            overflow-y: auto;
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            background: none; border: none;
+            color: var(--text-bamboo-green);
+            font-size: 1.5rem; cursor: pointer;
+        }
+        .close-btn:hover { color: var(--text-neon-cyan); }
+        .modal-title { color: var(--text-neon-cyan); margin-bottom: 2px; font-weight: 400; }
+        .modal-desc { color: var(--text-primary-cyan); font-size: 0.85rem; margin-top: 15px; margin-bottom: 4px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; color: var(--text-bamboo-green); font-size: 0.85rem; margin-bottom: 8px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            background: #020a0f; 
+            border: 1px solid var(--border-dark-green);
+            color: var(--text-primary-cyan);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--text-bamboo-green);
         }
     </style>
 </head>
@@ -248,6 +312,7 @@
             <h1 class="brand-title">河洛能量时空</h1>
             <div class="brand-subtitle">HeLuo Energy Studio</div>
             <p class="brand-desc">解密东方传统智慧，构建时空能量矩阵。</p>
+            <div class="en-subtitle">Decoding traditional Eastern wisdom, constructing space-time energy matrices.</div>
         </header>
 
         <section class="services-grid">
@@ -276,9 +341,13 @@
 
         <section class="contact-section">
             <h2 class="contact-title">开启时空对接通道</h2>
-            <p style="color: var(--text-bamboo-green); font-size: 0.9rem; margin-bottom: 20px;">
+            <div class="en-subtitle" style="margin-bottom: 25px;">Open the Space-Time Alignment Channel</div>
+            
+            <p style="color: var(--text-primary-cyan); font-size: 0.9rem; margin-bottom: 2px;">
                 提交您的核心诉求，获取专属会话邀约。
             </p>
+            <div class="en-subtitle">Submit your core request to receive an exclusive session invitation.</div>
+            
             <button id="open-contact-btn" class="contact-btn">Initiate Request (立即沟通)</button>
         </section>
 
@@ -299,85 +368,38 @@
         <div class="modal-content">
             <button id="close-modal-btn" class="close-btn">&times;</button>
             <h3 class="modal-title">时空对接意向登记</h3>
+            <div class="en-subtitle" style="letter-spacing: 0;">Space-Time Alignment Intent Registration</div>
+
             <p class="modal-desc">我们将在评估您的意向后发送专属会话邀约。</p>
+            <div class="en-subtitle" style="margin-bottom: 25px; text-transform: none;">We will send an exclusive session invitation after evaluating your intent.</div>
             
             <form id="public-contact-form">
                 <div class="form-group">
                     <label>您的称呼 (Name)</label>
-                    <input type="text" id="contact-name" required placeholder="例如：李先生 / Mr. Lee">
+                    <input type="text" id="contact-name" required placeholder="例如：李先生 / e.g. Mr. Lee">
                 </div>
                 <div class="form-group">
                     <label>联络方式 (Email / WeChat)</label>
-                    <input type="text" id="contact-info" required placeholder="请留下您的邮箱或微信号">
+                    <input type="text" id="contact-info" required placeholder="请留下您的邮箱或微信号 / Email or WeChat ID">
                 </div>
                 <div class="form-group">
                     <label>核心诉求 (Primary Intent)</label>
                     <select id="contact-intent" required>
-                        <option value="" disabled selected>请选择您的主要诉求方向...</option>
-                        <option value="局象推演">局象推演决策</option>
-                        <option value="专项课程">专项课程学习</option>
-                        <option value="其他事项">个性需求定制</option>
+                        <option value="" disabled selected>请选择您的主要诉求方向... (Select your primary intent...)</option>
+                        <option value="局象推演">局象推演决策 (Situation Deduction & Decision)</option>
+                        <option value="专项课程">专项课程学习 (Specialized Course Learning)</option>
+                        <option value="其他事项">个性需求定制 (Personalized Customization)</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>背景简述 (Brief Background)</label>
-                    <textarea id="contact-message" rows="3" placeholder="请简述您当下的痛点或决策背景..."></textarea>
+                    <textarea id="contact-message" rows="3" placeholder="请简述您当下的痛点或决策背景... (Briefly describe your current pain points or decision background...)"></textarea>
                 </div>
-                <button type="submit" id="submit-btn" class="contact-btn" style="width: 100%; margin-top: 10px;">提交意向 (Submit)</button>
+                <button type="submit" id="submit-btn" class="contact-btn" style="width: 100%; margin-top: 5px;">提交意向 (Submit)</button>
             </form>
-            <div id="submit-status" style="margin-top: 15px; text-align: center; font-size: 0.9rem;"></div>
+            <div id="submit-status" style="margin-top: 15px; text-align: center; font-size: 0.9rem; line-height: 1.4;"></div>
         </div>
     </div>
-
-    <style>
-        /* 弹窗核心样式（严格遵循水木相生原则） */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 5, 5, 0.9);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: var(--panel-deep-blue);
-            border: 1px solid var(--border-dark-green);
-            border-radius: 8px;
-            padding: 40px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            box-shadow: 0 0 30px rgba(10, 46, 36, 0.8);
-        }
-        .close-btn {
-            position: absolute;
-            top: 15px; right: 20px;
-            background: none; border: none;
-            color: var(--text-bamboo-green);
-            font-size: 1.5rem; cursor: pointer;
-        }
-        .close-btn:hover { color: var(--text-neon-cyan); }
-        .modal-title { color: var(--text-neon-cyan); margin-bottom: 10px; font-weight: 400; }
-        .modal-desc { color: var(--text-bamboo-green); font-size: 0.85rem; margin-bottom: 25px; opacity: 0.8; }
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; color: var(--text-bamboo-green); font-size: 0.85rem; margin-bottom: 8px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            background: #020a0f; /* 极深蓝水色 */
-            border: 1px solid var(--border-dark-green);
-            color: var(--text-primary-cyan);
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            border-color: var(--text-bamboo-green);
-        }
-    </style>
 
     <script>
         // 极简表单交互逻辑
@@ -395,8 +417,9 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
-            submitBtn.textContent = '正在加密传输...';
-            statusDiv.textContent = '';
+            // 提交按钮状态双语
+            submitBtn.textContent = '正在加密传输... (Encrypting & Transmitting...)';
+            statusDiv.innerHTML = '';
             statusDiv.style.color = 'var(--text-primary-cyan)';
 
             const payload = {
@@ -415,15 +438,17 @@
                 
                 if (response.ok) {
                     statusDiv.style.color = 'var(--text-neon-cyan)';
-                    statusDiv.textContent = '意向已提交。若契机相合，我们将在48小时内通过邮件/微信与您联络。';
+                    // 成功反馈全量双语
+                    statusDiv.innerHTML = '意向已提交。若契机相合，我们将在48小时内通过邮件/微信与您联络。<br><span style="font-size: 0.75rem; color: var(--text-bamboo-green); display: block; margin-top: 4px;">Intent submitted. If aligned, we will contact you via email/WeChat within 48 hours.</span>';
                     form.reset();
-                    setTimeout(() => { modal.style.display = 'none'; statusDiv.textContent = ''; }, 4000);
+                    setTimeout(() => { modal.style.display = 'none'; statusDiv.innerHTML = ''; }, 5000);
                 } else {
                     throw new Error('传输异常');
                 }
             } catch (error) {
                 statusDiv.style.color = '#ff6b6b';
-                statusDiv.textContent = '系统能量波动，提交失败，请稍后重试。';
+                // 失败反馈全量双语
+                statusDiv.innerHTML = '系统能量波动，提交失败，请稍后重试。<br><span style="font-size: 0.75rem; color: #ff9999; display: block; margin-top: 4px;">System energy fluctuation. Submission failed, please try again later.</span>';
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = '提交意向 (Submit)';
