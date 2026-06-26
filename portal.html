@@ -304,6 +304,128 @@
         video:fullscreen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
         video:-webkit-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
         video:-moz-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
+    /* =========================================
+   海外课程专属全息播放舱 (带呼吸灯特效版)
+   ========================================= */
+.course-dashboard { 
+    width: 100%; 
+    max-width: 1100px; /* 加宽以容纳左右分栏 */
+}
+
+.dashboard-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+
+.course-title { 
+    color: #7ebdae; 
+    font-size: 20px; 
+    margin: 0; 
+    text-shadow: 0 0 10px rgba(126, 189, 174, 0.3);
+}
+
+/* 引流商城的荧光绿高亮按钮 */
+.return-store-btn { 
+    background: #10b981; 
+    color: #010614; 
+    padding: 8px 18px; 
+    border-radius: 4px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    font-size: 14px; 
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(16,185,129,0.4);
+}
+
+.dashboard-body { 
+    display: flex; 
+    gap: 20px; 
+    align-items: flex-start; 
+}
+
+/* 👇 左侧视频舱：完全继承您的呼吸灯边框特效 👇 */
+.video-main-screen { 
+    flex: 7; 
+    background: #000; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    border: 1px solid rgba(16, 185, 129, 0.25); 
+    animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
+}
+.video-main-screen video { 
+    width: 100%; 
+    display: block; 
+    aspect-ratio: 16 / 9; 
+    object-fit: cover;
+}
+
+/* 👇 右侧目录舱：完全继承您的呼吸灯边框特效 👇 */
+.video-playlist { 
+    flex: 3; 
+    background: rgba(2, 12, 36, 0.7); /* 使用原来的深邃幽蓝背景 */
+    border-radius: 8px; 
+    padding: 15px; 
+    max-height: calc(100vw * 9 / 16 * 0.7); 
+    overflow-y: auto; 
+    border: 1px solid rgba(16, 185, 129, 0.25); 
+    animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
+}
+
+.playlist-title { 
+    color: #7ebdae; 
+    font-size: 16px; 
+    margin-top: 0; 
+    margin-bottom: 15px; 
+    border-bottom: 1px solid rgba(126, 189, 174, 0.1); 
+    padding-bottom: 10px;
+}
+
+.episode-list { list-style: none; padding: 0; margin: 0; }
+
+.episode-item { 
+    padding: 12px 10px; 
+    color: #e5e7eb; 
+    cursor: pointer; 
+    border-bottom: 1px solid rgba(126, 189, 174, 0.05); 
+    transition: all 0.2s; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    font-size: 14px;
+}
+.episode-item:hover { 
+    background: rgba(126,189,174,0.1); 
+}
+
+/* 选中播放时的荧光绿状态 */
+.episode-item.active { 
+    color: #10b981; 
+    border-left: 3px solid #10b981; 
+    background: rgba(16,185,129,0.05); 
+    font-weight: bold;
+}
+
+.ep-num { 
+    background: #1a2a40; 
+    color: #7ebdae; 
+    padding: 3px 6px; 
+    border-radius: 4px; 
+    font-size: 12px; 
+}
+.episode-item.active .ep-num {
+    background: #10b981;
+    color: #010614;
+}
+
+/* 移动端极限折叠响应 */
+@media (max-width: 768px) {
+    .dashboard-body { flex-direction: column; }
+    .video-main-screen, .video-playlist { flex: none; width: 100%; max-height: none;}
+    .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+    .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -1230,6 +1352,39 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
         }
     });
 </script>
+<div id="layer-course-dashboard" class="container course-dashboard" style="display: none;">
+    <div class="dashboard-header">
+        <h2 class="course-title" id="dynamic-course-title">【时空能量与八字核心阵法】</h2>
+        <a href="https://您的lemonsqueezy店铺链接.com" class="return-store-btn" target="_blank" id="lemon-store-link">
+            获取更多高维课程
+        </a>
+    </div>
 
+    <div class="dashboard-body">
+        <div class="video-main-screen">
+            <video id="course-video-player" controls controlsList="nodownload" disablePictureInPicture preload="auto">
+                您的浏览器不支持 HTML5 视频。
+            </video>
+        </div>
+
+        <div class="video-playlist">
+            <h3 class="playlist-title">课程目录</h3>
+            <ul class="episode-list" id="course-episode-list">
+                <li class="episode-item active" data-src="您的第一集视频链接.m3u8">
+                    <span class="ep-num">01</span> 宇宙能量的底层逻辑
+                </li>
+                <li class="episode-item" data-src="您的第二集视频链接.m3u8">
+                    <span class="ep-num">02</span> 天干地支的时空矩阵
+                </li>
+                <li class="episode-item" data-src="您的第三集视频链接.m3u8">
+                    <span class="ep-num">03</span> 财富流年的精准推演
+                </li>
+                <li class="episode-item" data-src="您的第四集视频链接.m3u8">
+                    <span class="ep-num">04</span> 婚姻宫的因果纠缠
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 </body>
 </html>
