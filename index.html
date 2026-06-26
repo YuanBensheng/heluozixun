@@ -261,7 +261,8 @@
             <p style="color: var(--text-bamboo-green); font-size: 0.9rem; margin-bottom: 20px;">
                 高维决策需双向筛选。请提交您的核心诉求，我们将在评估后发送专属会话密钥。
             </p>
-            <a href="mailto:您的邮箱地址" class="contact-btn">Initiate Request (立即沟通)</a>
+            <button id="open-contact-btn" class="contact-btn">Initiate Request (立即沟通)</button>
+
         </section>
 
     </main>
@@ -276,6 +277,142 @@
             &copy; 2026 HeLuo Consulting. All Rights Reserved.
         </div>
     </footer>
+    <div id="contact-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <h3 class="modal-title">时空对接意向登记</h3>
+            <p class="modal-desc">请简述您的核心诉求，我们将在评估后发送专属会话密钥。</p>
+            
+            <form id="public-contact-form">
+                <div class="form-group">
+                    <label>如何称呼您 (Name)</label>
+                    <input type="text" id="contact-name" required placeholder="例如：李先生 / Mr. Lee">
+                </div>
+                <div class="form-group">
+                    <label>联络方式 (Email / WeChat)</label>
+                    <input type="text" id="contact-info" required placeholder="请留下您的邮箱或微信号">
+                </div>
+                <div class="form-group">
+                    <label>核心诉求 (Primary Intent)</label>
+                    <select id="contact-intent" required>
+                        <option value="" disabled selected>请选择您的主要诉求方向...</option>
+                        <option value="前置研判对齐">前置研判对齐 (初步沟通)</option>
+                        <option value="深度局象推演">深度局象推演 (事业/决策推演)</option>
+                        <option value="海外专项课程">海外专项课程 (系统学习)</option>
+                        <option value="其他事项">其他定制化需求</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>背景简述 (Brief Background)</label>
+                    <textarea id="contact-message" rows="3" placeholder="请用一两句话简述您当下的痛点或决策背景..."></textarea>
+                </div>
+                <button type="submit" id="submit-btn" class="contact-btn" style="width: 100%; margin-top: 10px;">提交意向 (Submit)</button>
+            </form>
+            <div id="submit-status" style="margin-top: 15px; text-align: center; font-size: 0.9rem;"></div>
+        </div>
+    </div>
+
+    <style>
+        /* 弹窗核心样式（严格遵循水木相生原则） */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 5, 5, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: var(--panel-deep-blue);
+            border: 1px solid var(--border-dark-green);
+            border-radius: 8px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(10, 46, 36, 0.8);
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            background: none; border: none;
+            color: var(--text-bamboo-green);
+            font-size: 1.5rem; cursor: pointer;
+        }
+        .close-btn:hover { color: var(--text-neon-cyan); }
+        .modal-title { color: var(--text-neon-cyan); margin-bottom: 10px; font-weight: 400; }
+        .modal-desc { color: var(--text-bamboo-green); font-size: 0.85rem; margin-bottom: 25px; opacity: 0.8; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; color: var(--text-bamboo-green); font-size: 0.85rem; margin-bottom: 8px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            background: #020a0f; /* 极深蓝水色 */
+            border: 1px solid var(--border-dark-green);
+            color: var(--text-primary-cyan);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--text-bamboo-green);
+        }
+    </style>
+
+    <script>
+        // 极简表单交互逻辑
+        const modal = document.getElementById('contact-modal');
+        const openBtn = document.getElementById('open-contact-btn');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const form = document.getElementById('public-contact-form');
+        const statusDiv = document.getElementById('submit-status');
+        const submitBtn = document.getElementById('submit-btn');
+
+        openBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
+        closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+        window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = '正在加密传输...';
+            statusDiv.textContent = '';
+            statusDiv.style.color = 'var(--text-primary-cyan)';
+
+            const payload = {
+                name: document.getElementById('contact-name').value,
+                contact: document.getElementById('contact-info').value,
+                intent: document.getElementById('contact-intent').value,
+                message: document.getElementById('contact-message').value
+            };
+
+            try {
+                const response = await fetch('/api/public-contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    statusDiv.style.color = 'var(--text-neon-cyan)';
+                    statusDiv.textContent = '意向已提交。若契机相合，我们将在48小时内通过邮件/微信与您联络。';
+                    form.reset();
+                    setTimeout(() => { modal.style.display = 'none'; statusDiv.textContent = ''; }, 4000);
+                } else {
+                    throw new Error('传输异常');
+                }
+            } catch (error) {
+                statusDiv.style.color = '#ff6b6b';
+                statusDiv.textContent = '系统能量波动，提交失败，请稍后重试。';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交意向 (Submit)';
+            }
+        });
+    </script>
 
 </body>
 </html>
