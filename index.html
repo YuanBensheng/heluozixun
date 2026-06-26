@@ -87,7 +87,14 @@
         .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; color: var(--text-bamboo-green); font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
         .close-btn:hover { color: var(--text-neon-cyan); }
         
-        .modal-title { color: var(--text-neon-cyan); margin-bottom: 2px; font-weight: 400; }
+                /* 👑 弹窗标题与副标题深度微调：实现完美中轴线绝对居中 */
+        .modal-title { 
+            color: var(--text-neon-cyan); 
+            margin-bottom: 2px; 
+            font-weight: 400; 
+            text-align: center;       /* 核心修复：强制中文主标题居中 */
+        }
+
         .modal-desc { color: var(--text-primary-cyan); font-size: 0.85rem; margin-top: 15px; margin-bottom: 4px; }
         
         /* 表单样式 */
