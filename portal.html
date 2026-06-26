@@ -2,33 +2,19 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>河洛咨询前置对齐系统</title>
-    
     <script>
-        // ================= 🚀 东方未来主义 · 统一路由与物理熔断系统 =================
-        // 在浏览器开始画网页前瞬间判断，提取 URL 参数
-        const urlParams = new URLSearchParams(window.location.search);
-        const portalType = urlParams.get('type');
-        const validTypes = ['public', 'vip', 'course_bazi', 'course_fengshui'];
-        
-        if (!portalType || !validTypes.includes(portalType)) {
-            // 如果没有带参数，或者参数被乱改，直接重定向回纯展示合规的 index.html，防恶意窥探
-            window.location.replace('index.html');
-        } else {
-            // 鉴权通过，向根节点打上对应的通道标签，供 CSS 防闪烁补丁使用
-            document.documentElement.classList.add('type-' + portalType);
-            // 注册全局核心变量，供后续 JS 调度使用
-            window.PORTAL_TYPE = portalType;
+        // 在浏览器开始画网页前瞬间判断，如果是 VIP，给根节点打个标签
+        if (window.location.search.toLowerCase().includes('type=vip')) {
+            document.documentElement.classList.add('is-vip-mode');
         }
     </script>
 
     <style>
         /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
-        /* ================= 防闪烁补丁 (三通道解耦隔离) ================= */
-        html.type-vip #layer-pay-399,
-        html.type-course_bazi #layer-pay-399,
-        html.type-course_fengshui #layer-pay-399 {
+        /* ================= 防闪烁补丁 ================= */
+        html.is-vip-mode #layer-pay-399 {
             display: none !important;
         }
        
@@ -67,7 +53,7 @@
             }
         }
 
-        /* 💡 特效动画2：激活按钮光圈 */
+        /* 💡 特效动画2：激活按钮光圈——与大外圈完成 6秒周期的微秒级因果同步共振 */
         @keyframes btn-smooth-resonance {
             0%, 100% { 
                 border-color: rgba(16, 185, 129, 0.5);
@@ -83,6 +69,7 @@
             }
         }
 
+        /* 👑 从根源上斩断横向溢出，锁死画布漂移缺陷，确保绝对正位 */
         html, body {
             width: 100%;
             margin: 0;
@@ -142,6 +129,7 @@
             text-transform: uppercase;
         }
 
+        /* 👑 脉冲仿生呼吸磨砂舱板 */
         .holo-card-panel {
             background: rgba(1, 5, 18, 0.7); 
             border: 1px solid rgba(16, 185, 129, 0.25); 
@@ -177,7 +165,10 @@
             text-indent: 0;
             margin: 0 0 22px 0;
         }
-        .article-main-text:last-child { margin-bottom: 0; }
+        
+        .article-main-text:last-child {
+            margin-bottom: 0;
+        }
 
         .flex-pay-container {
             display: flex;
@@ -185,52 +176,151 @@
             justify-content: space-between;
             gap: 30px;
         }
+        /* 👑 局部特权豁免：强行解除支付板块的防长按与防复制限制 */
         .flex-pay-container, 
         .flex-pay-container * {
-            -webkit-touch-callout: default !important;
-            -webkit-user-select: auto !important;
+            -webkit-touch-callout: default !important; /* 恢复微信/支付宝长按弹出原生菜单的功能 */
+            -webkit-user-select: auto !important;      /* 恢复文字选中功能 */
             -khtml-user-select: auto !important;
             -moz-user-select: auto !important;
             -ms-user-select: auto !important;
             user-select: auto !important;
         }
         .qrcode-box { 
-            width: 200px; height: 200px; border: 1px solid rgba(16, 185, 129, 0.35);
-            background: #000000; display: flex; justify-content: center; align-items: center; 
-            border-radius: 8px; flex-shrink: 0; margin: 0 auto;
+            width: 200px; 
+            height: 200px; 
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            background: #000000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 8px; 
+            flex-shrink: 0;
+            margin: 0 auto;
             box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
         }
         .qrcode-box img { width: 92%; height: 92%; object-fit: contain; }
-
-        .pay-toggle-group { display: flex; justify-content: center; gap: 12px; margin-top: 15px; }
-        .pay-toggle-btn { background: #010614; border: 1px solid #0d211c; color: #527a6e; padding: 6px 18px; font-size: 13px; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; box-sizing: border-box; }
-        .pay-toggle-btn.active-wx { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #10b981; font-weight: bold; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-        .pay-toggle-btn.active-ali { background: rgba(0, 163, 238, 0.15); border-color: #00a3ee; color: #00a3ee; font-weight: bold; box-shadow: 0 0 10px rgba(0, 163, 238, 0.3); }
-        .pay-desc-text { font-size: 14px; color: #7ebdae; line-height: 1.8; text-align: justify; text-align-last: left; display: flex; flex-direction: column; justify-content: center; flex: 1; }
+/* 👑 支付方式无缝切换引擎 */
+        .pay-toggle-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .pay-toggle-btn {
+            background: #010614;
+            border: 1px solid #0d211c;
+            color: #527a6e;
+            padding: 6px 18px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            box-sizing: border-box;
+        }
+        .pay-toggle-btn.active-wx {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: #10b981;
+            color: #10b981;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+        .pay-toggle-btn.active-ali {
+            background: rgba(0, 163, 238, 0.15); /* 支付宝专属蓝 */
+            border-color: #00a3ee;
+            color: #00a3ee;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 163, 238, 0.3);
+        }
+        .pay-desc-text {
+            font-size: 14px; 
+            color: #7ebdae; 
+            line-height: 1.8; 
+            text-align: justify; 
+            text-align-last: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            flex: 1;
+        }
 
         .video-wrapper-inner { 
-            width: 100%; aspect-ratio: 16/9; background: #000000; border-radius: 8px; overflow: hidden;
-            border: 1px solid rgba(0, 255, 204, 0.2); margin-bottom: 15px; position: relative; 
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            background: #000000; 
+            border-radius: 8px; 
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            margin-bottom: 15px;
+            position: relative; 
         }
-        .video-wrapper-inner video { width: 100%; height: 100%; object-fit: cover; pointer-events: auto; }
         
-        .auth-section { padding: 10px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .crypto-input { 
-            width: 240px; padding: 14px 0; border: 1px solid rgba(16, 185, 129, 0.45); border-radius: 6px; 
-            font-size: 20px; letter-spacing: 8px; text-indent: 8px; outline: none; background: #000000; 
-            color: #00ffcc; text-align: center; box-shadow: inset 0 2px 8px rgba(0,255,204,0.08), 0 0 12px rgba(0,255,204,0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box; line-height: normal !important;
-            position: relative; z-index: 2; transform: translateZ(0);
+        .video-wrapper-inner video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            pointer-events: auto;
         }
-        .crypto-input:focus { border-color: #00ffcc; box-shadow: 0 0 25px rgba(0, 255, 204, 0.45), inset 0 1px 5px rgba(0, 255, 204, 0.25); background: #01071a; }
+        
+        .auth-section { 
+            padding: 10px 0; 
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+        }
+
+        .crypto-input { 
+            width: 240px; 
+            padding: 14px 0; 
+            border: 1px solid rgba(16, 185, 129, 0.45); 
+            border-radius: 6px; 
+            font-size: 20px; 
+            letter-spacing: 8px; 
+            text-indent: 8px; 
+            outline: none; 
+            background: #000000; 
+            color: #00ffcc; 
+            text-align: center;
+            box-shadow: inset 0 2px 8px rgba(0,255,204,0.08), 0 0 12px rgba(0,255,204,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            line-height: normal !important;
+            position: relative;
+            z-index: 2;
+            transform: translateZ(0);
+        }
+        .crypto-input:focus { 
+            border-color: #00ffcc; 
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.45), inset 0 1px 5px rgba(0, 255, 204, 0.25); 
+            background: #01071a;
+        }
         
         .btn { 
-            background: #000000; color: #00ffcc; border: 1px solid rgba(16, 185, 129, 0.6); width: 240px; padding: 14px 0; 
-            border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; letter-spacing: 3px; 
-            transition: all 0.3s ease; animation: btn-smooth-resonance 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            display: inline-block; box-sizing: border-box; text-align: center; will-change: box-shadow, border-color;
+            background: #000000; 
+            color: #00ffcc; 
+            border: 1px solid rgba(16, 185, 129, 0.6); 
+            width: 240px; 
+            padding: 14px 0; 
+            border-radius: 6px; 
+            font-size: 15px; 
+            font-weight: bold;
+            cursor: pointer; 
+            letter-spacing: 3px; 
+            transition: all 0.3s ease; 
+            animation: btn-smooth-resonance 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            display: inline-block;
+            box-sizing: border-box;
+            text-align: center;
+            will-change: box-shadow, border-color;
         }
-        .btn:hover { background: #00ffcc; color: #000000; box-shadow: 0 0 30px rgba(0, 255, 204, 0.7); border-color: #00ffcc; }
+        .btn:hover { 
+            background: #00ffcc; 
+            color: #000000; 
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.7); 
+            border-color: #00ffcc;
+        }
         .btn:disabled { background: #010614; color: #16362e; border-color: #0d211c; cursor: not-allowed; box-shadow: none; animation: none; }
         
         .sync-container { display: none; margin: 25px auto; position: relative; width: 60px; height: 60px; }
@@ -243,13 +333,76 @@
         .layer.active { display: block; }
 
         /* ================= 📋 局象前置体检案卷专属样式 ================= */
-        .case-section-title { font-size: 15px; color: #10b981; font-weight: bold; margin-top: 25px; margin-bottom: 12px; border-left: 3px solid #00ffcc; padding-left: 10px; letter-spacing: 1px; }
-        .case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .case-option { background: #010614; border: 1px solid #0d211c; padding: 14px 10px; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); color: #7ebdae; font-size: 14px; box-sizing: border-box; }
-        @media (hover: hover) { .case-option:hover { border-color: #10b981; background: #010a18; color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.15); } }
-        .case-option.selected { background: rgba(0, 255, 204, 0.1) !important; border-color: #00ffcc !important; color: #00ffcc !important; font-weight: bold; box-shadow: 0 0 15px rgba(0, 255, 204, 0.25); }
-        .case-textarea { width: 100%; height: 110px; background: #000000; border: 1px solid #0d211c; color: #00ffcc; padding: 12px; border-radius: 6px; box-sizing: border-box; font-size: 15px; resize: none; outline: none; line-height: normal !important; position: relative; z-index: 2; transform: translateZ(0); transition: all 0.3s; }
-        .case-textarea:focus { border-color: #00ffcc; box-shadow: 0 0 12px rgba(0, 255, 204, 0.2); background: #010614; }
+        .case-section-title {
+            font-size: 15px;
+            color: #10b981;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            border-left: 3px solid #00ffcc;
+            padding-left: 10px;
+            letter-spacing: 1px;
+        }
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .case-option {
+            background: #010614;
+            border: 1px solid #0d211c;
+            padding: 14px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #7ebdae;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        /* 核心修正：利用媒体查询斩断手机端的“粘滞悬停”错觉，并使用翠绿色区分“悬停”与青色“选中”状态 */
+        @media (hover: hover) {
+            .case-option:hover {
+                border-color: #10b981; 
+                background: #010a18;
+                color: #10b981;
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+            }
+        }
+        .case-option.selected {
+            background: rgba(0, 255, 204, 0.1) !important;
+            border-color: #00ffcc !important;
+            color: #00ffcc !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.25);
+        }
+        .case-textarea {
+            width: 100%;
+            height: 110px;
+            background: #000000;
+            border: 1px solid #0d211c;
+            color: #00ffcc;
+            padding: 12px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+            resize: none; /* 锁死用户拖拽边框，防止乱动 */
+            outline: none;
+            
+            /* 核心修正：加入这三行锁死抖动 */
+            line-height: normal !important; 
+            position: relative;
+            z-index: 2;
+            transform: translateZ(0); /* 强制开启 GPU 加速，消除重绘导致的抖动 */
+            
+            transition: all 0.3s;
+        }
+        .case-textarea:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 12px rgba(0, 255, 204, 0.2);
+            background: #010614;
+        }
 
         .calendar-box { background: rgba(1, 5, 18, 0.7); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 25px; margin-top: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); will-change: box-shadow; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; box-sizing: border-box;}
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; font-size: 16px; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; color: #00ffcc; }
@@ -258,6 +411,7 @@
         
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
         .weekday-label { font-size: 13px; color: #2e7a68; text-align: center; font-weight: bold; }
+        
         .day-cell { background: #010614; border: 1px solid #0d211c; padding: 15px 5px; text-align: center; border-radius: 4px; cursor: pointer; transition: all 0.2s; font-size: 14px; color: #7ebdae; }
         .day-cell:hover:not(.disabled):not(.full) { background: #00ffcc; color: #111; border-color: #00ffcc; font-weight: bold; box-shadow: 0 0 15px rgba(0,255,204,0.5); }
         .day-cell.selected-day { background: #10b981 !important; color: #000000 !important; border-color: #10b981 !important; font-weight: bold; box-shadow: 0 0 15px rgba(16,185,129,0.5); }
@@ -285,7 +439,15 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-card { background: rgba(1, 5, 18, 0.92); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; width: 90%; max-width: 450px; padding: 25px; box-sizing: border-box; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); will-change: box-shadow, border-color, transform; animation: holo-smooth-breath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         .modal-title { font-size: 18px; font-weight: bold; color: #00ffcc; border-bottom: 1px solid rgba(16,185,129,0.15); padding-bottom: 12px; margin-bottom: 20px; letter-spacing: 1px; text-align: center; }
-        .modal-body { font-size: 14px; color: #7ebdae; line-height: 1.8; margin-bottom: 25px; text-align: justify; text-align-last: left; } 
+        .modal-body { 
+            font-size: 14px; 
+            color: #7ebdae; 
+            line-height: 1.8; 
+            margin-bottom: 25px; 
+            text-align: justify; 
+            text-align-last: left;
+        } 
+
         .modal-footer { text-align: center; border-top: 1px dashed rgba(16,185,129,0.15); padding-top: 20px; } 
 
         @media (max-width: 650px) {
@@ -296,138 +458,39 @@
             .modal-card { width: 88% !important; padding: 20px !important; }
             .holo-card-panel { padding: 25px 20px !important; }
             .final-thank-card { padding: 35px 15px !important; }
-            .case-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-            .case-option { padding: 10px 4px !important; font-size: 13px !important; display: flex; align-items: center; justify-content: center; min-height: 48px; }
+            /* --- 核心修正：取消手机端单列强制折叠，保持两宫格 --- */
+            .case-grid { 
+                grid-template-columns: repeat(2, 1fr) !important; /* 强制平分两列 */
+                gap: 8px !important; /* 手机端选项间距稍微收紧，防挤压 */
+            }
+            .case-option {
+                padding: 10px 4px !important; /* 手机端适度减小左右内边距 */
+                font-size: 13px !important; /* 手机端字号微调，避免文字折行不美观 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 48px; /* 确保如果字数多折成两行，各个选项框高度依然一致 */
+            }
         }
         video::-webkit-media-controls-fullscreen-button { display: none !important; }
         video::-webkit-media-controls-panel video::-webkit-media-controls-panel video::-webkit-media-controls-fullscreen-button { display: none !important; }
-        video:fullscreen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
-        video:-webkit-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
-        video:-moz-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
-    /* =========================================
-   海外课程专属全息播放舱 (带呼吸灯特效版)
-   ========================================= */
-.course-dashboard { 
-    width: 100%; 
-    max-width: 1100px; /* 加宽以容纳左右分栏 */
+       video:fullscreen {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
-.dashboard-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px; 
+video:-webkit-full-screen {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
-.course-title { 
-    color: #7ebdae; 
-    font-size: 20px; 
-    margin: 0; 
-    text-shadow: 0 0 10px rgba(126, 189, 174, 0.3);
+video:-moz-full-screen {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
 }
-
-/* 引流商城的荧光绿高亮按钮 */
-.return-store-btn { 
-    background: #10b981; 
-    color: #010614; 
-    padding: 8px 18px; 
-    border-radius: 4px; 
-    text-decoration: none; 
-    font-weight: bold; 
-    font-size: 14px; 
-    transition: all 0.3s;
-    box-shadow: 0 0 15px rgba(16,185,129,0.4);
-}
-
-.dashboard-body { 
-    display: flex; 
-    gap: 20px; 
-    align-items: flex-start; 
-}
-
-/* 👇 左侧视频舱：完全继承您的呼吸灯边框特效 👇 */
-.video-main-screen { 
-    flex: 7; 
-    background: #000; 
-    border-radius: 8px; 
-    overflow: hidden; 
-    border: 1px solid rgba(16, 185, 129, 0.25); 
-    animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
-}
-.video-main-screen video { 
-    width: 100%; 
-    display: block; 
-    aspect-ratio: 16 / 9; 
-    object-fit: cover;
-}
-
-/* 👇 右侧目录舱：完全继承您的呼吸灯边框特效 👇 */
-.video-playlist { 
-    flex: 3; 
-    background: rgba(2, 12, 36, 0.7); /* 使用原来的深邃幽蓝背景 */
-    border-radius: 8px; 
-    padding: 15px; 
-    max-height: calc(100vw * 9 / 16 * 0.7); 
-    overflow-y: auto; 
-    border: 1px solid rgba(16, 185, 129, 0.25); 
-    animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
-}
-
-.playlist-title { 
-    color: #7ebdae; 
-    font-size: 16px; 
-    margin-top: 0; 
-    margin-bottom: 15px; 
-    border-bottom: 1px solid rgba(126, 189, 174, 0.1); 
-    padding-bottom: 10px;
-}
-
-.episode-list { list-style: none; padding: 0; margin: 0; }
-
-.episode-item { 
-    padding: 12px 10px; 
-    color: #e5e7eb; 
-    cursor: pointer; 
-    border-bottom: 1px solid rgba(126, 189, 174, 0.05); 
-    transition: all 0.2s; 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-    font-size: 14px;
-}
-.episode-item:hover { 
-    background: rgba(126,189,174,0.1); 
-}
-
-/* 选中播放时的荧光绿状态 */
-.episode-item.active { 
-    color: #10b981; 
-    border-left: 3px solid #10b981; 
-    background: rgba(16,185,129,0.05); 
-    font-weight: bold;
-}
-
-.ep-num { 
-    background: #1a2a40; 
-    color: #7ebdae; 
-    padding: 3px 6px; 
-    border-radius: 4px; 
-    font-size: 12px; 
-}
-.episode-item.active .ep-num {
-    background: #10b981;
-    color: #010614;
-}
-
-/* 移动端极限折叠响应 */
-@media (max-width: 768px) {
-    .dashboard-body { flex-direction: column; }
-    .video-main-screen, .video-playlist { flex: none; width: 100%; max-height: none;}
-    .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
-    .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
-}
-
-      #layer-course-dashboard { display: none; }  
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -435,24 +498,40 @@
 <body class="noselect" ondragstart="return false">
 
 <div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(165deg, #000000 0%, #010614 50%, #020c24 100%); z-index: 9999999; color: #7ebdae; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
+    
     <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 80% 50% at 20% 80%, rgba(1, 6, 20, 0.95) 0%, transparent 50%), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 45%); pointer-events: none;"></div>
-    <style> @keyframes maskBounceRight { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(5px, -5px); } } </style>
+
+    <style>
+        /* ⚡ 修正：严格锁定在45度黄金对角线上，且幅度收敛为微调的 5px，增加缓入缓出的生命力 */
+        @keyframes maskBounceRight {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(5px, -5px); }
+        }
+    </style>
+
     <div style="position: absolute; top: 30px; right: 30px; z-index: 99; animation: maskBounceRight 1.5s infinite ease-in-out;">
         <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px rgba(0, 255, 204, 0.6));">
-            <line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
         </svg>
     </div>
+
     <div style="position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 420px; background: rgba(1, 5, 18, 0.85); border: none; border-radius: 12px; padding: 40px 25px; box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 25px rgba(16,185,129,0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); text-align: center; box-sizing: border-box; z-index: 10;">
+
         <div style="margin-bottom: 20px;">
             <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));">
-                <circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
             </svg>
         </div>
+
         <h2 style="font-size: 22px; font-weight: 600; color: #00ffcc; letter-spacing: 2px; margin: 0 0 15px 0; text-shadow: 0 0 15px rgba(0, 255, 204, 0.5);">河洛咨询 · 温馨提示</h2>
         <div style="width: 40px; height: 2px; background: #10b981; margin: 0 auto 20px auto; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);"></div>
+
         <p style="font-size: 15px; color: #7ebdae; line-height: 1.8; text-align: justify; text-align-last: center; margin-bottom: 30px;">
             为保障您的咨询数据隐私与浏览体验，请不要在第三方社交软件内直接加载。
         </p>
+
         <div style="background: #010614; border: 1px solid #0d211c; border-radius: 8px; padding: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
             <p style="font-size: 15px; color: #10b981; margin: 0 0 12px 0; font-weight: bold; letter-spacing: 1px;">
                 请点击右上角 <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px; vertical-align: middle; color: #00ffcc; text-shadow: 0 0 8px rgba(0,255,204,0.4);">···</span>
@@ -462,10 +541,10 @@
                 <span style="background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; font-size: 14px; font-weight: bold; padding: 6px 14px; border-radius: 4px; letter-spacing: 1px; box-shadow: 0 0 10px rgba(0,255,204,0.2);">在浏览器打开</span>
             </div>
         </div>
+
         <p style="font-size: 10px; color: #2e7a68; margin-top: 30px; margin-bottom: 0; letter-spacing: 1.2px; text-transform: uppercase; white-space: nowrap;">SECURE ENVIRONMENT• HELUO CONSULTING</p>
     </div>
 </div>
-
 <div class="container">
 
     <div id="layer-pay-399" class="layer">
@@ -503,30 +582,10 @@
             <div class="auth-section">
                 <input type="text" id="password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
                 <button class="btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('password-input').value)">输入密钥 · 开启破局</button>
+                <p id="err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
             </div>
         </div>
     </div>
-
-
-    <div id="layer-course" class="layer">
-        <h2 id="course-title">海外高维课程</h2>
-        <div class="sub-title">河洛智慧 · 闭门交付</div>
-        
-        <div class="holo-card-panel">
-            <div class="article-title">－ 课程简介 －</div>
-            <p class="article-main-text" id="course-desc">认知同频，方能破局。请输入您的专属海外课程密钥，开启高维学习通道。</p>
-            <p class="article-main-text" style="margin-top: 10px; font-size: 14px; color: #527a6e;">* 注：课程全系搭载动态溯源与 HLS 军工级防盗加密，请在安静、独立的空间内沉浸观看。</p>
-        </div>
-
-        <div class="holo-card-panel">
-            <div class="article-title">－ 专属密钥 －</div>
-            <div class="auth-section">
-                <input type="text" id="course-password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
-                <button class="btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('course-password-input').value)">验证密钥 · 开启课程</button>
-            </div>
-        </div>
-    </div>
-
 
     <div id="layer-video" class="layer">
         <h2>认知对齐 · 超维接引</h2>
@@ -536,8 +595,39 @@
             <div class="article-title">－ 认知对齐 －</div>
             <p class="article-main-text" style="margin-bottom: 20px;">下方影像含有我的部分底层逻辑矩阵，无需强求理解，只需感知共振。认知能在此刻对齐，后续的超维接引才有意义。</p>
             <div class="video-wrapper-inner">
-                <video id="heluo-video" src="" controls disablePictureInPicture playsinline webkit-playsinline x5-playsinline="true" oncontextmenu="return false;" preload="none" poster="./images/video-cover.png"></video>
-                <button id="manual-fullscreen-btn" style="position: absolute; bottom: 16px; right: 16px; z-index: 200; background: rgba(0, 0, 0, 0.2); border: 1px dashed rgba(0, 255, 204, 0.5); color: rgba(0, 255, 204, 0.7); border-radius: 4px; padding: 2px 6px; font-size: 14px; cursor: pointer; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); transition: all 0.2s ease; display: none; line-height: 1;" title="全屏观看" onmouseover="this.style.background='rgba(0,255,204,0.15)'; this.style.color='#00ffcc'; this.style.borderColor='#00ffcc';" onmouseout="this.style.background='rgba(0,0,0,0.2)'; this.style.color='rgba(0,255,204,0.7)'; this.style.borderColor='rgba(0,255,204,0.5)';">⛶</button>
+<video 
+    id="heluo-video" 
+    src="" 
+    controls 
+    disablePictureInPicture 
+    playsinline 
+    webkit-playsinline 
+    x5-playsinline="true" 
+    oncontextmenu="return false;" 
+    preload="none" 
+    poster="./images/video-cover.png">
+</video>
+<button id="manual-fullscreen-btn" style="
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px dashed rgba(0, 255, 204, 0.5);
+    color: rgba(0, 255, 204, 0.7);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 14px;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    transition: all 0.2s ease;
+    display: none;
+    line-height: 1;
+" title="全屏观看"
+onmouseover="this.style.background='rgba(0,255,204,0.15)'; this.style.color='#00ffcc'; this.style.borderColor='#00ffcc';"
+onmouseout="this.style.background='rgba(0,0,0,0.2)'; this.style.color='rgba(0,255,204,0.7)'; this.style.borderColor='rgba(0,255,204,0.5)';"
+>⛶</button>
                 <div id="dynamic-watermark" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
             </div>
         </div>
@@ -546,7 +636,9 @@
             <div class="article-title">－ 超维接引 －</div>
             <div class="flex-pay-container">
                 <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; margin: 0 auto;">
-                    <div class="qrcode-box"><img id="qr-img-3000" src="./images/wechat-pay.png" alt="收款码"></div>
+                    <div class="qrcode-box">
+                        <img id="qr-img-3000" src="./images/wechat-pay.png" alt="收款码">
+                    </div>
                     <div class="pay-toggle-group">
                         <div class="pay-toggle-btn active-wx" onclick="document.getElementById('qr-img-3000').src='./images/wechat-pay.png'; this.classList.add('active-wx'); this.nextElementSibling.classList.remove('active-ali');">微信</div>
                         <div class="pay-toggle-btn" onclick="document.getElementById('qr-img-3000').src='./images/alipay-pay.png'; this.classList.add('active-ali'); this.previousElementSibling.classList.remove('active-wx');">支付宝</div>
@@ -565,14 +657,16 @@
                 <input type="text" id="advanced-password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
                 <div id="sync-status-text" style="font-size: 14px; color: #00ffcc; min-height: 24px; font-weight: 500; margin-top: 15px; margin-bottom: 5px;"></div>
                 <div class="sync-container" id="loader-box" style="margin: 10px auto;">
-                    <div class="sync-ring"></div><div class="sync-pulse"></div>
+                    <div class="sync-ring"></div>
+                    <div class="sync-pulse"></div>
                 </div>
                 <button class="btn" id="active-ai-btn" style="margin-top: 25px;" onclick="verifyAndRouting(document.getElementById('advanced-password-input').value)">输入密钥 · 深度破局</button>
+                <p id="adv-err-msg" style="color: #f43f5e; font-size: 14px; margin-top: 15px; display: none; font-weight: bold;">密钥未对齐，请输入正确专属密钥</p>
             </div>
         </div>
     </div>
 
-    <div id="layer-ai" class="layer">
+        <div id="layer-ai" class="layer">
         <h2>前置研判 · 局象拓扑</h2>
         <div class="sub-title">河洛智慧 · 高维咨询</div>
         
@@ -774,9 +868,14 @@
 </div>
 
 <script>
-    // ================= 全局防御与功能核心逻辑 =================
+    // ================= 全局防御机制 =================
+    // ================= 全局防御机制 (带局部豁免) =================
     document.addEventListener('contextmenu', event => {
-        if (event.target.closest('.flex-pay-container')) return; 
+        // 如果用户点击或长按的区域，是在包含二维码的支付板块内，则直接放行，不拦截！
+        if (event.target.closest('.flex-pay-container')) {
+            return; 
+        }
+        // 其他所有区域依然保持绝对严密防守，禁止右键和长按
         event.preventDefault();
     });
     document.addEventListener('keydown', function(e) {
@@ -787,6 +886,7 @@
         }
     });
 
+    // 水印系统
     function startDynamicWatermark(pwd) {
         const wm = document.getElementById('dynamic-watermark');
         if (!wm) return;
@@ -794,6 +894,7 @@
         wm.innerText = "【溯源对齐: " + pwd + "】";
     }
 
+    // 弹窗控制
     function showCustomAlert(title, message, callback) {
         document.getElementById('global-alert-title').innerHTML = title;
         document.getElementById('global-alert-body').innerHTML = message.replace(/\n/g, '<br><br>');
@@ -806,28 +907,51 @@
         modal.style.display = 'flex';
     }
 
-    // ================= 📋 案卷数据存储与排期逻辑 =================
-    let selectedCaseData = { rel_spouse: [], rel_parentchild: [], rel_workplace: [], rel_originfamily: [], rel_social: [], focus: [] };
+            // ================= 📋 案卷数据核心控制 (新版 Schema) =================
+    let selectedCaseData = { 
+        rel_spouse: [], 
+        rel_parentchild: [], 
+        rel_workplace: [], 
+        rel_originfamily: [], 
+        rel_social: [], 
+        focus: [] 
+    };
     
+    // 全局统一：支持无限制多选与随时反选取消
     function selectCaseTag(type, value, element) {
         if (element.classList.contains('selected')) {
+            // 已选中则取消高亮，并从数组移除
             element.classList.remove('selected');
             selectedCaseData[type] = selectedCaseData[type].filter(v => v !== value);
         } else {
+            // 未选中则点亮，并推入数组
             element.classList.add('selected');
             selectedCaseData[type].push(value);
         }
     }
 
     async function saveCaseAndProceed() {
+        // 1. 校验基础必填项
         const name = document.getElementById('ts-name').value.trim();
-        if (!name) { showCustomAlert("⚠️ 案卷未完备", "请填写【时空结构】中的“阁下称呼”"); return; }
+        if (!name) {
+            showCustomAlert("⚠️ 案卷未完备", "请填写【时空结构】中的“阁下称呼”"); 
+            return;
+        }
+        
+        // 2. 校验多选数组是否为空（必须至少选一项）
         if (selectedCaseData.rel_spouse.length === 0 || selectedCaseData.rel_parentchild.length === 0 || selectedCaseData.focus.length === 0) {
-            showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】(伴侣/亲子) 及【核心诉求】的必填磁场标签，以便咨询师提取精准局象。"); return;
+            showCustomAlert("⚠️ 案卷未完备", "请完整点选【五伦关系】(伴侣/亲子) 及【核心诉求】的必填磁场标签，以便咨询师提取精准局象。"); 
+            return;
         }
 
+        // 3. 打包数据契约 (后端 booking.js 无需任何修改)
         const payload = {
-            timeSpace: { name: name, role: document.getElementById('ts-role').value.trim(), members: document.getElementById('ts-members').value.trim(), birthInfo: document.getElementById('ts-birthinfo').value.trim() },
+            timeSpace: {
+                name: name,
+                role: document.getElementById('ts-role').value.trim(),
+                members: document.getElementById('ts-members').value.trim(),
+                birthInfo: document.getElementById('ts-birthinfo').value.trim()
+            },
             fiveRelations: {
                 spouse: selectedCaseData.rel_spouse.length > 0 ? selectedCaseData.rel_spouse.join(' 、 ') : "未选",
                 parentchild: selectedCaseData.rel_parentchild.length > 0 ? selectedCaseData.rel_parentchild.join(' 、 ') : "未选",
@@ -835,31 +959,63 @@
                 originfamily: selectedCaseData.rel_originfamily.length > 0 ? selectedCaseData.rel_originfamily.join(' 、 ') : "未选",
                 social: selectedCaseData.rel_social.length > 0 ? selectedCaseData.rel_social.join(' 、 ') : "未选"
             },
-            careerEdu: { career: document.getElementById('ce-career').value.trim(), edu: document.getElementById('ce-edu').value.trim() },
+            careerEdu: {
+                career: document.getElementById('ce-career').value.trim(),
+                edu: document.getElementById('ce-edu').value.trim()
+            },
             coreFocus: selectedCaseData.focus.length > 0 ? selectedCaseData.focus.join(' 、 ') : "未选", 
             extraNotes: document.getElementById('extra-notes').value.trim()
         };
 
+        // 存入沙盒并进入日历排期层
         localStorage.setItem('heLuoCaseDataPayload', JSON.stringify(payload));
         initCalendarLayer();
     }
 
+
+
     let globalBookedSlots = {}; 
+
     async function syncSlotsFromCloud() {
         try {
             const response = await fetch('/api/booking'); 
             if (response.ok) {
                 const data = await response.json();
                 globalBookedSlots = {}; 
-                if (data.bookedSlots && Array.isArray(data.bookedSlots)) { data.bookedSlots.forEach(slot => { globalBookedSlots[slot] = true; }); }
+                if (data.bookedSlots && Array.isArray(data.bookedSlots)) {
+                    data.bookedSlots.forEach(slot => { globalBookedSlots[slot] = true; });
+                }
                 return true;
             }
             return false;
-        } catch (error) { return false; }
+        } catch (error) {
+            console.error("云端数据同步闪烁:", error);
+            return false;
+        }
     }
+
     window.addEventListener('DOMContentLoaded', () => { syncSlotsFromCloud(); });
 
-    let currentDisplayDate = new Date(); const todayDate = new Date(); 
+    const P_A_S_S = "2468"; const P_A_S_S_ADV = "1357"; 
+
+    function triggerEnergySync() {
+        const btn = document.getElementById('active-ai-btn'); const loaderBox = document.getElementById('loader-box'); const statusText = document.getElementById('sync-status-text');
+        btn.disabled = true; loaderBox.style.display = "block";
+        statusText.innerHTML = "正在链接高维数据节点，校验当前时空资金链对齐状态...";
+        setTimeout(() => { statusText.innerHTML = "<span style='color: #10b981;'>资金链迹息已捕捉，正在通过河洛算法锁定状态...</span>"; }, 400);
+        setTimeout(() => { statusText.innerHTML = "<span style='color: #00ffcc;'>因果磁场高度同频，正在全自动点亮前置采集通道...</span>"; }, 800);
+        setTimeout(() => { 
+            loaderBox.style.display = "none"; 
+            localStorage.removeItem('videoExpiry'); 
+            const aiExpiry = Date.now() + (30 * 60 * 1000);
+            localStorage.setItem('aiExpiry', aiExpiry);
+            localStorage.setItem('currentLayer', 'layer-ai');
+            switchLayer('layer-video', 'layer-ai'); 
+            startGlobalTimer(aiExpiry, 'ai'); 
+        }, 1200);
+    }
+
+    let currentDisplayDate = new Date(); const todayDate = new Date(); const maxFutureDate = new Date(new Date().setFullYear(todayDate.getFullYear() + 1)); 
     let chosenDate = ""; let chosenTime = ""; let chosenPeriod = ""; let chosenDateKey = ""; let finalTimeStrGlobal = ""; 
 
     async function initCalendarLayer() {
@@ -913,15 +1069,20 @@
         chosenDate = displayText; chosenDateKey = storageKey;
         document.getElementById('selected-date-text').innerText = "已选日期：" + displayText + "，请选专属时段：";
         document.getElementById('time-panel').style.display = 'block'; clearPrivacyInputs(); resetSlots();
-        if (globalBookedSlots[`${storageKey}_AM`]) { setSlotFused('slot-am1', '第一场：08:00 - 10:00 (上午场满)'); setSlotFused('slot-am2', '第二场：10:00 - 12:00 (上午场满)'); }
-        if (globalBookedSlots[`${storageKey}_PM`]) { setSlotFused('slot-pm1', '第三场：14:00 - 16:00 (下午场满)'); setSlotFused('slot-pm2', '第四场：16:00 - 18:00 (下午场满)'); }
+        if (globalBookedSlots[`${storageKey}_AM`]) {
+            setSlotFused('slot-am1', '第一场：08:00 - 10:00 (上午场能量已满)'); setSlotFused('slot-am2', '第二场：10:00 - 12:00 (上午场能量已满)');
+        }
+        if (globalBookedSlots[`${storageKey}_PM`]) {
+            setSlotFused('slot-pm1', '第三场：14:00 - 16:00 (下午场能量已满)'); setSlotFused('slot-pm2', '第四场：16:00 - 18:00 (下午场能量已满)');
+        }
     }
 
     function setSlotFused(id, text) { const el = document.getElementById(id); el.className = "time-slot fused"; el.innerText = text; }
     function resetSlots() {
-        ['slot-am1', 'slot-am2', 'slot-pm1', 'slot-pm2'].forEach(id => document.getElementById(id).className = "time-slot");
-        document.getElementById('slot-am1').innerText = "第一场：08:00 - 10:00 (可约)"; document.getElementById('slot-am2').innerText = "第二场：10:00 - 12:00 (可约)";
-        document.getElementById('slot-pm1').innerText = "第三场：14:00 - 16:00 (可约)"; document.getElementById('slot-pm2').innerText = "第四场：16:00 - 18:00 (可约)";
+        document.getElementById('slot-am1').className = "time-slot"; document.getElementById('slot-am1').innerText = "第一场：08:00 - 10:00 (可约)";
+        document.getElementById('slot-am2').className = "time-slot"; document.getElementById('slot-am2').innerText = "第二场：10:00 - 12:00 (可约)";
+        document.getElementById('slot-pm1').className = "time-slot"; document.getElementById('slot-pm1').innerText = "第三场：14:00 - 16:00 (可约)";
+        document.getElementById('slot-pm2').className = "time-slot"; document.getElementById('slot-pm2').innerText = "第四场：16:00 - 18:00 (可约)";
     }
 
     function selectTime(timeStr, period) {
@@ -935,10 +1096,10 @@
 
     function fallbackCopyText(text) {
         const textarea = document.createElement('textarea'); textarea.value = text;
-        textarea.style.position = 'fixed'; textarea.style.opacity = '0'; document.body.appendChild(textarea);
+        textarea.style.position = 'fixed'; textarea.style.top = '0'; textarea.style.left = '0'; textarea.style.width = '2em'; textarea.style.height = '2em'; textarea.style.padding = '0'; textarea.style.border = 'none'; textarea.style.outline = 'none'; textarea.style.boxShadow = 'none'; textarea.style.background = 'transparent'; document.body.appendChild(textarea);
         textarea.select(); textarea.setSelectionRange(0, 99999); 
-        try { document.execCommand('copy'); } catch (err) {}
-        document.body.removeChild(textarea); 
+        let success = false; try { success = document.execCommand('copy'); } catch (err) { success = false; }
+        document.body.removeChild(textarea); return success;
     }
 
     async function submitAppointment() {
@@ -951,26 +1112,39 @@
         submitBtn.disabled = true; submitBtn.innerText = "正在向云端发起全网垄断锁定...";
 
         const slotKey = `${chosenDateKey}_${chosenPeriod}`; 
+
         try {
+            // 提取前面缓存的案卷全量数据
             let caseData = {};
             const cachedCase = localStorage.getItem('heLuoCaseDataPayload');
-            if (cachedCase) caseData = JSON.parse(cachedCase);
+            if (cachedCase) {
+                caseData = JSON.parse(cachedCase);
+            }
 
+            // 修改点1：触发后台 API 进行同步，顺带把前置案卷作为 caseReport 发送给后台
             const response = await fetch('/api/booking', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    slot: slotKey, displayTime: document.getElementById('final-time-string').innerText, 
-                    user: { name: name, wechat: wechat }, caseReport: caseData, authKey: localStorage.getItem('active_pwd')
-                })
+    slot: slotKey,
+    displayTime: document.getElementById('final-time-string').innerText, 
+    user: { name: name, wechat: wechat },
+    caseReport: caseData,
+    authKey: localStorage.getItem('active_pwd') // ⚡【新增】附带刚激活的密钥发给后端验身
+})
+
             });
 
             const result = await response.json();
+
             if (response.ok && result.success) {
                 globalBookedSlots[slotKey] = true;
                 finalTimeStrGlobal = chosenDate + " " + chosenTime;
                 localStorage.setItem('savedBookedTime', finalTimeStrGlobal);
                 
+                // 修改点2：不再复制全表明文内容，仅保留3行极简双向核对凭证
                 const credentialText = `老师您好，我已通过三维对齐并成功支付前置费用。\n【时空锁定凭证】\n锁定场域：${chosenDate} ${chosenTime}\n溯源代号：${name}\n微信号码：${wechat}`;
+                
                 const proceedToModal = () => {
                     submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
                     document.getElementById('modal-user-name').innerText = name; 
@@ -978,7 +1152,7 @@
                 };
 
                 if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(credentialText).then(proceedToModal).catch(err => { fallbackCopyText(credentialText); proceedToModal(); });
+                    navigator.clipboard.writeText(credentialText).then(() => { proceedToModal(); }).catch(err => { fallbackCopyText(credentialText); proceedToModal(); });
                 } else { fallbackCopyText(credentialText); proceedToModal(); }
 
             } else {
@@ -987,6 +1161,7 @@
                 await syncSlotsFromCloud(); renderCalendar();
                 document.getElementById('time-panel').style.display = 'none'; document.getElementById('appoint-form').style.display = 'none';
             }
+
         } catch (error) {
             showCustomAlert("❌ 网络异常", "线上公网连接出现异常，请检查网络后重新点击。");
             submitBtn.disabled = false; submitBtn.innerText = originalBtnText;
@@ -1001,21 +1176,49 @@
     }
     
     function switchLayer(fromId, toId) { 
-        document.querySelectorAll('video').forEach(vid => { vid.pause(); vid.muted = true; });
-        if (document.exitPictureInPicture) document.exitPictureInPicture().catch(()=>{});
-        document.getElementById(fromId).style.display = 'none'; document.getElementById(toId).style.display = 'block'; 
+        document.querySelectorAll('video').forEach(vid => {
+            vid.pause();    
+            vid.muted = true; 
+        });
+
+        if (document.exitPictureInPicture) {
+            document.exitPictureInPicture();
+        }
+
+        document.getElementById(fromId).style.display = 'none'; 
+        document.getElementById(toId).style.display = 'block'; 
         window.scrollTo(0, 0); 
     }
+    // 防止视频被右键/长按下载（配合 HLS 加密）
+(function() {
+    const video = document.getElementById('heluo-video');
+    if (!video) return;
 
-    // 防截屏抓取与劫持
-    (function() {
-        const video = document.getElementById('heluo-video');
-        if (!video) return;
-        video.addEventListener('contextmenu', e => e.preventDefault());
-        video.addEventListener('touchstart', e => { if (e.touches.length === 1) video._touchStartTime = Date.now(); });
-        video.addEventListener('touchend', e => { if (Date.now() - video._touchStartTime > 500) e.preventDefault(); });
-        video.addEventListener('dragstart', e => e.preventDefault());
-    })();
+    // 阻止右键菜单（已在标签上用 oncontextmenu="return false;" 了，这里再加一层保险）
+    video.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // 阻止长按事件（移动端可能会弹出下载菜单）
+    video.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+            // 记录长按
+            video._touchStartTime = Date.now();
+        }
+    });
+    video.addEventListener('touchend', function(e) {
+        if (Date.now() - video._touchStartTime > 500) {
+            // 长按超过 500ms，阻止默认行为
+            e.preventDefault();
+        }
+    });
+
+    // 禁止拖动视频（部分浏览器拖动视频会触发下载）
+    video.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+    });
+})();
 </script>
 
 <div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
@@ -1023,43 +1226,83 @@
 </div>
 
 <script>
-let globalTimerInterval = null;
+const PAGE_INDEX_ID     = 'layer-pay-399'; 
+const PAGE_VIDEO_ID     = 'layer-video';   
+const PAGE_AI_ID        = 'layer-ai';      
+const PAGE_SCHEDULE_ID  = 'layer-schedule'; 
+const PAGE_THANKYOU_ID  = 'layer-thankyou'; 
 
-// ================= 智能视频流驱动引擎 =================
+let globalTimerInterval = null;
+// ================= 智能视频流驱动引擎 (对齐 EF 视频：静默预载，手动秒开) =================
 function smartLoadVideo(url, videoElement) {
     setTimeout(async () => {
         const ua = navigator.userAgent.toLowerCase();
         const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
-        if (window.heluoHlsInstance) { window.heluoHlsInstance.destroy(); window.heluoHlsInstance = null; }
-        videoElement.pause(); videoElement.removeAttribute('src'); videoElement.load();
+        // 1. 彻底清空上一局残留
+        if (window.heluoHlsInstance) {
+            window.heluoHlsInstance.destroy();
+            window.heluoHlsInstance = null;
+        }
+        videoElement.pause();
+        videoElement.removeAttribute('src');
+        videoElement.load();
 
         const isM3U8 = url.toLowerCase().includes('.m3u8');
+
+        // 2. 非 M3U8 逻辑照旧（E/F 视频）
         if (!isM3U8) {
-            if (isMobile) { videoElement.src = url; return; }
+            if (isMobile) {
+                videoElement.src = url;
+                return;
+            }
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('流提取失败');
                 const blob = await response.blob();
                 videoElement.src = URL.createObjectURL(blob);
-            } catch (e) { videoElement.src = url; }
+            } catch (e) {
+                videoElement.src = url;
+            }
             return;
         }
 
+        // 3. M3U8 逻辑：先获取动态 Token
         let token = '';
         try {
             const tokenResp = await fetch('/api/generate-token');
-            if (tokenResp.ok) { const data = await tokenResp.json(); token = data.token; }
-        } catch (e) { console.warn('Token获取失败，使用无Token链接'); }
+            if (tokenResp.ok) {
+                const data = await tokenResp.json();
+                token = data.token;
+            }
+        } catch (e) {
+            console.warn('Token 获取失败，将使用无 Token 链接（可能无法播放）');
+        }
 
+        // 4. 拉取原始 m3u8 内容
         try {
             const m3u8Resp = await fetch(url);
             if (!m3u8Resp.ok) throw new Error('M3U8 加载失败');
             let m3u8Content = await m3u8Resp.text();
-            const basePath = url.substring(0, url.lastIndexOf('/') + 1);
-            m3u8Content = m3u8Content.replace(/(segment_\d+\.ts)/g, basePath + '$1');
-            if (token) { m3u8Content = m3u8Content.replace(/URI="([^"]*)"/, `URI="$1?token=${token}"`); }
 
+            // 5. 替换密钥 URI：在原有的 #EXT-X-KEY 行末尾追加 ?token=xxx
+            // 原始行形如：#EXT-X-KEY:METHOD=AES-128,URI="https://www.heluo.pro/api/get-video-key"
+            // 我们替换 URI 部分，添加 token 参数
+            // 获取 COS 基础路径（m3u8 文件所在的文件夹地址）
+const basePath = url.substring(0, url.lastIndexOf('/') + 1);
+
+// 替换所有 .ts 分片路径为绝对路径
+m3u8Content = m3u8Content.replace(/(segment_\d+\.ts)/g, basePath + '$1');
+
+// 替换密钥 URI，追加 token 参数
+if (token) {
+    m3u8Content = m3u8Content.replace(
+        /URI="([^"]*)"/,
+        `URI="$1?token=${token}"`
+    );
+}
+
+            // 6. 创建 Blob URL 传给 hls.js
             const blob = new Blob([m3u8Content], { type: 'application/vnd.apple.mpegurl' });
             const blobUrl = URL.createObjectURL(blob);
 
@@ -1067,224 +1310,236 @@ function smartLoadVideo(url, videoElement) {
                 window.heluoHlsInstance = new Hls();
                 window.heluoHlsInstance.loadSource(blobUrl);
                 window.heluoHlsInstance.attachMedia(videoElement);
+
+                window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        console.error('HLS引擎底层报错:', data);
+                    }
+                });
             } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
                 videoElement.src = blobUrl;
             }
-        } catch (e) { console.error('M3U8 处理失败:', e); }
+        } catch (e) {
+            console.error('动态 M3U8 处理失败:', e);
+        }
     }, 100);
 }
+// ====================================================================
 
-// 👑 【核心安全补丁：升级为全局顶层判定函数，彻底粉碎 ReferenceError 卡死空白漏洞】
-function checkIsCourseKey(firstLetter) {
-    const isVip = (firstLetter === 'V');
-    const isPublic = ['E', 'F', 'W', 'P'].includes(firstLetter);
-    return (!isVip && !isPublic);
-}
 
-// ================= 🚀 核心身份鉴权与三通道调度路由 =================
+
+
+
+
+
 async function verifyAndRouting(inputPassword) {
-    if (!inputPassword) { showCustomAlert("⚠️ 密钥缺失", "请输入时空密钥！"); return; }
+    if (!inputPassword) {
+        showCustomAlert("⚠️ 密钥缺失", "请输入时空密钥！");
+        return;
+    }
+
     const pwd = inputPassword.trim().toUpperCase();
 
     if (localStorage.getItem('burnt_' + pwd)) {
-        showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！"); return;
+        showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！");
+        return;
     }
 
     const type = pwd.charAt(0); 
-    const isVipPassword = (type === 'V');
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
     const isPublicPassword = ['E', 'F', 'W', 'P'].includes(type);
-    const isCoursePassword = checkIsCourseKey(type); // 调用全局顶层函数验证
 
-    // === 【三通道严格物理隔离网关】 ===
-    if (window.PORTAL_TYPE === 'vip' && !isVipPassword) {
-        showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，请使用 V 开头的专属密钥！"); return;
+    // === 【双向严格隔离网关 - 前端快速拦截】 ===
+    if (isVipChannel && isPublicPassword) {
+        showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，公域密钥无法在此激活！");
+        return;
     }
-    if (window.PORTAL_TYPE === 'public' && (isVipPassword || isCoursePassword)) {
-        showCustomAlert("❌ 通道不匹配", "通道错误：检测到特殊通道密钥，请通过专属对应链接进入！"); return;
-    }
-    if (window.PORTAL_TYPE.startsWith('course_') && !isCoursePassword) {
-        showCustomAlert("❌ 通道不匹配", "权限错误：请在此输入正确的海外课程专属密钥！"); return;
+    if (!isVipChannel && type === 'V') {
+        showCustomAlert("❌ 凭证不匹配", "通道错误：检测到 VIP 专属密钥，请前往专属 VIP 链接登录！");
+        return;
     }
 
-    const btn1 = document.querySelector('#layer-pay-399 .btn');
-    const btn2 = document.getElementById('active-ai-btn');
-    const btn3 = document.querySelector('#layer-course .btn');
-    if(btn1) btn1.disabled = true; if(btn2) btn2.disabled = true; if(btn3) btn3.disabled = true;
+    // 锁定按钮，防止手抖狂点
+    const firstBtn = document.querySelector('#layer-pay-399 .btn');
+    const secondBtn = document.getElementById('active-ai-btn');
+    if(firstBtn) firstBtn.disabled = true;
+    if(secondBtn) secondBtn.disabled = true;
 
     try {
+        // 向云端发起验身与锁单请求
         const cloudResponse = await fetch('/api/verify-key', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ key: pwd })
         });
         const cloudResult = await cloudResponse.json();
+
+        // 无论密码不对、还是被别人用过，云端都会拦截并返回 message
         if (!cloudResponse.ok || !cloudResult.success) {
             showCustomAlert("❌ 对齐失败", cloudResult.message || "未知能量阻断，请重试。");
-            if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
+            if(firstBtn) firstBtn.disabled = false;
+            if(secondBtn) secondBtn.disabled = false;
             return;
         }
     } catch (error) {
         showCustomAlert("❌ 网络异常", "无法连接全网数据大脑，请检查网络后重新对齐！");
-        if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
+        if(firstBtn) firstBtn.disabled = false;
+        if(secondBtn) secondBtn.disabled = false;
         return;
     }
 
-    if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
+    // 解锁按钮
+    if(firstBtn) firstBtn.disabled = false;
+    if(secondBtn) secondBtn.disabled = false;
 
-    // 通道鉴权彻底通过，记录烧毁标记与特征
+    // 鉴权彻底通过，记录身份特征并开始路由分发
     localStorage.setItem('burnt_' + pwd, 'true');
     localStorage.setItem('user_token_auth', type);
     localStorage.setItem('active_pwd', pwd);
 
-    // 1. VIP 路由或 3000 元破局路由 (直接跳填表)
-    if (type === 'V' || type === 'P') {
+    // ====== 下面的路由逻辑保持原样不变 ======
+    if (type === 'V') {
         const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('aiExpiry', expiryTime);
-        localStorage.setItem('currentLayer', 'layer-ai');
-        showTargetLayerOnly('layer-ai');
+        localStorage.setItem('currentLayer', PAGE_AI_ID);
+        showTargetLayerOnly(PAGE_AI_ID);
         startGlobalTimer(expiryTime, 'ai');
-        showCustomAlert("✓ 通道开启", type === 'V' ? "VIP 专属通道已开启，直达深度背景采集系统！" : "3000元基础对价已核，进入深度背景采集系统。");
+        showCustomAlert("✓ VIP专属通道开启", "跳过公域互信对齐，直达深度背景采集系统！\n当前安全停留时间：30分钟。");
         return;
     }
 
-    // 2. 视频资源路由 (公域 E/F/W 或 21字母随机海外课程)
-    if (['E', 'F', 'W'].includes(type) || isCoursePassword) {
+    if (type === 'P') {
+        const expiryTime = Date.now() + (30 * 60 * 1000); 
+        localStorage.setItem('aiExpiry', expiryTime);
+        localStorage.setItem('currentLayer', PAGE_AI_ID);
+        showTargetLayerOnly(PAGE_AI_ID);
+        startGlobalTimer(expiryTime, 'ai');
+        showCustomAlert("✓ 契约达成", "3000元基础对价已核，进入深度背景采集系统。\n当前安全停留时间：30分钟。");
+        return;
+    }
+
+    if (type === 'E' || type === 'F' || type === 'W') {
         let videoUrl = "";
-        
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-        // 🚀 降维弹性接应：只要是通过了哈希校验的任意新课程前缀字母，统一发发海外通用多媒体流
-        else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+        else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";        
 
-        const videoElement = document.querySelector('#layer-video video');
-        if (videoElement) smartLoadVideo(videoUrl, videoElement); 
+                        const videoElement = document.querySelector('#layer-video video');
+        if (videoElement) {
+            smartLoadVideo(videoUrl, videoElement); // 🚀 接入带时空锁的智能缓冲引擎
+        }
         startDynamicWatermark(pwd);
 
-        const videoLayer = document.getElementById('layer-video');
-        if (videoLayer && window.PORTAL_TYPE.startsWith('course_')) {
-            const panels = videoLayer.querySelectorAll('.holo-card-panel');
-            if (panels.length >= 3) {
-                panels[0].style.display = 'none'; 
-                panels[2].style.display = 'none'; 
-            }
-            const mainTitle = videoLayer.querySelector('h2');
-            if (mainTitle) mainTitle.innerHTML = '专属高维课程 · 闭门交付';
-            const subTitle = videoLayer.querySelector('.sub-title');
-            if (subTitle) subTitle.innerHTML = '河洛智慧 · 闭门造境';
-        }
 
-        const duration = isCoursePassword ? (120 * 60 * 1000) : (30 * 60 * 1000);
-        const expiryTime = Date.now() + duration; 
+        const expiryTime = Date.now() + (30 * 60 * 1000); 
         localStorage.setItem('videoExpiry', expiryTime);
-        localStorage.setItem('currentLayer', 'layer-video');
-        showTargetLayerOnly('layer-video');
+        localStorage.setItem('currentLayer', PAGE_VIDEO_ID);
+        showTargetLayerOnly(PAGE_VIDEO_ID);
         startGlobalTimer(expiryTime, 'video');
         
-        showCustomAlert("✓ 契约达成", isCoursePassword ? "专属课程认证成功，高维播放通道已加密开启。" : "初次认知对齐契约达成，高维时空已开启.");
+        showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启。\n当前安全停留时间：30分钟。");
     }
 }
 
-// ================= 状态恢复与路由重定位 =================
 function checkStateAndRestore() {
     let bugExp = localStorage.getItem('videoExpiry');
-    if (bugExp && parseInt(bugExp) > Date.now() + 3 * 3600 * 1000) {
-        localStorage.removeItem('videoExpiry'); localStorage.removeItem('currentLayer');
+    if (bugExp && parseInt(bugExp) > Date.now() + 2 * 3600 * 1000) {
+        localStorage.removeItem('videoExpiry');
+        localStorage.removeItem('currentLayer');
     }
 
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
+    if (isVipChannel) {
+        const currentLayer = localStorage.getItem('currentLayer');
+        if (!currentLayer || currentLayer === PAGE_INDEX_ID || currentLayer === PAGE_VIDEO_ID) {
+            showTargetLayerOnly(PAGE_VIDEO_ID);
+            hideTimerBar();
+
+            const videoLayer = document.getElementById(PAGE_VIDEO_ID);
+            if (videoLayer) {
+                const panels = videoLayer.querySelectorAll('.holo-card-panel');
+                if (panels.length >= 3) {
+                    panels[0].style.display = 'none';
+                    panels[1].style.display = 'none';
+                }
+                const mainTitle = videoLayer.querySelector('h2');
+                if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
+                const subTitle = videoLayer.querySelector('.sub-title');
+                if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
+            }
+            return; 
+        }
+    }
+
+    const currentLayer = localStorage.getItem('currentLayer') || PAGE_INDEX_ID;
     const now = Date.now();
-    const currentLayer = localStorage.getItem('currentLayer');
 
-    // 1. 动态设定三大通道的“默认原点降落区”
-    let defaultLayer = 'layer-pay-399';
-    if (window.PORTAL_TYPE === 'vip') {
-        defaultLayer = 'layer-video';
-        const videoLayer = document.getElementById('layer-video');
-        if (videoLayer) {
-            const panels = videoLayer.querySelectorAll('.holo-card-panel');
-            if (panels.length >= 3) { panels[0].style.display = 'none'; panels[1].style.display = 'none'; panels[2].style.display = 'block'; }
-            const mainTitle = videoLayer.querySelector('h2');
-            if (mainTitle) mainTitle.innerHTML = 'VIP 专属通道';
-            const subTitle = videoLayer.querySelector('.sub-title');
-            if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
-        }
-    } else if (window.PORTAL_TYPE.startsWith('course_')) {
-        defaultLayer = 'layer-course';
-        if (window.PORTAL_TYPE === 'course_bazi') {
-            document.getElementById('course-title').innerText = "八字破局 · 核心课程";
-            document.getElementById('course-desc').innerText = "本视界承载八字底层逻辑与实战心法，为海外学员专属封闭交付通道。";
-        } else if (window.PORTAL_TYPE === 'course_fengshui') {
-            document.getElementById('course-title').innerText = "风水堪舆 · 核心课程";
-            document.getElementById('course-desc').innerText = "本视界承载高维风水布局与时空能量阵法，为海外学员专属封闭交付通道。";
-        }
-    } else {
-        const videoLayer = document.getElementById('layer-video');
-        if (videoLayer) {
-            const panels = videoLayer.querySelectorAll('.holo-card-panel');
-            panels.forEach(p => p.style.display = 'block');
-            const mainTitle = videoLayer.querySelector('h2');
-            if (mainTitle) mainTitle.innerHTML = '认知对齐 · 超维接引';
-            const subTitle = videoLayer.querySelector('.sub-title');
-            if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
-        }
-    }
-
-    if (!currentLayer || currentLayer === 'layer-pay-399' || currentLayer === 'layer-course') {
-        showTargetLayerOnly(defaultLayer); hideTimerBar(); return; 
-    }
-
-    if (currentLayer === 'layer-video') {
+    if (currentLayer === PAGE_VIDEO_ID) {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
-            showTargetLayerOnly('layer-video');
+            showTargetLayerOnly(PAGE_VIDEO_ID);
             startGlobalTimer(videoExpiry, 'video');
-            
-            if (window.PORTAL_TYPE.startsWith('course_')) {
-                const videoLayer = document.getElementById('layer-video');
-                const panels = videoLayer.querySelectorAll('.holo-card-panel');
-                if (panels.length >= 3) { panels[0].style.display = 'none'; panels[2].style.display = 'none'; }
-                const mainTitle = videoLayer.querySelector('h2');
-                if (mainTitle) mainTitle.innerHTML = '专属高维课程 · 闭门交付';
-            }
             
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
                 let videoUrl = "";
-                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
                 else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-                // 🚀 刷新状态弹性接应：只要不是公域引流前缀，刷新时自动安全复原海外加密流
-                else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8"; // 👑 修正为正确的 M3U8 切片地址
                 
                 const videoElement = document.querySelector('#layer-video video');
-                if (videoElement) smartLoadVideo(videoUrl, videoElement);
+                if (videoElement) {
+                    smartLoadVideo(videoUrl, videoElement); // 🚀 接入带时空锁的智能缓冲引擎
+                }
                 startDynamicWatermark(activePwd);
+
+
             }
         } else { forceKickOut(); }
 
-    } else if (currentLayer === 'layer-ai') {
+    } else if (currentLayer === PAGE_AI_ID) {
         const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
-        if (aiExpiry && now < aiExpiry) { showTargetLayerOnly('layer-ai'); startGlobalTimer(aiExpiry, 'ai'); } else { forceKickOut(); }
-    } else if (currentLayer === 'layer-thankyou') {
-        showTargetLayerOnly('layer-thankyou'); hideTimerBar();
+        if (aiExpiry && now < aiExpiry) {
+            showTargetLayerOnly(PAGE_AI_ID);
+            startGlobalTimer(aiExpiry, 'ai');
+        } else { forceKickOut(); }
+
+    } else if (currentLayer === PAGE_THANKYOU_ID) {
+        showTargetLayerOnly(PAGE_THANKYOU_ID);
+        hideTimerBar();
         const savedTime = localStorage.getItem('savedBookedTime');
-        if (savedTime) document.getElementById('thank-time-text').innerText = savedTime; 
-    } else if (currentLayer === 'layer-schedule') {
-        showTargetLayerOnly('layer-schedule'); hideTimerBar();
-        if(typeof todayDate !== 'undefined') currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
-        if(typeof renderCalendar === 'function') renderCalendar();
-    } else { forceKickOut(); }
+        if (savedTime) { document.getElementById('thank-time-text').innerText = savedTime; }
+
+    } else if (currentLayer === PAGE_SCHEDULE_ID) {
+        showTargetLayerOnly(PAGE_SCHEDULE_ID);
+        hideTimerBar();
+        if(typeof todayDate !== 'undefined') {
+            currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+        }
+        if(typeof renderCalendar === 'function') { renderCalendar(); }
+    } else {
+        showTargetLayerOnly(PAGE_INDEX_ID);
+        hideTimerBar();
+    }
 }
 
 function startGlobalTimer(expiry, type) {
     clearInterval(globalTimerInterval); 
     const timerBar = document.getElementById('global-timer-bar');
     const timeLeftSpan = document.getElementById('global-time-left');
+    
+    timerBar.style.background = '#010614';
+    timerBar.style.borderBottom = '1px solid #10B981'; 
+    timerBar.style.color = '#10B981';
     timerBar.style.display = 'block';
 
     globalTimerInterval = setInterval(function() {
         const distance = expiry - Date.now();
-        if (distance <= 0) { forceKickOut(); return; }
+        if (distance <= 0) {
+            forceKickOut(); 
+            return;
+        }
         const minutes = Math.floor(distance / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
         timeLeftSpan.innerHTML = minutes + "分 " + seconds + "秒";
@@ -1292,57 +1547,118 @@ function startGlobalTimer(expiry, type) {
 }
 
 function showTargetLayerOnly(targetId) {
-    document.querySelectorAll('video').forEach(vid => { vid.pause(); vid.muted = true; });
-    if (document.pictureInPictureElement && document.exitPictureInPicture) document.exitPictureInPicture().catch(() => {}); 
-    document.querySelectorAll('.layer').forEach(layer => { layer.style.display = 'none'; layer.classList.remove('active'); });
+    document.querySelectorAll('video').forEach(vid => {
+        vid.pause();
+        vid.muted = true;
+    });
+    
+    if (document.pictureInPictureElement && document.exitPictureInPicture) {
+        document.exitPictureInPicture().catch(() => {}); 
+    }
+
+    document.querySelectorAll('.layer').forEach(layer => {
+        layer.style.display = 'none';
+        layer.classList.remove('active');
+    });
     const targetElem = document.getElementById(targetId);
-    if(targetElem) { targetElem.style.display = 'block'; targetElem.classList.add('active'); }
+    if(targetElem) {
+        targetElem.style.display = 'block';
+        targetElem.classList.add('active');
+    }
     window.scrollTo(0, 0);
 }
 
 function forceKickOut() {
-    document.querySelectorAll('video').forEach(vid => { vid.pause(); vid.muted = true; });
-    if (document.exitPictureInPicture) document.exitPictureInPicture().catch(() => {});
+    // 1. 斩断所有正在播放的音视频能量
+    document.querySelectorAll('video').forEach(vid => {
+        vid.pause();
+        vid.muted = true;
+    });
     
+    if (document.exitPictureInPicture) {
+        document.exitPictureInPicture().catch(() => {});
+    }
+    
+    // 2. 清除云端时空和本地所有倒计时、密钥缓存
     clearInterval(globalTimerInterval);
-    localStorage.removeItem('currentLayer'); localStorage.removeItem('videoExpiry'); localStorage.removeItem('aiExpiry');
-    localStorage.removeItem('user_token_auth'); localStorage.removeItem('savedBookedTime'); localStorage.removeItem('active_pwd'); 
+    localStorage.removeItem('currentLayer');
+    localStorage.removeItem('videoExpiry');
+    localStorage.removeItem('aiExpiry');
+    localStorage.removeItem('user_token_auth');
+    localStorage.removeItem('savedBookedTime'); 
+    localStorage.removeItem('active_pwd'); 
     hideTimerBar();
 
-    if (document.getElementById('password-input')) document.getElementById('password-input').value = "";
-    if (document.getElementById('advanced-password-input')) document.getElementById('advanced-password-input').value = "";
-    if (document.getElementById('course-password-input')) document.getElementById('course-password-input').value = "";
+    // 3. --- 核心修正：不刷新页面，纯前端逻辑无痕闭环 ---
+    // 判断当前 URL 是不是 VIP 通道
+    const isVipChannel = window.location.search.toLowerCase().includes('type=vip');
     
-    checkStateAndRestore(); 
+    if (isVipChannel) {
+        // 如果是 VIP 通道，清空密码框，强行留在 VIP 的那个 layer-video（已被重置为输入密码页），绝对不会闪现公域
+        const vipPwdInput1 = document.getElementById('password-input');
+        const vipPwdInput2 = document.getElementById('advanced-password-input');
+        if(vipPwdInput1) vipPwdInput1.value = "";
+        if(vipPwdInput2) vipPwdInput2.value = "";
+        
+        // 重新调用系统自带的恢复判定，它会自动把页面安全封存回 VIP 初始状态
+        checkStateAndRestore();
+    } else {
+        // 如果是普通公域通道，安全送回公域首页
+        showTargetLayerOnly(PAGE_INDEX_ID);
+    }
 }
 
 (function() {
-    const video = document.getElementById('heluo-video'); const btn = document.getElementById('manual-fullscreen-btn');
+    const video = document.getElementById('heluo-video');
+    const btn = document.getElementById('manual-fullscreen-btn');
     if (!video || !btn) return;
-    if (/android/.test(navigator.userAgent.toLowerCase())) btn.style.display = 'inline-block';
+
+    // 在安卓设备上显示全屏按钮（因为百度、360等可能没有全屏按钮）
+    if (/android/.test(navigator.userAgent.toLowerCase())) {
+        btn.style.display = 'inline-block';
+    }
+
+    // 点击按钮主动全屏
     btn.addEventListener('click', function(e) {
         e.stopPropagation();
-        if (video.requestFullscreen) video.requestFullscreen();
-        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-        else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
-        else if (video.msRequestFullscreen) video.msRequestFullscreen();
+        if (video.requestFullscreen) {
+            video.requestFullscreen();
+        } else if (video.webkitRequestFullscreen) {
+            video.webkitRequestFullscreen();
+        } else if (video.webkitEnterFullscreen) {
+            video.webkitEnterFullscreen(); // iOS Safari
+        } else if (video.msRequestFullscreen) {
+            video.msRequestFullscreen();
+        }
     });
+
+    // 监听屏幕方向变化，横屏时自动尝试全屏（针对不会自动全屏的浏览器）
     window.addEventListener('orientationchange', function() {
         if (window.orientation === 90 || window.orientation === -90) {
-            if (video.requestFullscreen) video.requestFullscreen().catch(()=>{});
-            else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+            // 已横屏，尝试全屏
+            if (video.requestFullscreen) {
+                video.requestFullscreen().catch(function(){});
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            }
         }
     });
 })();
+
     
-function hideTimerBar() { const timerBar = document.getElementById('global-timer-bar'); if(timerBar) timerBar.style.display = 'none'; }
+function hideTimerBar() {
+    const timerBar = document.getElementById('global-timer-bar');
+    if(timerBar) timerBar.style.display = 'none';
+}
+
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
 </script>
 
 <script>
     window.addEventListener('DOMContentLoaded', function() {
         var ua = navigator.userAgent.toLowerCase();
-        if (ua.indexOf('micromessenger') !== -1) {
+        var isWeChat = ua.indexOf('micromessenger') !== -1;
+        if (isWeChat) {
             var securityMask = document.getElementById('wechat-security-mask');
             if (securityMask) {
                 securityMask.style.display = 'block';
@@ -1354,39 +1670,6 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
         }
     });
 </script>
-<div id="layer-course-dashboard" class="container course-dashboard" style="display: none;">
-    <div class="dashboard-header">
-        <h2 class="course-title" id="dynamic-course-title">【时空能量与八字核心阵法】</h2>
-        <a href="https://您的lemonsqueezy店铺链接.com" class="return-store-btn" target="_blank" id="lemon-store-link">
-            获取更多高维课程
-        </a>
-    </div>
 
-    <div class="dashboard-body">
-        <div class="video-main-screen">
-            <video id="course-video-player" controls controlsList="nodownload" disablePictureInPicture preload="auto">
-                您的浏览器不支持 HTML5 视频。
-            </video>
-        </div>
-
-        <div class="video-playlist">
-            <h3 class="playlist-title">课程目录</h3>
-            <ul class="episode-list" id="course-episode-list">
-                <li class="episode-item active" data-src="您的第一集视频链接.m3u8">
-                    <span class="ep-num">01</span> 宇宙能量的底层逻辑
-                </li>
-                <li class="episode-item" data-src="您的第二集视频链接.m3u8">
-                    <span class="ep-num">02</span> 天干地支的时空矩阵
-                </li>
-                <li class="episode-item" data-src="您的第三集视频链接.m3u8">
-                    <span class="ep-num">03</span> 财富流年的精准推演
-                </li>
-                <li class="episode-item" data-src="您的第四集视频链接.m3u8">
-                    <span class="ep-num">04</span> 婚姻宫的因果纠缠
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
 </body>
 </html>
