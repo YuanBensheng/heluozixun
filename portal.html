@@ -308,11 +308,30 @@
         /* =========================================
    海外课程专属全息播放舱 (布局优化版)
    ========================================= */
-.course-dashboard { 
-    width: 100%; 
-    max-width: 800px; /* 电脑端收窄，显得更加精致饱满 */
-    margin: 0 auto;
+/* 1. 强制容器全宽，修复移动端边界溢出 */
+.course-dashboard {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 10px; /* 留出极其细微的呼吸感，防止贴死屏幕边缘 */
+    box-sizing: border-box;
 }
+
+/* 2. 视频框全屏比例化：将高度改为自动，按比例缩放，不再被“压扁” */
+#layer-course-dashboard .video-container, 
+#layer-course-dashboard video {
+    width: 100% !important;
+    height: auto !important; /* 关键：自动计算高度，保持 16:9 比例 */
+    aspect-ratio: 16 / 9;   /* 强制锁定比例，拒绝被压缩 */
+}
+
+/* 3. 标题绝对居中 */
+.course-title-class { /* 请确保您的标题容器类名与此一致 */
+    text-align: center !important;
+    width: 100%;
+    display: block;
+    margin: 20px 0;
+}
+
 
 .dashboard-header { 
     display: flex; 
