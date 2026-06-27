@@ -1074,6 +1074,25 @@
         video.addEventListener('touchend', e => { if (Date.now() - video._touchStartTime > 500) e.preventDefault(); });
         video.addEventListener('dragstart', e => e.preventDefault());
     })();
+
+    async function loadCourseTitle() {
+    const params = new URLSearchParams(window.location.search);
+    const courseId = params.get('course'); // 从 URL 获取课程 ID
+    
+    // 假设已通过 fetch 获取了 courses.json
+    const response = await fetch('courses.json');
+    const data = await response.json();
+    
+    if (data[courseId]) {
+        const titleContainer = document.getElementById('course-title-container');
+        titleContainer.innerHTML = `
+            <span style="display: block; font-size: 24px; font-weight: bold;">${data[courseId].cn}</span>
+            <span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 5px;">
+                ${data[courseId].en}
+            </span>
+        `;
+    }
+}
 </script>
 
 <div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
