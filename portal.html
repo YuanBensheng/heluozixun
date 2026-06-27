@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <style id="holo-void-lock">
+    /* 【河洛绝对虚空锁】：在JS接管前，强制隐藏 body 下所有的业务容器，只保留底层的暗黑星空背景。杜绝一切残影！ */
+    body > div, 
+    body > section, 
+    body > main, 
+    body > form {
+        display: none !important;
+    }
+</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>河洛咨询前置对齐系统</title>
@@ -1277,15 +1286,17 @@ async function verifyAndRouting(inputPassword) {
 
 // ================= 状态恢复与路由重定位 =================
 function checkStateAndRestore() {
+    // 1. 基础逻辑：清理过期凭证
     let bugExp = localStorage.getItem('videoExpiry');
     if (bugExp && parseInt(bugExp) > Date.now() + 3 * 3600 * 1000) {
-        localStorage.removeItem('videoExpiry'); localStorage.removeItem('currentLayer');
+        localStorage.removeItem('videoExpiry'); 
+        localStorage.removeItem('currentLayer');
     }
 
     const now = Date.now();
     const currentLayer = localStorage.getItem('currentLayer');
 
-    // 1. 动态设定三大通道的“默认原点降落区”
+    // 2. 动态设定原点降落区
     let defaultLayer = 'layer-pay-399';
     if (window.PORTAL_TYPE === 'vip') {
         defaultLayer = 'layer-video';
@@ -1300,10 +1311,8 @@ function checkStateAndRestore() {
         }
     } else if (window.PORTAL_TYPE.startsWith('course_')) {
         defaultLayer = 'layer-course'; 
-        // 自动将登录页的标题也渲染为双语
         loadCourseTitle(window.PORTAL_TYPE, 'course-title');
         document.getElementById('course-desc').innerText = "认知同频，方能破局。请输入您的专属海外课程密钥，开启高维学习通道。";
-
     } else {
         const videoLayer = document.getElementById('layer-video');
         if (videoLayer) {
@@ -1316,17 +1325,15 @@ function checkStateAndRestore() {
         }
     }
 
+    // 3. 执行状态恢复逻辑
     if (!currentLayer || currentLayer === 'layer-pay-399' || currentLayer === 'layer-course') {
-        showTargetLayerOnly(defaultLayer); hideTimerBar(); return; 
-    }
-
-    // 【新版】：彻底隔离公域限时与海外课程长效状态
-    if (currentLayer === 'layer-video') {
+        showTargetLayerOnly(defaultLayer); 
+        hideTimerBar();
+    } else if (currentLayer === 'layer-video') {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
             showTargetLayerOnly('layer-video');
-            startGlobalTimer(videoExpiry, 'video'); // 公域保留倒计时
-            
+            startGlobalTimer(videoExpiry, 'video');
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
@@ -1334,34 +1341,26 @@ function checkStateAndRestore() {
                 if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
                 else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";     
                 else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-                
                 const videoElement = document.querySelector('#layer-video video');
                 if (videoElement) smartLoadVideo(videoUrl, videoElement);
                 startDynamicWatermark(activePwd);
             }
         } else { forceKickOut(); }
-
     } else if (currentLayer === 'layer-course-dashboard') {
         const courseExpiry = parseInt(localStorage.getItem('courseExpiry'));
-        // 【核心修正二】：验证当前网页所处的课程编号，与当时记录的授权课程编号是否绝对一致
         const authorizedCourseType = localStorage.getItem('authorized_course_type'); 
-
         if (courseExpiry && now < courseExpiry && authorizedCourseType === window.PORTAL_TYPE) {
             showTargetLayerOnly('layer-course-dashboard');
-            hideTimerBar(); // 刷新也不显示倒计时
-            
+            hideTimerBar();
             const activePwd = localStorage.getItem('active_pwd');
             if (activePwd) {
                 let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
                 const videoElement = document.getElementById('course-video-player');
                 if (videoElement) smartLoadVideo(videoUrl, videoElement);
                 startDynamicWatermark(activePwd);
-                
-                // 刷新页面后重新注入双语标题
                 loadCourseTitle(window.PORTAL_TYPE, 'dynamic-course-title'); 
             }
         } else { forceKickOut(); }
-
     } else if (currentLayer === 'layer-ai') {
         const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
         if (aiExpiry && now < aiExpiry) { showTargetLayerOnly('layer-ai'); startGlobalTimer(aiExpiry, 'ai'); } else { forceKickOut(); }
@@ -1374,6 +1373,12 @@ function checkStateAndRestore() {
         if(typeof todayDate !== 'undefined') currentDisplayDate = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
         if(typeof renderCalendar === 'function') renderCalendar();
     } else { forceKickOut(); }
+
+    // 【最终揭幕指令】：系统状态判定完成，瞬间揭开虚空锁
+    const voidLock = document.getElementById('holo-void-lock');
+    if (voidLock) {
+        voidLock.remove();
+    }
 }
 
 function startGlobalTimer(expiry, type) {
