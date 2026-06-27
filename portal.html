@@ -326,12 +326,16 @@
 
 /* 3. 标题绝对居中 */
 .course-title {
-    margin: 0 !important;      /* 清除默认的上下边距，防止被推偏 */
+    display: block !important;
+    width: 100% !important;
     text-align: center !important;
-    width: 100%;
-    display: block;            /* 确保它作为块级元素存在 */
-    /* 如果文字较长需要折行，下面这句保持默认即可；如果不希望折行，再加 white-space: nowrap; */
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    text-indent: 0 !important; /* 关键：确保没有首行缩进 */
+    transform: none !important; /* 确保没有被平移过 */
 }
+
 
 
 
