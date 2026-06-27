@@ -442,24 +442,23 @@
             .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
             .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
         }
-/* 水印动态定位与表现优化 */
-.watermark {
+/* 视频水印：强制锁定在容器正中心 */
+.holo-watermark {
     position: absolute;
-    top: 15px;            /* 距离视频顶部 15px */
-    left: 50%;            /* 水印中心点对齐 */
-    transform: translateX(-50%); /* 水平绝对居中 */
-    z-index: 999;
-    pointer-events: none;
-    font-size: 14px;
-    font-family: monospace;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.5); /* 降低透明度，避免抢戏 */
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-    background: rgba(0, 0, 0, 0.2);  /* 轻微背景，保证在不同视频内容下均清晰可见 */
-    padding: 4px 10px;
-    border-radius: 4px;
-    display: none;        /* 默认隐藏 */
+    top: 50%;           /* 垂直居中 */
+    left: 50%;          /* 水平居中 */
+    transform: translate(-50%, -50%); /* 确保对齐的是中心点 */
+    z-index: 20;        /* 确保显示在播放按钮上方 */
+    pointer-events: none; /* 防止点击水印触发意外行为 */
+    opacity: 0;         /* 默认隐藏 */
+    transition: opacity 0.5s ease; /* 保持原有的优雅呼吸感 */
 }
+
+/* 状态联动：只有视频在播放时显示 */
+.video-main-screen.is-playing .holo-watermark {
+    opacity: 0.6; /* 播放时淡入 */
+}
+
 
         
     </style>
@@ -1521,6 +1520,23 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+    // 【河洛1号工程：水印联动逻辑】
+document.addEventListener('DOMContentLoaded', function() {
+    const video = document.getElementById('main-video');
+    const screen = document.querySelector('.video-main-screen');
+
+    // 严防空指针：确保元素存在才执行
+    if (video && screen) {
+        video.addEventListener('play', () => {
+            screen.classList.add('is-playing');
+        });
+
+        video.addEventListener('pause', () => {
+            screen.classList.remove('is-playing');
+        });
+    }
+});
+
 </script>
 
 </body>
