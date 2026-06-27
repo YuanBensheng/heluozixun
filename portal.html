@@ -325,32 +325,28 @@
 }
 
 /* 3. 标题绝对居中 */
-/* 针对该标题的精准对齐样式 */
+/* 确保标题本身不受任何外来 Margin 干扰 */
 .course-title {
-    display: flex !important;           /* 使用 Flex 进行定位 */
-    justify-content: center !important; /* 水平绝对居中 */
-    align-items: center !important;     /* 垂直绝对居中 */
-    width: 100% !important;
     margin: 0 auto !important;
-    padding: 0 !important;
-    
-    /* 核心修复点：消除文字本身的属性偏移 */
-    letter-spacing: 0px !important;     /* 抹掉字符间距干扰 */
-    text-indent: 0 !important;          /* 抹掉首行缩进 */
     text-align: center !important;
-    position: relative;
-    left: 0;                            /* 强制归零偏移 */
+    width: 100% !important;
+    display: block !important;
+}
+/* 强制将标题的父容器与页面的边界完全对齐 */
+.dashboard-header {
+    width: 100% !important;
+    max-width: 100% !important; /* 确保不被父容器 container 的 padding 限制 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 !important;
+    padding: 20px 0 !important;
+    /* 核心逻辑：脱离 container 的 padding 约束 */
+    box-sizing: border-box;
 }
 
-/* 强制清理父级 Header 的干扰 */
-.dashboard-header {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-    padding: 20px 0 !important;
-    margin: 0 !important;
-}
+
+
 
 
 .dashboard-body { 
