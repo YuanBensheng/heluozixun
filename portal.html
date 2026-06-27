@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <style id="router-lock">
+    /* 核心：在页面加载完成前，直接物理屏蔽所有容器，绝不给闪烁机会 */
+    body { visibility: hidden !important; }
+</style>
+<script>
+    // 在页面头部立刻判断类型，如果不是公域，提前处理
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get('type');
+    if (type) {
+        // 如果有参数，直接移除隐藏锁，或者后续让JS来控制
+        document.getElementById('router-lock').disabled = true;
+        document.body.style.visibility = 'visible';
+    } else {
+        // 如果没有参数，默认显示公域逻辑
+        document.getElementById('router-lock').disabled = true;
+        document.body.style.visibility = 'visible';
+    }
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>河洛咨询前置对齐系统</title>
