@@ -38,7 +38,20 @@
     </script>
 
     <style>
-        /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
+       
+        /* 强制预隐藏：在页面加载的初始阶段，无论内容是什么，全部不可见 */
+#holo-void-lock {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000; /* 纯黑遮罩 */
+    z-index: 999999;  /* 顶级浮层 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}/* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
         
         /* ================= 防闪烁补丁 (三通道解耦隔离) ================= */
         /* 【核心修正一】：废除旧路由防闪烁，对齐全新的 01-05 矩阵 */
@@ -460,6 +473,13 @@
 </head>
 
 <body class="noselect" ondragstart="return false">
+
+    <body>
+    <div id="holo-void-lock"></div>
+    
+    <div id="layer-public">...</div>
+    ...
+</body>
 
 <div id="wechat-security-mask" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(165deg, #000000 0%, #010614 50%, #020c24 100%); z-index: 9999999; color: #7ebdae; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;">
     <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 80% 50% at 20% 80%, rgba(1, 6, 20, 0.95) 0%, transparent 50%), radial-gradient(ellipse 60% 40% at 80% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 45%); pointer-events: none;"></div>
@@ -1375,10 +1395,15 @@ function checkStateAndRestore() {
     } else { forceKickOut(); }
 
     // 【最终揭幕指令】：系统状态判定完成，瞬间揭开虚空锁
-    const voidLock = document.getElementById('holo-void-lock');
-    if (voidLock) {
-        voidLock.remove();
-    }
+   // 替换原有的 voidLock.remove()，改用隐藏逻辑
+const voidLock = document.getElementById('holo-void-lock');
+if (voidLock) {
+    // 渐隐动画，让体验更丝滑
+    voidLock.style.transition = 'opacity 0.3s ease';
+    voidLock.style.opacity = '0';
+    setTimeout(() => {
+        voidLock.style.display = 'none';
+    }, 300); 
 }
 
 function startGlobalTimer(expiry, type) {
