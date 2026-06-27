@@ -1,25 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <style id="router-lock">
-    /* 核心：在页面加载完成前，直接物理屏蔽所有容器，绝不给闪烁机会 */
-    body { visibility: hidden !important; }
-</style>
-<script>
-    // 在页面头部立刻判断类型，如果不是公域，提前处理
-    const params = new URLSearchParams(window.location.search);
-    const type = params.get('type');
-    if (type) {
-        // 如果有参数，直接移除隐藏锁，或者后续让JS来控制
-        document.getElementById('router-lock').disabled = true;
-        document.body.style.visibility = 'visible';
-    } else {
-        // 如果没有参数，默认显示公域逻辑
-        document.getElementById('router-lock').disabled = true;
-        document.body.style.visibility = 'visible';
-    }
-</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>河洛咨询前置对齐系统</title>
@@ -42,7 +23,6 @@
             // 注册全局核心变量，供后续 JS 调度使用
             window.PORTAL_TYPE = portalType;
         }
-        
     </script>
 
     <style>
@@ -461,25 +441,6 @@
             .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
             .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
         }
-/* 视频水印：强制锁定在容器正中心 */
-.holo-watermark {
-    position: absolute;
-    top: 50%;           /* 垂直居中 */
-    left: 50%;          /* 水平居中 */
-    transform: translate(-50%, -50%); /* 确保对齐的是中心点 */
-    z-index: 20;        /* 确保显示在播放按钮上方 */
-    pointer-events: none; /* 防止点击水印触发意外行为 */
-    opacity: 0;         /* 默认隐藏 */
-    transition: opacity 0.5s ease; /* 保持原有的优雅呼吸感 */
-}
-
-/* 状态联动：只有视频在播放时显示 */
-.video-main-screen.is-playing .holo-watermark {
-    opacity: 0.6; /* 播放时淡入 */
-}
-
-
-        
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -1469,40 +1430,6 @@ function forceKickOut() {
     
 function hideTimerBar() { const timerBar = document.getElementById('global-timer-bar'); if(timerBar) timerBar.style.display = 'none'; }
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
-
-    // 【核心逻辑重构】驱动水印随播放状态联动
-function setupWatermarkLogic(videoElement, watermarkElement) {
-    if (!videoElement || !watermarkElement) return;
-
-    // 当视频开始播放时，水印出现
-    videoElement.addEventListener('play', () => {
-        watermarkElement.style.display = 'block';
-    });
-
-    // 当视频暂停或等待时，水印隐藏 (可选：如果您希望暂停时也显示，请注释掉下面这行)
-    videoElement.addEventListener('pause', () => {
-        watermarkElement.style.display = 'none';
-    });
-    
-    // 确保视频元数据加载时水印是隐藏的
-    videoElement.addEventListener('loadstart', () => {
-        watermarkElement.style.display = 'none';
-    });
-}
-
-// 在页面加载后绑定逻辑
-window.addEventListener('DOMContentLoaded', () => {
-    // 绑定公域/VIP通道
-    const v1 = document.getElementById('heluo-video');
-    const w1 = document.getElementById('dynamic-watermark');
-    setupWatermarkLogic(v1, w1);
-
-    // 绑定海外课程通道
-    const v2 = document.getElementById('course-video-player');
-    const w2 = document.getElementById('dynamic-watermark-course');
-    setupWatermarkLogic(v2, w2);
-});
-
 </script>
 
 <script>
@@ -1539,23 +1466,6 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
-    // 【河洛1号工程：水印联动逻辑】
-document.addEventListener('DOMContentLoaded', function() {
-    const video = document.getElementById('main-video');
-    const screen = document.querySelector('.video-main-screen');
-
-    // 严防空指针：确保元素存在才执行
-    if (video && screen) {
-        video.addEventListener('play', () => {
-            screen.classList.add('is-playing');
-        });
-
-        video.addEventListener('pause', () => {
-            screen.classList.remove('is-playing');
-        });
-    }
-});
-
 </script>
 
 </body>
