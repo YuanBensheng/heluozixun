@@ -10,12 +10,14 @@
         // 在浏览器开始画网页前瞬间判断，提取 URL 参数
         const urlParams = new URLSearchParams(window.location.search);
         const portalType = urlParams.get('type');
-        const validTypes = ['public', 'vip', 'course_bazi', 'course_fengshui'];
+                const isCourseType = portalType && portalType.startsWith('course_');
+        const validTypes = ['public', 'vip'];
         
-        if (!portalType || !validTypes.includes(portalType)) {
+        if (!portalType || (!validTypes.includes(portalType) && !isCourseType)) {
             // 如果没有带参数，或者参数被乱改，直接重定向回纯展示合规的 index.html，防恶意窥探
             window.location.replace('index.html');
         } else {
+
             // 鉴权通过，向根节点打上对应的通道标签，供 CSS 防闪烁补丁使用
             document.documentElement.classList.add('type-' + portalType);
             // 注册全局核心变量，供后续 JS 调度使用
@@ -1075,24 +1077,21 @@
         video.addEventListener('dragstart', e => e.preventDefault());
     })();
 
-    async function loadCourseTitle() {
-    const params = new URLSearchParams(window.location.search);
-    const courseId = params.get('course'); // 从 URL 获取课程 ID
-    
-    // 假设已通过 fetch 获取了 courses.json
-    const response = await fetch('courses.json');
-    const data = await response.json();
-    
-    if (data[courseId]) {
-        const titleContainer = document.getElementById('course-title-container');
-        titleContainer.innerHTML = `
-            <span style="display: block; font-size: 24px; font-weight: bold;">${data[courseId].cn}</span>
-            <span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 5px;">
-                ${data[courseId].en}
-            </span>
-        `;
+        async function loadCourseTitle(courseKey, targetElementId) {
+        try {
+            const response = await fetch('courses.json');
+            const data = await response.json();
+            if (data[courseKey]) {
+                const titleElement = document.getElementById(targetElementId);
+                if (titleElement) {
+                    titleElement.innerHTML = `【${data[courseKey].cn}】<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">${data[courseKey].en}</span>`;
+                }
+            }
+        } catch (e) {
+            console.warn('JSON读取失败，请检查文件是否存在', e);
+        }
     }
-}
+
 </script>
 
 <div id="global-timer-bar" style="display: none; background: #010614; color: #10B981; padding: 8px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-shadow: 0 2px 10px rgba(0,255,204,0.2);">
@@ -1245,32 +1244,30 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 3. 【修补点】：海外课程专属路由 (绝对隔离分发到 layer-course-dashboard)
+        // 3. 【新版】：海外课程专属路由 (绝对隔离分发到 layer-course-dashboard)
     if (isCoursePassword) {
-        // 初始降落加载第一集
         let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
         const videoElement = document.getElementById('course-video-player');
         if (videoElement) smartLoadVideo(videoUrl, videoElement); 
         
         startDynamicWatermark(pwd);
 
-        // 动态修改海外课程标题
-        if (window.PORTAL_TYPE === 'course_bazi') {
-            document.getElementById('dynamic-course-title').innerText = "【八字破局 · 核心课程】";
-        } else if (window.PORTAL_TYPE === 'course_fengshui') {
-            document.getElementById('dynamic-course-title').innerText = "【风水堪舆 · 核心课程】";
-        }
+        // 核心修复1：调用新版 JSON 读取引擎，实现中英双语自动注入！
+        loadCourseTitle(window.PORTAL_TYPE, 'dynamic-course-title');
 
-        const duration = 120 * 60 * 1000; // 课程赋予 120 分钟权限
+        // 核心修复2：彻底废除倒计时机制！改为 1 年的静默记录，且强制隐藏倒计时 UI 条！
+        const duration = 365 * 24 * 60 * 60 * 1000; // 物理期限 1 年
         const expiryTime = Date.now() + duration; 
-        localStorage.setItem('videoExpiry', expiryTime); // 复用倒计时变量名
-        localStorage.setItem('currentLayer', 'layer-course-dashboard'); // 精准锚定新舱位
+        localStorage.setItem('courseExpiry', expiryTime); // 换用独立的变量，防冲突
+        localStorage.setItem('currentLayer', 'layer-course-dashboard'); 
+        
         showTargetLayerOnly('layer-course-dashboard');
-        startGlobalTimer(expiryTime, 'video');
+        hideTimerBar(); // 【关键】强制隐藏倒计时 UI！
         
         showCustomAlert("✓ 契约达成", "专属课程认证成功，全息播放舱已为您开启。");
         return;
     }
+
 }
 
 // ================= 状态恢复与路由重定位 =================
@@ -1296,15 +1293,13 @@ function checkStateAndRestore() {
             const subTitle = videoLayer.querySelector('.sub-title');
             if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
         }
-    } else if (window.PORTAL_TYPE.startsWith('course_')) {
-        defaultLayer = 'layer-course'; // 海外课程通道降落的默认登录框
-        if (window.PORTAL_TYPE === 'course_bazi') {
-            document.getElementById('course-title').innerText = "八字破局 · 核心课程";
-            document.getElementById('course-desc').innerText = "本视界承载八字底层逻辑与实战心法，为海外学员专属封闭交付通道。";
-        } else if (window.PORTAL_TYPE === 'course_fengshui') {
-            document.getElementById('course-title').innerText = "风水堪舆 · 核心课程";
-            document.getElementById('course-desc').innerText = "本视界承载高维风水布局与时空能量阵法，为海外学员专属封闭交付通道。";
-        }
+        } else if (window.PORTAL_TYPE.startsWith('course_')) {
+        defaultLayer = 'layer-course'; 
+        // 自动将登录页的标题也渲染为双语
+        loadCourseTitle(window.PORTAL_TYPE, 'course-title');
+        document.getElementById('course-desc').innerText = "认知同频，方能破局。请输入您的专属海外课程密钥，开启高维学习通道。";
+    }
+
     } else {
         const videoLayer = document.getElementById('layer-video');
         if (videoLayer) {
@@ -1321,43 +1316,47 @@ function checkStateAndRestore() {
         showTargetLayerOnly(defaultLayer); hideTimerBar(); return; 
     }
 
-    // 【修补点】：在刷新浏览器维持倒计时状态时，彻底认祖归宗，接纳 layer-course-dashboard 
-    if (currentLayer === 'layer-video' || currentLayer === 'layer-course-dashboard') {
+        // 【新版】：彻底隔离公域限时与海外课程长效状态
+    if (currentLayer === 'layer-video') {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
-            showTargetLayerOnly(currentLayer);
-            startGlobalTimer(videoExpiry, 'video');
+            showTargetLayerOnly('layer-video');
+            startGlobalTimer(videoExpiry, 'video'); // 公域保留倒计时
             
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
-                // 如果是公域路由则恢复旧视频层
-                if (currentLayer === 'layer-video') {
-                    let videoUrl = "";
-                    if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-                    else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-                    else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-                    
-                    const videoElement = document.querySelector('#layer-video video');
-                    if (videoElement) smartLoadVideo(videoUrl, videoElement);
-                } 
-                // 【如果是课程路由则精准恢复海外多集播放舱】
-                else if (currentLayer === 'layer-course-dashboard') {
-                    let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
-                    const videoElement = document.getElementById('course-video-player');
-                    if (videoElement) smartLoadVideo(videoUrl, videoElement);
-
-                    if (window.PORTAL_TYPE === 'course_bazi') {
-                        document.getElementById('dynamic-course-title').innerText = "【八字破局 · 核心课程】";
-                    } else if (window.PORTAL_TYPE === 'course_fengshui') {
-                        document.getElementById('dynamic-course-title').innerText = "【风水堪舆 · 核心课程】";
-                    }
-                }
+                let videoUrl = "";
+                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";     
+                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
+                
+                const videoElement = document.querySelector('#layer-video video');
+                if (videoElement) smartLoadVideo(videoUrl, videoElement);
                 startDynamicWatermark(activePwd);
             }
         } else { forceKickOut(); }
 
+    } else if (currentLayer === 'layer-course-dashboard') {
+        const courseExpiry = parseInt(localStorage.getItem('courseExpiry'));
+        if (courseExpiry && now < courseExpiry) {
+            showTargetLayerOnly('layer-course-dashboard');
+            hideTimerBar(); // 【关键】刷新也不显示倒计时
+            
+            const activePwd = localStorage.getItem('active_pwd');
+            if (activePwd) {
+                let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+                const videoElement = document.getElementById('course-video-player');
+                if (videoElement) smartLoadVideo(videoUrl, videoElement);
+                startDynamicWatermark(activePwd);
+                
+                // 【关键】刷新页面后重新注入双语标题
+                loadCourseTitle(window.PORTAL_TYPE, 'dynamic-course-title'); 
+            }
+        } else { forceKickOut(); }
+
     } else if (currentLayer === 'layer-ai') {
+
         const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
         if (aiExpiry && now < aiExpiry) { showTargetLayerOnly('layer-ai'); startGlobalTimer(aiExpiry, 'ai'); } else { forceKickOut(); }
     } else if (currentLayer === 'layer-thankyou') {
