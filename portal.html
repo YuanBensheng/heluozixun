@@ -325,12 +325,14 @@
 }
 
 /* 3. 标题绝对居中 */
-.course-title-class { /* 请确保您的标题容器类名与此一致 */
+.course-title {
+    margin: 0 !important;      /* 清除默认的上下边距，防止被推偏 */
     text-align: center !important;
     width: 100%;
-    display: block;
-    margin: 20px 0;
+    display: block;            /* 确保它作为块级元素存在 */
+    /* 如果文字较长需要折行，下面这句保持默认即可；如果不希望折行，再加 white-space: nowrap; */
 }
+
 
 
 .dashboard-header {
@@ -342,13 +344,6 @@
     box-sizing: border-box;
 }
 
-.course-title {
-    margin: 0 !important;      /* 清除默认的上下边距，防止被推偏 */
-    text-align: center !important;
-    width: 100%;
-    display: block;            /* 确保它作为块级元素存在 */
-    /* 如果文字较长需要折行，下面这句保持默认即可；如果不希望折行，再加 white-space: nowrap; */
-}
 
 .dashboard-body { 
     display: flex; 
