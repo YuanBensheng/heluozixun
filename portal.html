@@ -333,12 +333,21 @@
 }
 
 
-.dashboard-header { 
-    display: flex; 
-    flex-direction: column; /* 标题与链接改为上下结构 */
-    align-items: center; 
-    gap: 15px; 
-    margin-bottom: 30px; 
+.dashboard-header {
+    width: 100%;
+    display: flex;             /* 开启 flex 布局 */
+    justify-content: center;   /* 强制水平居中 */
+    align-items: center;       /* 强制垂直居中 */
+    padding: 20px 0;           /* 给标题留出上下呼吸感 */
+    box-sizing: border-box;
+}
+
+.course-title {
+    margin: 0 !important;      /* 清除默认的上下边距，防止被推偏 */
+    text-align: center !important;
+    width: 100%;
+    display: block;            /* 确保它作为块级元素存在 */
+    /* 如果文字较长需要折行，下面这句保持默认即可；如果不希望折行，再加 white-space: nowrap; */
 }
 
 .dashboard-body { 
