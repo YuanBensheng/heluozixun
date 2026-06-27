@@ -305,84 +305,46 @@
         video:-webkit-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
         video:-moz-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
 
-        /* =========================================
-        海外课程专属全息播放舱 (带呼吸灯特效版)
-        ========================================= */
-        .course-dashboard { 
-            width: 100%; 
-            max-width: 1100px; /* 加宽以容纳左右分栏 */
-        }
+        /* 优化后的全息播放舱：垂直流动布局 */
+.course-dashboard {
+    width: 100%;
+    max-width: 800px; /* 限制最大宽度，保证手机端不被撑开 */
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* 强制垂直排列 */
+    gap: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
 
-        .dashboard-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 20px; 
-        }
+/* 顶部标题防溢出与居中 */
+.course-header {
+    width: 100%;
+    text-align: center;
+    padding-top: 10px; /* 解决顶部被压住的问题 */
+}
 
-        .course-title { 
-            color: #7ebdae; 
-            font-size: 20px; 
-            margin: 0; 
-            text-shadow: 0 0 10px rgba(126, 189, 174, 0.3);
-        }
+/* 视频播放器：大气占比 */
+.video-main-screen {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* 保持黄金比例 */
+    background: #000;
+    border: 1px solid #7ebdae;
+    box-shadow: 0 0 15px rgba(126, 189, 174, 0.2);
+}
 
-        /* 引流商城的荧光绿高亮按钮 */
-        .return-store-btn { 
-            background: #10b981; 
-            color: #010614; 
-            padding: 8px 18px; 
-            border-radius: 4px; 
-            text-decoration: none; 
-            font-weight: bold; 
-            font-size: 14px; 
-            transition: all 0.3s;
-            box-shadow: 0 0 15px rgba(16,185,129,0.4);
-        }
+/* 课程目录：流式布局，不限高 */
+.video-playlist {
+    width: 100%;
+    border-top: 1px solid #333;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #7ebdae;
+}
 
-        .dashboard-body { 
-            display: flex; 
-            gap: 20px; 
-            align-items: flex-start; 
-        }
-
-        /* 👇 左侧视频舱：完全继承您的呼吸灯边框特效 👇 */
-        .video-main-screen { 
-            flex: 7; 
-            background: #000; 
-            border-radius: 8px; 
-            overflow: hidden; 
-            border: 1px solid rgba(16, 185, 129, 0.25); 
-            animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
-            position: relative; /* 【修补点】必须为相对定位，以承载防盗水印 */
-        }
-        .video-main-screen video { 
-            width: 100%; 
-            display: block; 
-            aspect-ratio: 16 / 9; 
-            object-fit: cover;
-        }
-
-        /* 👇 右侧目录舱：完全继承您的呼吸灯边框特效 👇 */
-        .video-playlist { 
-            flex: 3; 
-            background: rgba(2, 12, 36, 0.7); /* 使用原来的深邃幽蓝背景 */
-            border-radius: 8px; 
-            padding: 15px; 
-            max-height: calc(100vw * 9 / 16 * 0.7); 
-            overflow-y: auto; 
-            border: 1px solid rgba(16, 185, 129, 0.25); 
-            animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
-        }
-
-        .playlist-title { 
-            color: #7ebdae; 
-            font-size: 16px; 
-            margin-top: 0; 
-            margin-bottom: 15px; 
-            border-bottom: 1px solid rgba(126, 189, 174, 0.1); 
-            padding-bottom: 10px;
-        }
 
         .episode-list { list-style: none; padding: 0; margin: 0; }
 
@@ -572,41 +534,24 @@
         </div>
     </div>
 
-    <div id="layer-course-dashboard" class="layer course-dashboard" style="display: none; margin: 0 auto;">
-        <div class="dashboard-header">
-            <h2 class="course-title" id="dynamic-course-title">【时空能量与核心阵法】</h2>
-            <a href="https://您的lemonsqueezy店铺链接.com" class="return-store-btn" target="_blank" id="lemon-store-link">
-                获取更多高维课程
-            </a>
-        </div>
-
-        <div class="dashboard-body">
-            <div class="video-main-screen">
-                <video id="course-video-player" controls controlsList="nodownload" disablePictureInPicture preload="auto">
-                    您的浏览器不支持 HTML5 视频。
-                </video>
-                <div id="dynamic-watermark-course" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
-            </div>
-
-            <div class="video-playlist">
-                <h3 class="playlist-title">课程目录</h3>
-                <ul class="episode-list" id="course-episode-list">
-                    <li class="episode-item active" data-src="您的第一集视频链接.m3u8">
-                        <span class="ep-num">01</span> 宇宙能量的底层逻辑
-                    </li>
-                    <li class="episode-item" data-src="您的第二集视频链接.m3u8">
-                        <span class="ep-num">02</span> 天干地支的时空矩阵
-                    </li>
-                    <li class="episode-item" data-src="您的第三集视频链接.m3u8">
-                        <span class="ep-num">03</span> 财富流年的精准推演
-                    </li>
-                    <li class="episode-item" data-src="您的第四集视频链接.m3u8">
-                        <span class="ep-num">04</span> 婚姻宫的因果纠缠
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div id="layer-course-dashboard" class="course-dashboard" style="display: none; width: 100%; max-width: 800px; margin: 0 auto; padding: 20px; box-sizing: border-box; flex-direction: column; gap: 20px;">
+    
+    <div class="course-header" style="text-align: center; padding-top: 20px;">
+        <h2 style="color: #7ebdae; margin: 0;">八字破局·核心课程</h2>
     </div>
+
+    <div class="video-main-screen" style="width: 100%; aspect-ratio: 16 / 9; background: #000; border: 1px solid #7ebdae; box-shadow: 0 0 15px rgba(126, 189, 174, 0.2);">
+        <div id="video-container" style="width: 100%; height: 100%;"></div>
+    </div>
+
+    <div class="video-playlist" style="width: 100%; border-top: 1px solid #333; padding-top: 15px; color: #7ebdae;">
+        <h3 style="margin: 0 0 10px 0;">课程目录</h3>
+        <ul id="course-list" style="list-style: none; padding: 0; margin: 0; width: 100%;">
+            </ul>
+        <a href="您的Lemon商店链接" class="return-store-btn" style="margin-top: 20px; display: block; color: #7ebdae; text-decoration: none; text-align: center;">进入商铺订购/获取更多</a>
+    </div>
+</div>
+
 
 
     <div id="layer-ai" class="layer">
