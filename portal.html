@@ -304,130 +304,130 @@
         video:fullscreen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
         video:-webkit-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
         video:-moz-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
-    /* =========================================
-   海外课程专属全息播放舱 (带呼吸灯特效版)
-   ========================================= */
-.course-dashboard { 
-    width: 100%; 
-    max-width: 1100px; /* 加宽以容纳左右分栏 */
-}
 
-.dashboard-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px; 
-}
+        /* =========================================
+        海外课程专属全息播放舱 (带呼吸灯特效版)
+        ========================================= */
+        .course-dashboard { 
+            width: 100%; 
+            max-width: 1100px; /* 加宽以容纳左右分栏 */
+        }
 
-.course-title { 
-    color: #7ebdae; 
-    font-size: 20px; 
-    margin: 0; 
-    text-shadow: 0 0 10px rgba(126, 189, 174, 0.3);
-}
+        .dashboard-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
 
-/* 引流商城的荧光绿高亮按钮 */
-.return-store-btn { 
-    background: #10b981; 
-    color: #010614; 
-    padding: 8px 18px; 
-    border-radius: 4px; 
-    text-decoration: none; 
-    font-weight: bold; 
-    font-size: 14px; 
-    transition: all 0.3s;
-    box-shadow: 0 0 15px rgba(16,185,129,0.4);
-}
+        .course-title { 
+            color: #7ebdae; 
+            font-size: 20px; 
+            margin: 0; 
+            text-shadow: 0 0 10px rgba(126, 189, 174, 0.3);
+        }
 
-.dashboard-body { 
-    display: flex; 
-    gap: 20px; 
-    align-items: flex-start; 
-}
+        /* 引流商城的荧光绿高亮按钮 */
+        .return-store-btn { 
+            background: #10b981; 
+            color: #010614; 
+            padding: 8px 18px; 
+            border-radius: 4px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 14px; 
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(16,185,129,0.4);
+        }
 
-/* 👇 左侧视频舱：完全继承您的呼吸灯边框特效 👇 */
-.video-main-screen { 
-    flex: 7; 
-    background: #000; 
-    border-radius: 8px; 
-    overflow: hidden; 
-    border: 1px solid rgba(16, 185, 129, 0.25); 
-    animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
-}
-.video-main-screen video { 
-    width: 100%; 
-    display: block; 
-    aspect-ratio: 16 / 9; 
-    object-fit: cover;
-}
+        .dashboard-body { 
+            display: flex; 
+            gap: 20px; 
+            align-items: flex-start; 
+        }
 
-/* 👇 右侧目录舱：完全继承您的呼吸灯边框特效 👇 */
-.video-playlist { 
-    flex: 3; 
-    background: rgba(2, 12, 36, 0.7); /* 使用原来的深邃幽蓝背景 */
-    border-radius: 8px; 
-    padding: 15px; 
-    max-height: calc(100vw * 9 / 16 * 0.7); 
-    overflow-y: auto; 
-    border: 1px solid rgba(16, 185, 129, 0.25); 
-    animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
-}
+        /* 👇 左侧视频舱：完全继承您的呼吸灯边框特效 👇 */
+        .video-main-screen { 
+            flex: 7; 
+            background: #000; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            border: 1px solid rgba(16, 185, 129, 0.25); 
+            animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
+            position: relative; /* 【修补点】必须为相对定位，以承载防盗水印 */
+        }
+        .video-main-screen video { 
+            width: 100%; 
+            display: block; 
+            aspect-ratio: 16 / 9; 
+            object-fit: cover;
+        }
 
-.playlist-title { 
-    color: #7ebdae; 
-    font-size: 16px; 
-    margin-top: 0; 
-    margin-bottom: 15px; 
-    border-bottom: 1px solid rgba(126, 189, 174, 0.1); 
-    padding-bottom: 10px;
-}
+        /* 👇 右侧目录舱：完全继承您的呼吸灯边框特效 👇 */
+        .video-playlist { 
+            flex: 3; 
+            background: rgba(2, 12, 36, 0.7); /* 使用原来的深邃幽蓝背景 */
+            border-radius: 8px; 
+            padding: 15px; 
+            max-height: calc(100vw * 9 / 16 * 0.7); 
+            overflow-y: auto; 
+            border: 1px solid rgba(16, 185, 129, 0.25); 
+            animation: holo-smooth-breath 6s infinite ease-in-out; /* 强制调用原来的呼吸灯动画 */
+        }
 
-.episode-list { list-style: none; padding: 0; margin: 0; }
+        .playlist-title { 
+            color: #7ebdae; 
+            font-size: 16px; 
+            margin-top: 0; 
+            margin-bottom: 15px; 
+            border-bottom: 1px solid rgba(126, 189, 174, 0.1); 
+            padding-bottom: 10px;
+        }
 
-.episode-item { 
-    padding: 12px 10px; 
-    color: #e5e7eb; 
-    cursor: pointer; 
-    border-bottom: 1px solid rgba(126, 189, 174, 0.05); 
-    transition: all 0.2s; 
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
-    font-size: 14px;
-}
-.episode-item:hover { 
-    background: rgba(126,189,174,0.1); 
-}
+        .episode-list { list-style: none; padding: 0; margin: 0; }
 
-/* 选中播放时的荧光绿状态 */
-.episode-item.active { 
-    color: #10b981; 
-    border-left: 3px solid #10b981; 
-    background: rgba(16,185,129,0.05); 
-    font-weight: bold;
-}
+        .episode-item { 
+            padding: 12px 10px; 
+            color: #e5e7eb; 
+            cursor: pointer; 
+            border-bottom: 1px solid rgba(126, 189, 174, 0.05); 
+            transition: all 0.2s; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 14px;
+        }
+        .episode-item:hover { 
+            background: rgba(126,189,174,0.1); 
+        }
 
-.ep-num { 
-    background: #1a2a40; 
-    color: #7ebdae; 
-    padding: 3px 6px; 
-    border-radius: 4px; 
-    font-size: 12px; 
-}
-.episode-item.active .ep-num {
-    background: #10b981;
-    color: #010614;
-}
+        /* 选中播放时的荧光绿状态 */
+        .episode-item.active { 
+            color: #10b981; 
+            border-left: 3px solid #10b981; 
+            background: rgba(16,185,129,0.05); 
+            font-weight: bold;
+        }
 
-/* 移动端极限折叠响应 */
-@media (max-width: 768px) {
-    .dashboard-body { flex-direction: column; }
-    .video-main-screen, .video-playlist { flex: none; width: 100%; max-height: none;}
-    .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
-    .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
-}
+        .ep-num { 
+            background: #1a2a40; 
+            color: #7ebdae; 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+        }
+        .episode-item.active .ep-num {
+            background: #10b981;
+            color: #010614;
+        }
 
-      #layer-course-dashboard { display: none; }  
+        /* 移动端极限折叠响应 */
+        @media (max-width: 768px) {
+            .dashboard-body { flex-direction: column; }
+            .video-main-screen, .video-playlist { flex: none; width: 100%; max-height: none;}
+            .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -571,6 +571,43 @@
             </div>
         </div>
     </div>
+
+    <div id="layer-course-dashboard" class="layer course-dashboard" style="display: none; margin: 0 auto;">
+        <div class="dashboard-header">
+            <h2 class="course-title" id="dynamic-course-title">【时空能量与核心阵法】</h2>
+            <a href="https://您的lemonsqueezy店铺链接.com" class="return-store-btn" target="_blank" id="lemon-store-link">
+                获取更多高维课程
+            </a>
+        </div>
+
+        <div class="dashboard-body">
+            <div class="video-main-screen">
+                <video id="course-video-player" controls controlsList="nodownload" disablePictureInPicture preload="auto">
+                    您的浏览器不支持 HTML5 视频。
+                </video>
+                <div id="dynamic-watermark-course" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
+            </div>
+
+            <div class="video-playlist">
+                <h3 class="playlist-title">课程目录</h3>
+                <ul class="episode-list" id="course-episode-list">
+                    <li class="episode-item active" data-src="您的第一集视频链接.m3u8">
+                        <span class="ep-num">01</span> 宇宙能量的底层逻辑
+                    </li>
+                    <li class="episode-item" data-src="您的第二集视频链接.m3u8">
+                        <span class="ep-num">02</span> 天干地支的时空矩阵
+                    </li>
+                    <li class="episode-item" data-src="您的第三集视频链接.m3u8">
+                        <span class="ep-num">03</span> 财富流年的精准推演
+                    </li>
+                    <li class="episode-item" data-src="您的第四集视频链接.m3u8">
+                        <span class="ep-num">04</span> 婚姻宫的因果纠缠
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
 
     <div id="layer-ai" class="layer">
         <h2>前置研判 · 局象拓扑</h2>
@@ -787,11 +824,13 @@
         }
     });
 
+    // 【修补点】双核引擎全息水印：同时向旧的对齐影像和新的海外舱投放动态溯源码
     function startDynamicWatermark(pwd) {
-        const wm = document.getElementById('dynamic-watermark');
-        if (!wm) return;
-        wm.style.display = 'block';
-        wm.innerText = "【溯源对齐: " + pwd + "】";
+        const wm1 = document.getElementById('dynamic-watermark');
+        if (wm1) { wm1.style.display = 'block'; wm1.innerText = "【溯源对齐: " + pwd + "】"; }
+        
+        const wm2 = document.getElementById('dynamic-watermark-course');
+        if (wm2) { wm2.style.display = 'block'; wm2.innerText = "【溯源对齐: " + pwd + "】"; }
     }
 
     function showCustomAlert(title, message, callback) {
@@ -1074,7 +1113,7 @@ function smartLoadVideo(url, videoElement) {
     }, 100);
 }
 
-// 👑 【核心安全补丁：升级为全局顶层判定函数，彻底粉碎 ReferenceError 卡死空白漏洞】
+// 👑 全局顶层判定函数，彻底粉碎 ReferenceError 卡死空白漏洞
 function checkIsCourseKey(firstLetter) {
     const isVip = (firstLetter === 'V');
     const isPublic = ['E', 'F', 'W', 'P'].includes(firstLetter);
@@ -1146,41 +1185,53 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 2. 视频资源路由 (公域 E/F/W 或 21字母随机海外课程)
-    if (['E', 'F', 'W'].includes(type) || isCoursePassword) {
+    // 2. 【公域资源路由】（单独拆分解耦，只分发给 layer-video）
+    if (['E', 'F', 'W'].includes(type)) {
         let videoUrl = "";
-        
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
         else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
         else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-        // 🚀 降维弹性接应：只要是通过了哈希校验的任意新课程前缀字母，统一发发海外通用多媒体流
-        else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
 
         const videoElement = document.querySelector('#layer-video video');
         if (videoElement) smartLoadVideo(videoUrl, videoElement); 
         startDynamicWatermark(pwd);
 
-        const videoLayer = document.getElementById('layer-video');
-        if (videoLayer && window.PORTAL_TYPE.startsWith('course_')) {
-            const panels = videoLayer.querySelectorAll('.holo-card-panel');
-            if (panels.length >= 3) {
-                panels[0].style.display = 'none'; 
-                panels[2].style.display = 'none'; 
-            }
-            const mainTitle = videoLayer.querySelector('h2');
-            if (mainTitle) mainTitle.innerHTML = '专属高维课程 · 闭门交付';
-            const subTitle = videoLayer.querySelector('.sub-title');
-            if (subTitle) subTitle.innerHTML = '河洛智慧 · 闭门造境';
-        }
-
-        const duration = isCoursePassword ? (120 * 60 * 1000) : (30 * 60 * 1000);
+        const duration = 30 * 60 * 1000;
         const expiryTime = Date.now() + duration; 
         localStorage.setItem('videoExpiry', expiryTime);
         localStorage.setItem('currentLayer', 'layer-video');
         showTargetLayerOnly('layer-video');
         startGlobalTimer(expiryTime, 'video');
         
-        showCustomAlert("✓ 契约达成", isCoursePassword ? "专属课程认证成功，高维播放通道已加密开启。" : "初次认知对齐契约达成，高维时空已开启.");
+        showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启.");
+        return;
+    }
+
+    // 3. 【修补点】：海外课程专属路由 (绝对隔离分发到 layer-course-dashboard)
+    if (isCoursePassword) {
+        // 初始降落加载第一集
+        let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+        const videoElement = document.getElementById('course-video-player');
+        if (videoElement) smartLoadVideo(videoUrl, videoElement); 
+        
+        startDynamicWatermark(pwd);
+
+        // 动态修改海外课程标题
+        if (window.PORTAL_TYPE === 'course_bazi') {
+            document.getElementById('dynamic-course-title').innerText = "【八字破局 · 核心课程】";
+        } else if (window.PORTAL_TYPE === 'course_fengshui') {
+            document.getElementById('dynamic-course-title').innerText = "【风水堪舆 · 核心课程】";
+        }
+
+        const duration = 120 * 60 * 1000; // 课程赋予 120 分钟权限
+        const expiryTime = Date.now() + duration; 
+        localStorage.setItem('videoExpiry', expiryTime); // 复用倒计时变量名
+        localStorage.setItem('currentLayer', 'layer-course-dashboard'); // 精准锚定新舱位
+        showTargetLayerOnly('layer-course-dashboard');
+        startGlobalTimer(expiryTime, 'video');
+        
+        showCustomAlert("✓ 契约达成", "专属课程认证成功，全息播放舱已为您开启。");
+        return;
     }
 }
 
@@ -1208,7 +1259,7 @@ function checkStateAndRestore() {
             if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
         }
     } else if (window.PORTAL_TYPE.startsWith('course_')) {
-        defaultLayer = 'layer-course';
+        defaultLayer = 'layer-course'; // 海外课程通道降落的默认登录框
         if (window.PORTAL_TYPE === 'course_bazi') {
             document.getElementById('course-title').innerText = "八字破局 · 核心课程";
             document.getElementById('course-desc').innerText = "本视界承载八字底层逻辑与实战心法，为海外学员专属封闭交付通道。";
@@ -1232,32 +1283,38 @@ function checkStateAndRestore() {
         showTargetLayerOnly(defaultLayer); hideTimerBar(); return; 
     }
 
-    if (currentLayer === 'layer-video') {
+    // 【修补点】：在刷新浏览器维持倒计时状态时，彻底认祖归宗，接纳 layer-course-dashboard 
+    if (currentLayer === 'layer-video' || currentLayer === 'layer-course-dashboard') {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
-            showTargetLayerOnly('layer-video');
+            showTargetLayerOnly(currentLayer);
             startGlobalTimer(videoExpiry, 'video');
-            
-            if (window.PORTAL_TYPE.startsWith('course_')) {
-                const videoLayer = document.getElementById('layer-video');
-                const panels = videoLayer.querySelectorAll('.holo-card-panel');
-                if (panels.length >= 3) { panels[0].style.display = 'none'; panels[2].style.display = 'none'; }
-                const mainTitle = videoLayer.querySelector('h2');
-                if (mainTitle) mainTitle.innerHTML = '专属高维课程 · 闭门交付';
-            }
             
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
             if (activePwd && authType) {
-                let videoUrl = "";
-                if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-                else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
-                else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
-                // 🚀 刷新状态弹性接应：只要不是公域引流前缀，刷新时自动安全复原海外加密流
-                else videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
-                
-                const videoElement = document.querySelector('#layer-video video');
-                if (videoElement) smartLoadVideo(videoUrl, videoElement);
+                // 如果是公域路由则恢复旧视频层
+                if (currentLayer === 'layer-video') {
+                    let videoUrl = "";
+                    if (authType === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
+                    else if (authType === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+                    else if (authType === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
+                    
+                    const videoElement = document.querySelector('#layer-video video');
+                    if (videoElement) smartLoadVideo(videoUrl, videoElement);
+                } 
+                // 【如果是课程路由则精准恢复海外多集播放舱】
+                else if (currentLayer === 'layer-course-dashboard') {
+                    let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+                    const videoElement = document.getElementById('course-video-player');
+                    if (videoElement) smartLoadVideo(videoUrl, videoElement);
+
+                    if (window.PORTAL_TYPE === 'course_bazi') {
+                        document.getElementById('dynamic-course-title').innerText = "【八字破局 · 核心课程】";
+                    } else if (window.PORTAL_TYPE === 'course_fengshui') {
+                        document.getElementById('dynamic-course-title').innerText = "【风水堪舆 · 核心课程】";
+                    }
+                }
                 startDynamicWatermark(activePwd);
             }
         } else { forceKickOut(); }
@@ -1353,40 +1410,27 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
             }
         }
     });
+
+    // ================= 【修补点】海外课程多集互动点击引擎 =================
+    document.addEventListener('DOMContentLoaded', () => {
+        const episodes = document.querySelectorAll('.episode-item');
+        const player = document.getElementById('course-video-player');
+        
+        episodes.forEach(ep => {
+            ep.addEventListener('click', function() {
+                // 1. 移除全局高亮，为当前点击的赋予高亮绿态
+                episodes.forEach(e => e.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 2. 提取配置的源链接并投喂给播放引擎
+                const src = this.getAttribute('data-src');
+                if (src && player) {
+                    smartLoadVideo(src, player);
+                }
+            });
+        });
+    });
 </script>
-<div id="layer-course-dashboard" class="container course-dashboard" style="display: none;">
-    <div class="dashboard-header">
-        <h2 class="course-title" id="dynamic-course-title">【时空能量与八字核心阵法】</h2>
-        <a href="https://您的lemonsqueezy店铺链接.com" class="return-store-btn" target="_blank" id="lemon-store-link">
-            获取更多高维课程
-        </a>
-    </div>
 
-    <div class="dashboard-body">
-        <div class="video-main-screen">
-            <video id="course-video-player" controls controlsList="nodownload" disablePictureInPicture preload="auto">
-                您的浏览器不支持 HTML5 视频。
-            </video>
-        </div>
-
-        <div class="video-playlist">
-            <h3 class="playlist-title">课程目录</h3>
-            <ul class="episode-list" id="course-episode-list">
-                <li class="episode-item active" data-src="您的第一集视频链接.m3u8">
-                    <span class="ep-num">01</span> 宇宙能量的底层逻辑
-                </li>
-                <li class="episode-item" data-src="您的第二集视频链接.m3u8">
-                    <span class="ep-num">02</span> 天干地支的时空矩阵
-                </li>
-                <li class="episode-item" data-src="您的第三集视频链接.m3u8">
-                    <span class="ep-num">03</span> 财富流年的精准推演
-                </li>
-                <li class="episode-item" data-src="您的第四集视频链接.m3u8">
-                    <span class="ep-num">04</span> 婚姻宫的因果纠缠
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
 </body>
 </html>
