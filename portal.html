@@ -23,6 +23,7 @@
             // 注册全局核心变量，供后续 JS 调度使用
             window.PORTAL_TYPE = portalType;
         }
+        
     </script>
 
     <style>
@@ -441,6 +442,26 @@
             .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
             .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
         }
+/* 水印动态定位与表现优化 */
+.watermark {
+    position: absolute;
+    top: 15px;            /* 距离视频顶部 15px */
+    left: 50%;            /* 水印中心点对齐 */
+    transform: translateX(-50%); /* 水平绝对居中 */
+    z-index: 999;
+    pointer-events: none;
+    font-size: 14px;
+    font-family: monospace;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5); /* 降低透明度，避免抢戏 */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.2);  /* 轻微背景，保证在不同视频内容下均清晰可见 */
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: none;        /* 默认隐藏 */
+}
+
+        
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -1430,6 +1451,40 @@ function forceKickOut() {
     
 function hideTimerBar() { const timerBar = document.getElementById('global-timer-bar'); if(timerBar) timerBar.style.display = 'none'; }
 window.addEventListener('DOMContentLoaded', checkStateAndRestore);
+
+    // 【核心逻辑重构】驱动水印随播放状态联动
+function setupWatermarkLogic(videoElement, watermarkElement) {
+    if (!videoElement || !watermarkElement) return;
+
+    // 当视频开始播放时，水印出现
+    videoElement.addEventListener('play', () => {
+        watermarkElement.style.display = 'block';
+    });
+
+    // 当视频暂停或等待时，水印隐藏 (可选：如果您希望暂停时也显示，请注释掉下面这行)
+    videoElement.addEventListener('pause', () => {
+        watermarkElement.style.display = 'none';
+    });
+    
+    // 确保视频元数据加载时水印是隐藏的
+    videoElement.addEventListener('loadstart', () => {
+        watermarkElement.style.display = 'none';
+    });
+}
+
+// 在页面加载后绑定逻辑
+window.addEventListener('DOMContentLoaded', () => {
+    // 绑定公域/VIP通道
+    const v1 = document.getElementById('heluo-video');
+    const w1 = document.getElementById('dynamic-watermark');
+    setupWatermarkLogic(v1, w1);
+
+    // 绑定海外课程通道
+    const v2 = document.getElementById('course-video-player');
+    const w2 = document.getElementById('dynamic-watermark-course');
+    setupWatermarkLogic(v2, w2);
+});
+
 </script>
 
 <script>
