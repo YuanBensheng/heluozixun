@@ -1,21 +1,21 @@
 {
-  "course_01": {
+  "course_mhys": {
     "cn": "梅花易数",
     "en": "Plum Blossom Oracle (Ancient Wisdom for Modern Decision Making)"
   },
-  "course_02": {
+  "course_mcxlr": {
     "cn": "秘传小六壬",
     "en": "Secret Xiao Liu Ren (The Art of Instant Intuitive Divination)"
   },
-  "course_03": {
+  "course_szbzpp": {
     "cn": "四柱八字排盘",
     "en": "Four Pillars of Destiny (Decoding Your Life Blueprint)"
   },
-  "course_04": {
+  "course_szsd": {
     "cn": "三掌神断",
     "en": "Three-Palm Mastery (Rapid Predictive Techniques)"
   },
-  "course_05": {
+  "course_zzfs": {
     "cn": "住宅风水",
     "en": "Residential Spatial Harmony (Architectural & Environmental Strategy)"
   }
