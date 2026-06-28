@@ -11,10 +11,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const portalType = urlParams.get('type');
         
-        // 【核心修正一】：精确定义合法的课程路由白名单，彻底拦截一切不存在的非法后缀
-        const validCourseTypes = ['course_01', 'course_02', 'course_03', 'course_04', 'course_05'];
-        const isCourseType = portalType && validCourseTypes.includes(portalType);
-        
+        // 【核心修正一】：废弃硬编码，改为动态映射前置判断
+        const isCourseType = portalType && portalType.startsWith('course_');
         const validTypes = ['public', 'vip'];
         
         if (!portalType || (!validTypes.includes(portalType) && !isCourseType)) {
@@ -32,13 +30,9 @@
         /* ================= 🌌 东方未来主义 · 仿生呼吸体系 ================= */
         
         /* ================= 防闪烁补丁 (三通道解耦隔离) ================= */
-        /* 【核心修正一】：废除旧路由防闪烁，对齐全新的 01-05 矩阵 */
+        /* 【核心修正二】：废除旧路由防闪烁硬编码，采用动态属性选择器，一劳永逸 */
         html.type-vip #layer-pay-399,
-        html.type-course_01 #layer-pay-399,
-        html.type-course_02 #layer-pay-399,
-        html.type-course_03 #layer-pay-399,
-        html.type-course_04 #layer-pay-399,
-        html.type-course_05 #layer-pay-399 {
+        html[class*="type-course_"] #layer-pay-399 {
             display: none !important;
         }
         
@@ -64,14 +58,14 @@
             33% {
                 border-color: rgba(0, 255, 204, 0.65);
                 box-shadow: 0 18px 45px rgba(0, 0, 0, 0.95),
-                            0 0 58px rgba(16, 185, 129, 0.65),    
+                            0 0 58px rgba(16, 185, 129, 0.65),  
                             0 0 88px rgba(0, 255, 204, 0.45),   
                             inset 0 0 20px rgba(16, 185, 129, 0.2);
             }
             50% {
                 border-color: rgba(0, 255, 204, 0.6);
                 box-shadow: 0 18px 45px rgba(0, 0, 0, 0.95),
-                            0 0 54px rgba(16, 185, 129, 0.6),    
+                            0 0 54px rgba(16, 185, 129, 0.6),  
                             0 0 82px rgba(0, 255, 204, 0.4),   
                             inset 0 0 18px rgba(16, 185, 129, 0.18);
             }
@@ -1172,7 +1166,7 @@ async function verifyAndRouting(inputPassword) {
     if (window.PORTAL_TYPE === 'public' && (isVipPassword || isCoursePassword)) {
         showCustomAlert("❌ 通道不匹配", "通道错误：检测到特殊通道密钥，请通过专属对应链接进入！"); return;
     }
-    if (window.PORTAL_TYPE.startsWith('course_') && !isCoursePassword) {
+    if (window.PORTAL_TYPE && window.PORTAL_TYPE.startsWith('course_') && !isCoursePassword) {
         showCustomAlert("❌ 通道不匹配", "权限错误：请在此输入正确的海外课程专属密钥！"); return;
     }
 
@@ -1262,7 +1256,27 @@ async function verifyAndRouting(inputPassword) {
 }
 
 // ================= 状态恢复与路由重定位 =================
-function checkStateAndRestore() {
+// 【核心修正三】：升级为异步函数，优先做字典鉴权
+async function checkStateAndRestore() {
+
+    // --- 全局兜底拦截器：查字典，防乱跳 ---
+    if (window.PORTAL_TYPE && window.PORTAL_TYPE.startsWith('course_')) {
+        try {
+            const response = await fetch('./courses.json');
+            const allCourses = await response.json();
+            
+            // 关键拦截：如果字典里没有这个课，直接无感重定向回首页，中断后续所有渲染逻辑！
+            if (!allCourses[window.PORTAL_TYPE]) {
+                console.warn("未注册的课程路径，执行回退策略");
+                window.location.replace('./index.html');
+                return; // 彻底切断
+            }
+        } catch (e) {
+            console.error('加载课程字典失败', e);
+        }
+    }
+    // ------------------------------------
+
     let bugExp = localStorage.getItem('videoExpiry');
     if (bugExp && parseInt(bugExp) > Date.now() + 3 * 3600 * 1000) {
         localStorage.removeItem('videoExpiry'); localStorage.removeItem('currentLayer');
@@ -1284,7 +1298,7 @@ function checkStateAndRestore() {
             const subTitle = videoLayer.querySelector('.sub-title');
             if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
         }
-    } else if (window.PORTAL_TYPE.startsWith('course_')) {
+    } else if (window.PORTAL_TYPE && window.PORTAL_TYPE.startsWith('course_')) {
         defaultLayer = 'layer-course-auth'; 
     } else {
         const videoLayer = document.getElementById('layer-video');
