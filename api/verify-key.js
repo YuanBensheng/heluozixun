@@ -47,7 +47,7 @@ export default async function handler(req, res) {
         const redisKey = `burnt_key:${pwd}`;
 
         // 智能识别：排除公域VIP，剩下的自动分配至海外课程通道
-        const isCourse = !['E', 'F', 'W', 'P'].includes(type);
+        const isCourse = !['E', 'F', 'W', 'P', 'V'].includes(type);
 
         if (!isCourse) {
             // ----------------------------------------------------
