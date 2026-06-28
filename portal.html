@@ -1091,7 +1091,7 @@
 <script>
 let globalTimerInterval = null;
 
-// ================= 智能视频流驱动引擎 =================
+// ================= 智能视频流驱动引擎（新旧双通道兼容版） =================
 function smartLoadVideo(url, videoElement) {
     setTimeout(async () => {
         const ua = navigator.userAgent.toLowerCase();
@@ -1112,6 +1112,20 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
+        // 🎯 【核心修正】：检测到是 Bunny Stream 的全球加速流，直接走绿色通道，拒绝本地 Blob 污染！
+        const isBunnyStream = url.includes('b-cdn.net') || url.includes('bunny');
+        if (isBunnyStream) {
+            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                window.heluoHlsInstance = new Hls();
+                window.heluoHlsInstance.loadSource(url);
+                window.heluoHlsInstance.attachMedia(videoElement);
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                videoElement.src = url;
+            }
+            return; // 完美的纯净流，直接退出，各司其职
+        }
+
+        // 📝 以下保持您原有的腾讯云点播 HLS 劫持改写逻辑，确保旧密码（如W）依然稳健运行
         let token = '';
         try {
             const tokenResp = await fetch('/api/generate-token');
@@ -1139,6 +1153,7 @@ function smartLoadVideo(url, videoElement) {
         } catch (e) { console.error('M3U8 处理失败:', e); }
     }, 100);
 }
+
 
 // 👑 全局顶层判定函数
 function checkIsCourseKey(firstLetter) {
