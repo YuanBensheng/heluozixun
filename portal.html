@@ -581,7 +581,7 @@
 
     <div id="layer-course-dashboard" class="layer course-dashboard" style="display: none; margin: 0 auto;">
         <div class="dashboard-header">
-            <h2 class="course-title" id="dynamic-course-title" style="margin: 0 auto; padding: 0; text-align: center; display: block; width: 100%;">【高维时空链接中...】</h2>
+            <h2 class="course-title" id="dynamic-course-title" style="margin: 0 auto; padding: 0; text-align: center; display: block; width: 100%; min-height: 85px;"></h2>
         </div>
 
         <div class="dashboard-body">
@@ -1156,19 +1156,8 @@ async function verifyAndRouting(inputPassword) {
     if (!inputPassword) { showCustomAlert("⚠️ 密钥缺失", "请输入时空密钥！"); return; }
     const pwd = inputPassword.trim().toUpperCase();
 
-    // === 【绝对虚空锁】：点击按钮瞬间屏蔽一切背景，防止网速慢导致视觉残影 ===
-    let voidLock = document.getElementById('holo-void-lock');
-    if(!voidLock) {
-        voidLock = document.createElement('div');
-        voidLock.id = 'holo-void-lock';
-        voidLock.style.cssText = 'position:fixed;inset:0;background:#000000;z-index:9999999;display:flex;justify-content:center;align-items:center;color:#00ffcc;font-size:16px;letter-spacing:2px;';
-        voidLock.innerHTML = '【时空折叠 · 数据校验中...】';
-        document.body.appendChild(voidLock);
-    }
-    const unlock = () => { if(voidLock) voidLock.remove(); };
-
     if (localStorage.getItem('burnt_' + pwd)) {
-        unlock(); showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！"); return;
+        showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！"); return;
     }
 
     const type = pwd.charAt(0); 
@@ -1178,13 +1167,13 @@ async function verifyAndRouting(inputPassword) {
 
     // === 【三通道严格物理隔离网关】 ===
     if (window.PORTAL_TYPE === 'vip' && !isVipPassword) {
-        unlock(); showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，请使用 V 开头的专属密钥！"); return;
+        showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，请使用 V 开头的专属密钥！"); return;
     }
     if (window.PORTAL_TYPE === 'public' && (isVipPassword || isCoursePassword)) {
-        unlock(); showCustomAlert("❌ 通道不匹配", "通道错误：检测到特殊通道密钥，请通过专属对应链接进入！"); return;
+        showCustomAlert("❌ 通道不匹配", "通道错误：检测到特殊通道密钥，请通过专属对应链接进入！"); return;
     }
     if (window.PORTAL_TYPE.startsWith('course_') && !isCoursePassword) {
-        unlock(); showCustomAlert("❌ 通道不匹配", "权限错误：请在此输入正确的海外课程专属密钥！"); return;
+        showCustomAlert("❌ 通道不匹配", "权限错误：请在此输入正确的海外课程专属密钥！"); return;
     }
 
     const btn1 = document.querySelector('#layer-pay-399 .btn');
@@ -1199,12 +1188,12 @@ async function verifyAndRouting(inputPassword) {
         });
         const cloudResult = await cloudResponse.json();
         if (!cloudResponse.ok || !cloudResult.success) {
-            unlock(); showCustomAlert("❌ 对齐失败", cloudResult.message || "未知能量阻断，请重试。");
+            showCustomAlert("❌ 对齐失败", cloudResult.message || "未知能量阻断，请重试。");
             if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
             return;
         }
     } catch (error) {
-        unlock(); showCustomAlert("❌ 网络异常", "无法连接全网数据大脑，请检查网络后重新对齐！");
+        showCustomAlert("❌ 网络异常", "无法连接全网数据大脑，请检查网络后重新对齐！");
         if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
         return;
     }
@@ -1223,7 +1212,6 @@ async function verifyAndRouting(inputPassword) {
         localStorage.setItem('currentLayer', 'layer-ai');
         showTargetLayerOnly('layer-ai');
         startGlobalTimer(expiryTime, 'ai');
-        unlock();
         showCustomAlert("✓ 通道开启", type === 'V' ? "VIP 专属通道已开启，直达深度背景采集系统！" : "3000元基础对价已核，进入深度背景采集系统。");
         return;
     }
@@ -1245,7 +1233,6 @@ async function verifyAndRouting(inputPassword) {
         localStorage.setItem('currentLayer', 'layer-video');
         showTargetLayerOnly('layer-video');
         startGlobalTimer(expiryTime, 'video');
-        unlock();
         showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启.");
         return;
     }
@@ -1269,11 +1256,9 @@ async function verifyAndRouting(inputPassword) {
         
         showTargetLayerOnly('layer-course-dashboard');
         hideTimerBar(); // 强制隐藏倒计时 UI！
-        unlock();
         showCustomAlert("✓ 契约达成", "专属课程认证成功，全息播放舱已为您开启。");
         return;
     }
-    unlock();
 }
 
 // ================= 状态恢复与路由重定位 =================
@@ -1300,7 +1285,6 @@ function checkStateAndRestore() {
             if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
         }
     } else if (window.PORTAL_TYPE.startsWith('course_')) {
-        // 【核心切除】：原代码在此处动态读取 courses.json 修改登录标题，导致了“八字破局”等旧文字闪现。现已完全剔除。
         defaultLayer = 'layer-course-auth'; 
     } else {
         const videoLayer = document.getElementById('layer-video');
