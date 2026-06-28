@@ -41,7 +41,7 @@
         html.type-course_05 #layer-pay-399 {
             display: none !important;
         }
-       
+        
         /* 全局防选择、防拖拽 */
         .noselect {
             -webkit-touch-callout: none;
@@ -318,80 +318,71 @@
         /* =========================================
    海外课程专属全息播放舱 (布局优化版)
    ========================================= */
-/* 1. 强制容器全宽，修复移动端边界溢出 */
-.course-dashboard {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 10px; /* 留出极其细微的呼吸感，防止贴死屏幕边缘 */
-    box-sizing: border-box;
-}
+        .course-dashboard {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
 
-/* 2. 视频框全屏比例化：将高度改为自动，按比例缩放，不再被“压扁” */
-#layer-course-dashboard .video-container, 
-#layer-course-dashboard video {
-    width: 100% !important;
-    height: auto !important; /* 关键：自动计算高度，保持 16:9 比例 */
-    aspect-ratio: 16 / 9;   /* 强制锁定比例，拒绝被压缩 */
-}
+        #layer-course-dashboard .video-container, 
+        #layer-course-dashboard video {
+            width: 100% !important;
+            height: auto !important; 
+            aspect-ratio: 16 / 9;   
+        }
 
-/* 3. 标题绝对居中 */
-/* 确保标题本身不受任何外来 Margin 干扰 */
-.course-title {
-    margin: 0 auto !important;
-    text-align: center !important;
-    width: 100% !important;
-    display: block !important;
-}
-/* 强制将标题的父容器与页面的边界完全对齐 */
-.dashboard-header {
-    width: 100% !important;
-    max-width: 100% !important; /* 确保不被父容器 container 的 padding 限制 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 !important;
-    padding: 20px 0 !important;
-    /* 核心逻辑：脱离 container 的 padding 约束 */
-    box-sizing: border-box;
-}
+        .course-title {
+            margin: 0 auto !important;
+            text-align: center !important;
+            width: 100% !important;
+            display: block !important;
+        }
 
-.dashboard-body { 
-    display: flex; 
-    flex-direction: column; /* 强制改为上下结构 */
-    gap: 20px; 
-}
+        .dashboard-header {
+            width: 100% !important;
+            max-width: 100% !important; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 !important;
+            padding: 20px 0 !important;
+            box-sizing: border-box;
+        }
 
-/* 视频舱：全宽度 */
-.video-main-screen { 
-    width: 100%; 
-    background: #000; 
-    border-radius: 8px; 
-    overflow: hidden; 
-    border: 1px solid rgba(16, 185, 129, 0.25); 
-    animation: holo-smooth-breath 6s infinite ease-in-out; 
-    /* 【核心修正三】：给容器开启相对定位，彻底将水印锁死在视频范围内 */
-    position: relative; 
-}
+        .dashboard-body { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
 
-/* 目录舱：全宽度，完美对齐视频 */
-.video-playlist { 
-    width: 100%; 
-    background: rgba(2, 12, 36, 0.7); 
-    border-radius: 8px; 
-    padding: 20px; 
-    box-sizing: border-box; 
-    border: 1px solid rgba(16, 185, 129, 0.25); 
-    animation: holo-smooth-breath 6s infinite ease-in-out; 
-}
+        .video-main-screen { 
+            width: 100%; 
+            background: #000; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            border: 1px solid rgba(16, 185, 129, 0.25); 
+            animation: holo-smooth-breath 6s infinite ease-in-out; 
+            position: relative; 
+        }
 
-/* 相关链接区 (目录下方，保持在最底部) */
-#lemon-store-link {
-    display: inline-block;
-    margin-top: 20px;
-    width: 100%;
-    text-align: center;
-    padding: 12px 0;
-}
+        .video-playlist { 
+            width: 100%; 
+            background: rgba(2, 12, 36, 0.7); 
+            border-radius: 8px; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            border: 1px solid rgba(16, 185, 129, 0.25); 
+            animation: holo-smooth-breath 6s infinite ease-in-out; 
+        }
+
+        #lemon-store-link {
+            display: inline-block;
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+        }
 
         .playlist-title { 
             color: #7ebdae; 
@@ -419,7 +410,6 @@
             background: rgba(126,189,174,0.1); 
         }
 
-        /* 选中播放时的荧光绿状态 */
         .episode-item.active { 
             color: #10b981; 
             border-left: 3px solid #10b981; 
@@ -439,7 +429,6 @@
             color: #010614;
         }
 
-        /* 移动端极限折叠响应 */
         @media (max-width: 768px) {
             .dashboard-body { flex-direction: column; }
             .video-main-screen, .video-playlist { flex: none; width: 100%; max-height: none;}
@@ -526,13 +515,13 @@
     </div>
 
 
-    <div id="layer-course" class="layer">
-        <h2 id="course-title">海外高维课程</h2>
+    <div id="layer-course-auth" class="layer">
+        <h2>高维课程 · 专属认证</h2>
         <div class="sub-title">河洛智慧 · 闭门交付</div>
         
         <div class="holo-card-panel">
-            <div class="article-title">－ 课程简介 －</div>
-            <p class="article-main-text" id="course-desc">认知同频，方能破局。请输入您的专属海外课程密钥，开启高维学习通道。</p>
+            <div class="article-title">－ 身份鉴权 －</div>
+            <p class="article-main-text">认知同频，方能破局。请输入您的专属课程密钥，开启高维学习通道。</p>
             <p class="article-main-text" style="margin-top: 10px; font-size: 14px; color: #527a6e;">* 注：课程全系搭载动态溯源与 HLS 军工级防盗加密，请在安静、独立的空间内沉浸观看。</p>
         </div>
 
@@ -848,7 +837,7 @@
         }
     });
 
-    // 【核心修正三】：双核引擎全息水印：同时向旧的对齐影像和新的海外舱投放动态溯源码
+    // 双核引擎全息水印
     function startDynamicWatermark(pwd) {
         const wm1 = document.getElementById('dynamic-watermark');
         if (wm1) { wm1.style.display = 'block'; wm1.innerText = "【溯源对齐: " + pwd + "】"; }
@@ -856,7 +845,6 @@
         const wm2 = document.getElementById('dynamic-watermark-course');
         if (wm2) { 
             wm2.innerText = "【溯源对齐: " + pwd + "】"; 
-            // 彻底切断直接 display: block 的强盗逻辑，显示时机已移交给下面的视频生命周期监听器
         }
     }
 
@@ -1156,7 +1144,7 @@ function smartLoadVideo(url, videoElement) {
     }, 100);
 }
 
-// 👑 全局顶层判定函数，彻底粉碎 ReferenceError 卡死空白漏洞
+// 👑 全局顶层判定函数
 function checkIsCourseKey(firstLetter) {
     const isVip = (firstLetter === 'V');
     const isPublic = ['E', 'F', 'W', 'P'].includes(firstLetter);
@@ -1168,8 +1156,19 @@ async function verifyAndRouting(inputPassword) {
     if (!inputPassword) { showCustomAlert("⚠️ 密钥缺失", "请输入时空密钥！"); return; }
     const pwd = inputPassword.trim().toUpperCase();
 
+    // === 【绝对虚空锁】：点击按钮瞬间屏蔽一切背景，防止网速慢导致视觉残影 ===
+    let voidLock = document.getElementById('holo-void-lock');
+    if(!voidLock) {
+        voidLock = document.createElement('div');
+        voidLock.id = 'holo-void-lock';
+        voidLock.style.cssText = 'position:fixed;inset:0;background:#000000;z-index:9999999;display:flex;justify-content:center;align-items:center;color:#00ffcc;font-size:16px;letter-spacing:2px;';
+        voidLock.innerHTML = '【时空折叠 · 数据校验中...】';
+        document.body.appendChild(voidLock);
+    }
+    const unlock = () => { if(voidLock) voidLock.remove(); };
+
     if (localStorage.getItem('burnt_' + pwd)) {
-        showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！"); return;
+        unlock(); showCustomAlert("⚠️ 密钥已熔断", "该时空密钥已被本地记录激活，无法二次冒领！"); return;
     }
 
     const type = pwd.charAt(0); 
@@ -1179,18 +1178,18 @@ async function verifyAndRouting(inputPassword) {
 
     // === 【三通道严格物理隔离网关】 ===
     if (window.PORTAL_TYPE === 'vip' && !isVipPassword) {
-        showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，请使用 V 开头的专属密钥！"); return;
+        unlock(); showCustomAlert("❌ 通道不匹配", "权限不足：此为 VIP 专属通道，请使用 V 开头的专属密钥！"); return;
     }
     if (window.PORTAL_TYPE === 'public' && (isVipPassword || isCoursePassword)) {
-        showCustomAlert("❌ 通道不匹配", "通道错误：检测到特殊通道密钥，请通过专属对应链接进入！"); return;
+        unlock(); showCustomAlert("❌ 通道不匹配", "通道错误：检测到特殊通道密钥，请通过专属对应链接进入！"); return;
     }
     if (window.PORTAL_TYPE.startsWith('course_') && !isCoursePassword) {
-        showCustomAlert("❌ 通道不匹配", "权限错误：请在此输入正确的海外课程专属密钥！"); return;
+        unlock(); showCustomAlert("❌ 通道不匹配", "权限错误：请在此输入正确的海外课程专属密钥！"); return;
     }
 
     const btn1 = document.querySelector('#layer-pay-399 .btn');
     const btn2 = document.getElementById('active-ai-btn');
-    const btn3 = document.querySelector('#layer-course .btn');
+    const btn3 = document.querySelector('#layer-course-auth .btn');
     if(btn1) btn1.disabled = true; if(btn2) btn2.disabled = true; if(btn3) btn3.disabled = true;
 
     try {
@@ -1200,12 +1199,12 @@ async function verifyAndRouting(inputPassword) {
         });
         const cloudResult = await cloudResponse.json();
         if (!cloudResponse.ok || !cloudResult.success) {
-            showCustomAlert("❌ 对齐失败", cloudResult.message || "未知能量阻断，请重试。");
+            unlock(); showCustomAlert("❌ 对齐失败", cloudResult.message || "未知能量阻断，请重试。");
             if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
             return;
         }
     } catch (error) {
-        showCustomAlert("❌ 网络异常", "无法连接全网数据大脑，请检查网络后重新对齐！");
+        unlock(); showCustomAlert("❌ 网络异常", "无法连接全网数据大脑，请检查网络后重新对齐！");
         if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
         return;
     }
@@ -1224,6 +1223,7 @@ async function verifyAndRouting(inputPassword) {
         localStorage.setItem('currentLayer', 'layer-ai');
         showTargetLayerOnly('layer-ai');
         startGlobalTimer(expiryTime, 'ai');
+        unlock();
         showCustomAlert("✓ 通道开启", type === 'V' ? "VIP 专属通道已开启，直达深度背景采集系统！" : "3000元基础对价已核，进入深度背景采集系统。");
         return;
     }
@@ -1232,7 +1232,7 @@ async function verifyAndRouting(inputPassword) {
     if (['E', 'F', 'W'].includes(type)) {
         let videoUrl = "";
         if (type === 'E') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-E.mp4"; 
-        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";      
+        else if (type === 'F') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/video-F.mp4";     
         else if (type === 'W') videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/output_hls/output.m3u8";
 
         const videoElement = document.querySelector('#layer-video video');
@@ -1245,14 +1245,14 @@ async function verifyAndRouting(inputPassword) {
         localStorage.setItem('currentLayer', 'layer-video');
         showTargetLayerOnly('layer-video');
         startGlobalTimer(expiryTime, 'video');
-        
+        unlock();
         showCustomAlert("✓ 契约达成", "初次认知对齐契约达成，高维时空已开启.");
         return;
     }
 
-    // 3. 【新版】：海外课程专属路由 (绝对隔离分发到 layer-course-dashboard)
+    // 3. 【新版】：海外课程专属路由
     if (isCoursePassword) {
-        // 【核心修正二】：在此处为用户打上专属课程号的认证钢印（防跨课白嫖）
+        // 在此处为用户打上专属课程号的认证钢印（防跨课白嫖）
         localStorage.setItem('authorized_course_type', window.PORTAL_TYPE);
 
         let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
@@ -1269,10 +1269,11 @@ async function verifyAndRouting(inputPassword) {
         
         showTargetLayerOnly('layer-course-dashboard');
         hideTimerBar(); // 强制隐藏倒计时 UI！
-        
+        unlock();
         showCustomAlert("✓ 契约达成", "专属课程认证成功，全息播放舱已为您开启。");
         return;
     }
+    unlock();
 }
 
 // ================= 状态恢复与路由重定位 =================
@@ -1299,11 +1300,8 @@ function checkStateAndRestore() {
             if (subTitle) subTitle.innerHTML = '河洛智慧 · 高维咨询';
         }
     } else if (window.PORTAL_TYPE.startsWith('course_')) {
-        defaultLayer = 'layer-course'; 
-        // 自动将登录页的标题也渲染为双语
-        loadCourseTitle(window.PORTAL_TYPE, 'course-title');
-        document.getElementById('course-desc').innerText = "认知同频，方能破局。请输入您的专属海外课程密钥，开启高维学习通道。";
-
+        // 【核心切除】：原代码在此处动态读取 courses.json 修改登录标题，导致了“八字破局”等旧文字闪现。现已完全剔除。
+        defaultLayer = 'layer-course-auth'; 
     } else {
         const videoLayer = document.getElementById('layer-video');
         if (videoLayer) {
@@ -1316,16 +1314,16 @@ function checkStateAndRestore() {
         }
     }
 
-    if (!currentLayer || currentLayer === 'layer-pay-399' || currentLayer === 'layer-course') {
+    if (!currentLayer || currentLayer === 'layer-pay-399' || currentLayer === 'layer-course-auth') {
         showTargetLayerOnly(defaultLayer); hideTimerBar(); return; 
     }
 
-    // 【新版】：彻底隔离公域限时与海外课程长效状态
+    // 隔离公域限时与海外课程长效状态
     if (currentLayer === 'layer-video') {
         const videoExpiry = parseInt(localStorage.getItem('videoExpiry'));
         if (videoExpiry && now < videoExpiry) {
             showTargetLayerOnly('layer-video');
-            startGlobalTimer(videoExpiry, 'video'); // 公域保留倒计时
+            startGlobalTimer(videoExpiry, 'video'); 
             
             const activePwd = localStorage.getItem('active_pwd');
             const authType = localStorage.getItem('user_token_auth');
@@ -1343,7 +1341,7 @@ function checkStateAndRestore() {
 
     } else if (currentLayer === 'layer-course-dashboard') {
         const courseExpiry = parseInt(localStorage.getItem('courseExpiry'));
-        // 【核心修正二】：验证当前网页所处的课程编号，与当时记录的授权课程编号是否绝对一致
+        // 验证当前网页所处的课程编号，与当时记录的授权课程编号是否绝对一致
         const authorizedCourseType = localStorage.getItem('authorized_course_type'); 
 
         if (courseExpiry && now < courseExpiry && authorizedCourseType === window.PORTAL_TYPE) {
@@ -1357,7 +1355,7 @@ function checkStateAndRestore() {
                 if (videoElement) smartLoadVideo(videoUrl, videoElement);
                 startDynamicWatermark(activePwd);
                 
-                // 刷新页面后重新注入双语标题
+                // 刷新页面后重新注入真实的课程双语标题
                 loadCourseTitle(window.PORTAL_TYPE, 'dynamic-course-title'); 
             }
         } else { forceKickOut(); }
@@ -1474,22 +1472,13 @@ window.addEventListener('DOMContentLoaded', checkStateAndRestore);
             });
         });
 
-        // 【核心修正三】：全息水印与播放器生命周期联动控制！
+        // 全息水印与播放器生命周期联动控制
         const coursePlayer = document.getElementById('course-video-player');
         const courseWm = document.getElementById('dynamic-watermark-course');
         if (coursePlayer && courseWm) {
-            // 开始播放，浮现水印
-            coursePlayer.addEventListener('play', () => {
-                courseWm.style.display = 'block';
-            });
-            // 暂停播放，隐匿水印
-            coursePlayer.addEventListener('pause', () => {
-                courseWm.style.display = 'none';
-            });
-            // 播放结束，隐匿水印
-            coursePlayer.addEventListener('ended', () => {
-                courseWm.style.display = 'none';
-            });
+            coursePlayer.addEventListener('play', () => { courseWm.style.display = 'block'; });
+            coursePlayer.addEventListener('pause', () => { courseWm.style.display = 'none'; });
+            coursePlayer.addEventListener('ended', () => { courseWm.style.display = 'none'; });
         }
     });
 </script>
