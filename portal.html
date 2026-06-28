@@ -1065,21 +1065,65 @@
         video.addEventListener('dragstart', e => e.preventDefault());
     })();
 
-    async function loadCourseTitle(courseKey, targetElementId) {
+    // ================= 🎯 升级版：高维大纲全自动渲染引擎 =================
+async function loadCourseTitle(courseKey, targetElementId) {
     try {
         const response = await fetch('courses.json');
         const data = await response.json();
-        if (data[courseKey]) {
+        const courseData = data[courseKey];
+
+        if (courseData) {
+            // 1. 动态渲染中英文主标题
             const titleElement = document.getElementById(targetElementId);
             if (titleElement) {
-                // 🎯 像素级对齐：精准咬合字典中的 title_zh 与 title_en，永绝 undefined
-                titleElement.innerHTML = `【${data[courseKey].title_zh}】<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">${data[courseKey].title_en}</span>`;
+                titleElement.innerHTML = `【${courseData.title_zh}】<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">${courseData.title_en}</span>`;
+            }
+
+            // 2. 核心联动：物理粉碎硬编码目录，根据 JSON 动态重建列表
+            const playlistContainer = document.getElementById('course-episode-list');
+            if (playlistContainer && courseData.episodes && Array.isArray(courseData.episodes)) {
+                
+                playlistContainer.innerHTML = ''; // 清空原本写死的“宇宙能量”等旧残影
+
+                courseData.episodes.forEach((ep, index) => {
+                    const li = document.createElement('li');
+                    // 默认给第一集打上 active 荧光绿高亮状态
+                    li.className = `episode-item${index === 0 ? ' active' : ''}`;
+                    li.setAttribute('data-src', ep.url);
+                    
+                    // 自动生成格式化集数（01, 02, 03...）并拼接对应单集标题
+                    const epNum = String(index + 1).padStart(2, '0');
+                    li.innerHTML = `<span class="ep-num">${epNum}</span> ${ep.title}`;
+                    
+                    // 🧠 核心神经元：为每一集绑定点击即刻切流播放的互动指令
+                    li.addEventListener('click', function() {
+                        document.querySelectorAll('.episode-item').forEach(e => e.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const currentVideoUrl = this.getAttribute('data-src');
+                        const player = document.getElementById('course-video-player');
+                        if (currentVideoUrl && player) {
+                            smartLoadVideo(currentVideoUrl, player);
+                        }
+                    });
+
+                    playlistContainer.appendChild(li);
+                });
+
+                // 3. 完美降落：让播放器首次进入时，默认播放第一集的真正视频
+                if (courseData.episodes.length > 0) {
+                    const player = document.getElementById('course-video-player');
+                    if (player) {
+                        smartLoadVideo(courseData.episodes[0].url, player);
+                    }
+                }
             }
         }
     } catch (e) {
-        console.warn('JSON读取失败，请检查文件是否存在', e);
+        console.warn('JSON读取或大纲动态生成失败', e);
     }
 }
+
 
 
 </script>
