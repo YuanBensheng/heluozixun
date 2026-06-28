@@ -1,7 +1,12 @@
 {
-  "course_mhys": {
-    "cn": "梅花易数",
-    "en": "Plum Blossom Oracle (Ancient Wisdom for Modern Decision Making)"
+  "course_01": {
+    "title_zh": "梅花易数·核心交付",
+    "title_en": "Plum Blossom Divination · Core Delivery",
+    "videoUrl": "https://vz-2ad7d82f-ba8.b-cdn.net/0c1b9d47-0abd-42aa-97b2-4b0c407734e1/playlist.m3u8",
+    "episodes": [
+      { "id": 1, "title": "第一集：无极生太极", "url": "这里同步粘贴xxxx.m3u8链接" }
+    ],
+    "lemonUrl": "https://heluo.store/..."
   },
   "course_mcxlr": {
     "cn": "秘传小六壬",
