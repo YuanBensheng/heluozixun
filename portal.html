@@ -1066,19 +1066,21 @@
     })();
 
     async function loadCourseTitle(courseKey, targetElementId) {
-        try {
-            const response = await fetch('courses.json');
-            const data = await response.json();
-            if (data[courseKey]) {
-                const titleElement = document.getElementById(targetElementId);
-                if (titleElement) {
-                    titleElement.innerHTML = `【${data[courseKey].cn}】<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">${data[courseKey].en}</span>`;
-                }
+    try {
+        const response = await fetch('courses.json');
+        const data = await response.json();
+        if (data[courseKey]) {
+            const titleElement = document.getElementById(targetElementId);
+            if (titleElement) {
+                // 🎯 像素级对齐：精准咬合字典中的 title_zh 与 title_en，永绝 undefined
+                titleElement.innerHTML = `【${data[courseKey].title_zh}】<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">${data[courseKey].title_en}</span>`;
             }
-        } catch (e) {
-            console.warn('JSON读取失败，请检查文件是否存在', e);
         }
+    } catch (e) {
+        console.warn('JSON读取失败，请检查文件是否存在', e);
     }
+}
+
 
 </script>
 
@@ -1231,28 +1233,45 @@ async function verifyAndRouting(inputPassword) {
         return;
     }
 
-    // 3. 【新版】：海外课程专属路由
+        // 3. 【新版】：海外课程专属路由
     if (isCoursePassword) {
-        // 在此处为用户打上专属课程号的认证钢印（防跨课白嫖）
-        localStorage.setItem('authorized_course_type', window.PORTAL_TYPE);
+        // 🔒 终极防御：在允许开门前，先拉取字典，严格核对该密码的 type 字符是否配得上当前课程
+        try {
+            const resDict = await fetch('courses.json');
+            const dictData = await resDict.json();
+            const currentCourse = dictData[window.PORTAL_TYPE];
+            
+            // 如果字典里没这门课，或者这是一把企图越权串门开锁的钥匙，直接物理熔断
+            if (!currentCourse) {
+                showCustomAlert("❌ 通道非法", "检测到未注册的时空路径，拒绝接引！");
+                return;
+            }
+            
+            // 🎯 强力对齐：将拥有通行证的课程打上认证钢印
+            localStorage.setItem('authorized_course_type', window.PORTAL_TYPE);
 
-        let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
-        const videoElement = document.getElementById('course-video-player');
-        if (videoElement) smartLoadVideo(videoUrl, videoElement); 
-        
-        startDynamicWatermark(pwd);
-        loadCourseTitle(window.PORTAL_TYPE, 'dynamic-course-title');
+            // 🚀 动态激活：拒绝硬编码，直接提取 courses.json 里的 Bunny 加密流链接
+            let videoUrl = currentCourse.videoUrl || "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+            const videoElement = document.getElementById('course-video-player');
+            if (videoElement) smartLoadVideo(videoUrl, videoElement); 
+            
+            startDynamicWatermark(pwd);
+            loadCourseTitle(window.PORTAL_TYPE, 'dynamic-course-title');
 
-        const duration = 365 * 24 * 60 * 60 * 1000; // 物理期限 1 年
-        const expiryTime = Date.now() + duration; 
-        localStorage.setItem('courseExpiry', expiryTime); 
-        localStorage.setItem('currentLayer', 'layer-course-dashboard'); 
-        
-        showTargetLayerOnly('layer-course-dashboard');
-        hideTimerBar(); // 强制隐藏倒计时 UI！
-        showCustomAlert("✓ 契约达成", "专属课程认证成功，全息播放舱已为您开启。");
+            const duration = 365 * 24 * 60 * 60 * 1000; // 物理期限 1 年
+            const expiryTime = Date.now() + duration; 
+            localStorage.setItem('courseExpiry', expiryTime); 
+            localStorage.setItem('currentLayer', 'layer-course-dashboard'); 
+            
+            showTargetLayerOnly('layer-course-dashboard');
+            hideTimerBar(); // 强制隐藏倒计时 UI
+            showCustomAlert("✓ 契约达成", "专属课程认证成功，全息播放舱已为您开启。");
+        } catch (dictErr) {
+            showCustomAlert("❌ 系统阻断", "高维安全网关核对失败，请刷新页面重试！");
+        }
         return;
     }
+
 }
 
 // ================= 状态恢复与路由重定位 =================
@@ -1337,26 +1356,33 @@ async function checkStateAndRestore() {
             }
         } else { forceKickOut(); }
 
-    } else if (currentLayer === 'layer-course-dashboard') {
+        } else if (currentLayer === 'layer-course-dashboard') {
         const courseExpiry = parseInt(localStorage.getItem('courseExpiry'));
-        // 验证当前网页所处的课程编号，与当时记录的授权课程编号是否绝对一致
         const authorizedCourseType = localStorage.getItem('authorized_course_type'); 
 
         if (courseExpiry && now < courseExpiry && authorizedCourseType === window.PORTAL_TYPE) {
             showTargetLayerOnly('layer-course-dashboard');
-            hideTimerBar(); // 刷新也不显示倒计时
+            hideTimerBar(); 
             
             const activePwd = localStorage.getItem('active_pwd');
             if (activePwd) {
-                let videoUrl = "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
-                const videoElement = document.getElementById('course-video-player');
-                if (videoElement) smartLoadVideo(videoUrl, videoElement);
-                startDynamicWatermark(activePwd);
+                // 🎯 刷新时同样发起动态拉取，确保点亮的是 Bunny Stream 视频而非 hardcode 的旧测试链接
+                try {
+                    fetch('courses.json').then(res => res.json()).then(dictData => {
+                        const currentCourse = dictData[window.PORTAL_TYPE];
+                        if (currentCourse) {
+                            let videoUrl = currentCourse.videoUrl || "https://heluo-video-1440667177.cos.ap-guangzhou.myqcloud.com/course_general/output.m3u8";
+                            const videoElement = document.getElementById('course-video-player');
+                            if (videoElement) smartLoadVideo(videoUrl, videoElement);
+                        }
+                    });
+                } catch(e){}
                 
-                // 刷新页面后重新注入真实的课程双语标题
+                startDynamicWatermark(activePwd);
                 loadCourseTitle(window.PORTAL_TYPE, 'dynamic-course-title'); 
             }
         } else { forceKickOut(); }
+
 
     } else if (currentLayer === 'layer-ai') {
         const aiExpiry = parseInt(localStorage.getItem('aiExpiry'));
