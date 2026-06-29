@@ -264,18 +264,18 @@
     </div>
 
 
-        <div id="layer-course-auth" class="layer">
-        <h2>高维课程 · 闭门交付<br><span style="font-size: 12px; opacity: 0.7; letter-spacing: 2px; margin-top: 4px; display: block; text-shadow: none;">EXCLUSIVE MASTERCLASS · PRIVATE ACCESS</span></h2>
+    <div id="layer-course-auth" class="layer">
+        <h2>EXCLUSIVE MASTERCLASS · PRIVATE ACCESS<br><span style="font-size: 14px; opacity: 0.7; letter-spacing: 2px; margin-top: 4px; display: block; text-shadow: none;">高维课程 · 闭门交付</span></h2>
         <div class="holo-card-panel">
-            <div class="article-title">身份鉴权 / AUTHENTICATION</div>
-            <p class="article-main-text" style="margin-top: 15px; font-size: 13px; color: #406056; line-height: 1.6;">课程全系搭载动态溯源与 HLS 军工级防盗加密，请在安静、独立的空间内沉浸观看。<br><span style="display: block; margin-top: 4px;">All courses are equipped with dynamic tracing and HLS military-grade encryption. Please immerse yourself in a quiet, independent space.</span></p>
-            <p class="article-main-text">请输入您的专属密钥，开启高维学习通道。<br><span style="font-size: 14px; color: #527a6e; display: block; margin-top: 6px; line-height: 1.6;">Please enter your exclusive course key to access the high-dimensional learning channel.</span></p>
+            <div class="article-title">AUTHENTICATION / 身份鉴权</div>
+            <p class="article-main-text" style="margin-top: 15px; font-size: 15px; color: #7ebdae; line-height: 1.6;">All courses are equipped with dynamic tracing and HLS military-grade encryption. Please immerse yourself in a quiet, independent space.<br><span style="display: block; margin-top: 4px; font-size: 13px; color: #406056;">课程全系搭载动态溯源与 HLS 军工级防盗加密，请在安静、独立的空间内沉浸观看。</span></p>
+            <p class="article-main-text">Please enter your exclusive course key to access the high-dimensional learning channel.<br><span style="font-size: 13px; color: #527a6e; display: block; margin-top: 6px; line-height: 1.6;">请输入您的专属密钥，开启高维学习通道。</span></p>
         </div>
         <div class="holo-card-panel">
-            <div class="article-title">专属密钥 / EXCLUSIVE KEY</div>
+            <div class="article-title">EXCLUSIVE KEY / 专属密钥</div>
             <div class="auth-section">
                 <input type="text" id="course-password-input" class="crypto-input" placeholder="••••••" maxlength="6" style="text-transform: uppercase; autocomplete: off;">
-                <button class="btn" style="margin-top: 25px; padding: 10px 0; line-height: 1.4;" onclick="verifyAndRouting(document.getElementById('course-password-input').value)">验证密钥 · 开启课程<br><span style="font-size: 11px; font-weight: normal; letter-spacing: 1px; opacity: 0.8;">VERIFY & ENTER</span></button>
+                <button class="btn" style="margin-top: 25px; padding: 10px 0; line-height: 1.4;" onclick="verifyAndRouting(document.getElementById('course-password-input').value)">VERIFY & ENTER<br><span style="font-size: 12px; font-weight: normal; letter-spacing: 1px; opacity: 0.8;">验证密钥 · 开启课程</span></button>
             </div>
         </div>
     </div>
@@ -329,12 +329,12 @@
                 <div id="dynamic-watermark-course" style="position: absolute; top: 15px; right: 15px; font-size: 14px; font-family: monospace; font-weight: bold; color: rgba(255, 255, 255, 0.65); text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; z-index: 100; display: none;"></div>
             </div>
             <div class="video-playlist">
-                <h3 class="playlist-title">课程目录 / Course Syllabus</h3>
+                <h3 class="playlist-title">Course Syllabus / 课程目录</h3>
                 <ul class="episode-list" id="course-episode-list"></ul>
             </div>
             <div id="layer-more-courses" class="holo-card-panel" style="margin-top: 20px; text-align: center;">
-                <h3 style="color: #10b981; margin-bottom: 15px; font-weight: bold;">更多课程探索 / Explore More</h3>
-                <a href="https://heluo.store/collections/all" target="_blank" style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; color: #ffffff; text-decoration: none; font-size: 16px; transition: all 0.3s;">点击前往 / View Courses & Order</a>
+                <h3 style="color: #10b981; margin-bottom: 15px; font-weight: bold;">Explore More / 更多课程探索</h3>
+                <a href="https://heluo.store/collections/all" target="_blank" style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; color: #ffffff; text-decoration: none; font-size: 16px; transition: all 0.3s;">View Courses & Order / 点击前往</a>
             </div>
         </div>
     </div>
@@ -673,7 +673,7 @@
             if (courseData) {
                 const titleElement = document.getElementById(targetElementId);
                 if (titleElement) {
-                    titleElement.innerHTML = `【${courseData.title_zh}】<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">${courseData.title_en}</span>`;
+                    titleElement.innerHTML = `${courseData.title_en}<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">【${courseData.title_zh}】</span>`;
                 }
 
                 const playlistContainer = document.getElementById('course-episode-list');
@@ -787,8 +787,8 @@ async function verifyAndRouting(inputPassword) {
 
     if (!inputPassword) { 
         showCustomAlert(
-            isOverseas ? "⚠️ 密钥缺失 / KEY MISSING" : "⚠️ 密钥缺失", 
-            isOverseas ? "请输入时空密钥！<br><br>Please enter your space-time key!" : "请输入时空密钥！"
+            isOverseas ? "⚠️ KEY MISSING / 密钥缺失" : "⚠️ 密钥缺失", 
+            isOverseas ? "Please enter your space-time key!<br><br>请输入时空密钥！" : "请输入时空密钥！"
         ); 
         return; 
     }
@@ -796,8 +796,8 @@ async function verifyAndRouting(inputPassword) {
 
     if (localStorage.getItem('burnt_' + pwd)) {
         showCustomAlert(
-            isOverseas ? "⚠️ 密钥已熔断 / KEY BURNT" : "⚠️ 密钥已熔断", 
-            isOverseas ? "该时空密钥已被本地记录激活，无法二次冒领！<br><br>This key has already been activated locally and cannot be claimed again!" : "该时空密钥已被本地记录激活，无法二次冒领！"
+            isOverseas ? "⚠️ KEY BURNT / 密钥已熔断" : "⚠️ 密钥已熔断", 
+            isOverseas ? "This key has already been activated locally and cannot be claimed again!<br><br>该时空密钥已被本地记录激活，无法二次冒领！" : "该时空密钥已被本地记录激活，无法二次冒领！"
         ); 
         return;
     }
@@ -812,7 +812,7 @@ async function verifyAndRouting(inputPassword) {
     
     // 海外通道专属错误拦截
     if (window.PORTAL_TYPE && window.PORTAL_TYPE.startsWith('course_') && !isCoursePassword) { 
-        showCustomAlert("❌ 通道不匹配 / CHANNEL MISMATCH", "权限错误：请在此输入正确的海外课程专属密钥！<br><br>Authorization Error: Please enter the correct exclusive key for overseas courses here."); 
+        showCustomAlert("❌ CHANNEL MISMATCH / 通道不匹配", "Authorization Error: Please enter the correct exclusive key for overseas courses here.<br><br>权限错误：请在此输入正确的海外课程专属密钥！"); 
         return; 
     }
 
@@ -828,16 +828,16 @@ async function verifyAndRouting(inputPassword) {
         cloudResult = await cloudResponse.json();
         if (!cloudResponse.ok || !cloudResult.success) {
             showCustomAlert(
-                isOverseas ? "❌ 对齐失败 / ALIGNMENT FAILED" : "❌ 对齐失败", 
-                isOverseas ? (cloudResult.message + "<br><br>Verification failed, please check your key and try again.") : (cloudResult.message || "未知能量阻断，请重试。")
+                isOverseas ? "❌ ALIGNMENT FAILED / 对齐失败" : "❌ 对齐失败", 
+                isOverseas ? ("Verification failed, please check your key and try again.<br><br>" + cloudResult.message) : (cloudResult.message || "未知能量阻断，请重试。")
             );
             if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
             return;
         }
     } catch (error) {
         showCustomAlert(
-            isOverseas ? "❌ 网络异常 / NETWORK ERROR" : "❌ 网络异常", 
-            isOverseas ? "无法连接全网数据大脑，请检查网络后重新对齐！<br><br>Unable to connect to the cloud, Please check your network and try again!" : "无法连接全网数据大脑，请检查网络后重新对齐！"
+            isOverseas ? "❌ NETWORK ERROR / 网络异常" : "❌ 网络异常", 
+            isOverseas ? "Unable to connect to the cloud, Please check your network and try again!<br><br>无法连接全网数据大脑，请检查网络后重新对齐！" : "无法连接全网数据大脑，请检查网络后重新对齐！"
         );
         if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
         return;
@@ -889,7 +889,7 @@ async function verifyAndRouting(inputPassword) {
             const currentCourse = dictData[window.PORTAL_TYPE];
             
             if (!currentCourse) {
-                showCustomAlert("❌ 通道非法 / INVALID PATH", "检测到未注册的时空路径，拒绝接引！<br><br>Unregistered space-time path detected, Access denied!");
+                showCustomAlert("❌ INVALID PATH / 通道非法", "Unregistered space-time path detected, Access denied!<br><br>检测到未注册的时空路径，拒绝接引！");
                 return;
             }
             
@@ -909,9 +909,9 @@ async function verifyAndRouting(inputPassword) {
             
             showTargetLayerOnly('layer-course-dashboard');
             hideTimerBar(); 
-            showCustomAlert("✓ 通道开启 / ACCESS GRANTED", "专属课程认证成功，全息播放舱已为您开启。<br><br>Exclusive course authentication successful, The holographic playback cabin is now open for you.");
+            showCustomAlert("✓ ACCESS GRANTED / 通道开启", "Exclusive course authentication successful, The holographic playback cabin is now open for you.<br><br>专属课程认证成功，全息播放舱已为您开启。");
         } catch (dictErr) {
-            showCustomAlert("❌ 系统阻断 / SYSTEM ERROR", "高维安全网关核对失败，请刷新页面重试！<br><br>Security gateway verification failed, Please refresh the page and try again!");
+            showCustomAlert("❌ SYSTEM ERROR / 系统阻断", "Security gateway verification failed, Please refresh the page and try again!<br><br>高维安全网关核对失败，请刷新页面重试！");
         }
         return;
     }
