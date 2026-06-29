@@ -836,7 +836,7 @@ async function verifyAndRouting(inputPassword) {
     } catch (error) {
         showCustomAlert(
             isOverseas ? "❌ 网络异常 / NETWORK ERROR" : "❌ 网络异常", 
-            isOverseas ? "无法连接全网数据大脑，请检查网络后重新对齐！<br><br>Unable to connect to the cloud. Please check your network and try again!" : "无法连接全网数据大脑，请检查网络后重新对齐！"
+            isOverseas ? "无法连接全网数据大脑，请检查网络后重新对齐！<br><br>Unable to connect to the cloud, Please check your network and try again!" : "无法连接全网数据大脑，请检查网络后重新对齐！"
         );
         if(btn1) btn1.disabled = false; if(btn2) btn2.disabled = false; if(btn3) btn3.disabled = false;
         return;
@@ -888,7 +888,7 @@ async function verifyAndRouting(inputPassword) {
             const currentCourse = dictData[window.PORTAL_TYPE];
             
             if (!currentCourse) {
-                showCustomAlert("❌ 通道非法 / INVALID PATH", "检测到未注册的时空路径，拒绝接引！<br><br>Unregistered space-time path detected. Access denied!");
+                showCustomAlert("❌ 通道非法 / INVALID PATH", "检测到未注册的时空路径，拒绝接引！<br><br>Unregistered space-time path detected, Access denied!");
                 return;
             }
             
@@ -908,9 +908,9 @@ async function verifyAndRouting(inputPassword) {
             
             showTargetLayerOnly('layer-course-dashboard');
             hideTimerBar(); 
-            showCustomAlert("✓ 通道开启 / ACCESS GRANTED", "专属课程认证成功，全息播放舱已为您开启。<br><br>Exclusive course authentication successful. The holographic playback cabin is now open for you.");
+            showCustomAlert("✓ 通道开启 / ACCESS GRANTED", "专属课程认证成功，全息播放舱已为您开启。<br><br>Exclusive course authentication successful, The holographic playback cabin is now open for you.");
         } catch (dictErr) {
-            showCustomAlert("❌ 系统阻断 / SYSTEM ERROR", "高维安全网关核对失败，请刷新页面重试！<br><br>Security gateway verification failed. Please refresh the page and try again!");
+            showCustomAlert("❌ 系统阻断 / SYSTEM ERROR", "高维安全网关核对失败，请刷新页面重试！<br><br>Security gateway verification failed, Please refresh the page and try again!");
         }
         return;
     }
