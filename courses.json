@@ -6,17 +6,17 @@
     "episodes": [
       { 
         "id": 1, 
-        "title": "第一集：无极生太极", 
+        "title": "Ep 1: From Wuji to Taiji / 第一集：无极生太极", 
         "url": "https://vz-2ad7d82f-ba8.b-cdn.net/0c1b9d47-0abd-42aa-97b2-4b0c407734e1/playlist.m3u8" 
       },
       { 
         "id": 2, 
-        "title": "第二集：五行生克与体用决断", 
+        "title": "Ep 2: Five Elements & Ti-Yong Divination / 第二集：五行生克与体用决断", 
         "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频B的ID/playlist.m3u8" 
       },
       { 
         "id": 3, 
-        "title": "第三集：依物起卦与时空应期推演", 
+        "title": "Ep 3: Object-Based Divination & Timing / 第三集：依物起卦与时空应期推演", 
         "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频C的ID/playlist.m3u8" 
       }
     ],
