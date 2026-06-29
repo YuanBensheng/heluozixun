@@ -202,23 +202,7 @@
             .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
             .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
         }
-        @media (max-width: 768px) {
-   
-    /* 针对鉴权页标题（请确保类名或ID与您HTML中一致，常见的如 .auth-title 或 #course-title） */
-    .auth-title, #course-title, .modal-title {
-        font-size: 1.1rem !important; /* 适度缩小字号 */
-        white-space: nowrap !important; /* 强制死守一行，绝不折行 */
-        letter-spacing: 1px !important; /* 稍微收紧字间距 */
-        overflow: hidden; 
-        text-overflow: ellipsis; /* 如果实在太长，以优雅的省略号收尾，绝不把横线挤下去 */
-    }
-}
-.en-text, .modal-desc-en {
-    text-align: left !important; /* 强制绝对左对齐 */
-    text-indent: 0 !important;   /* 彻底干掉首行缩进 */
-    padding-left: 0 !important;  /* 清除左侧多余内边距 */
-    margin-left: 0 !important;
-}
+        
 
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
