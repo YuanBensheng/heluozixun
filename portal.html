@@ -684,11 +684,37 @@
             const courseData = data[courseKey];
 
             if (courseData) {
-                // 🎯 第二处修正：主播放页标题逆转逻辑
+                                // 🎯 第二处修正：主播放页标题逆转逻辑（全新三行矩阵排版）
                 const titleElement = document.getElementById(targetElementId);
                 if (titleElement) {
-                    titleElement.innerHTML = `<span style="display: block; font-size: 24px; color: #00ffcc; font-weight: bold; letter-spacing: 3px; text-shadow: 0 0 15px rgba(0,255,204,0.3);">${courseData.title_zh}</span><span style="display: block; font-size: 12px; color: #527a6e; font-weight: normal; margin-top: 8px; letter-spacing: 2px; text-transform: uppercase;">${courseData.title_en}</span>`;
+                    let mainEn = courseData.title_en;
+                    let subEn = "";
+                    
+                    // 智能正则匹配：自动提取主英文与括号内的副英文
+                    const match = courseData.title_en.match(/^(.*?)\s*(\(.*?\))$/);
+                    if (match) {
+                        mainEn = match[1].trim();
+                        subEn = match[2].trim();
+                    }
+
+                    let newTitleHtml = "";
+                    if (subEn) {
+                        // 匹配成功：执行三行排版 (全大写 + 呼吸发光特效)
+                        newTitleHtml = `
+                            <span style="display: block; font-size: 22px; color: #00ffcc; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 15px rgba(0,255,204,0.4); line-height: 1.2;">${mainEn}</span>
+                            <span style="display: block; font-size: 12px; color: #527a6e; font-weight: normal; margin-top: 6px; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.4;">${subEn}</span>
+                            <span style="display: block; font-size: 18px; color: #10b981; font-weight: bold; margin-top: 14px; letter-spacing: 4px; text-shadow: 0 0 10px rgba(16,185,129,0.3);">${courseData.title_zh}</span>
+                        `;
+                    } else {
+                        // 降级保护：如果没有括号，则执行两行排版
+                        newTitleHtml = `
+                            <span style="display: block; font-size: 22px; color: #00ffcc; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 15px rgba(0,255,204,0.4); line-height: 1.2;">${mainEn}</span>
+                            <span style="display: block; font-size: 18px; color: #10b981; font-weight: bold; margin-top: 14px; letter-spacing: 4px; text-shadow: 0 0 10px rgba(16,185,129,0.3);">${courseData.title_zh}</span>
+                        `;
+                    }
+                    titleElement.innerHTML = newTitleHtml;
                 }
+
 
                 // 🎯 第三处修正：目录全息重构（增加斜杠智能分割算法）
                 const playlistContainer = document.getElementById('course-episode-list');
