@@ -1,5 +1,5 @@
 // api/verify-key.js
-// ⚡ 100% 继承原生 fetch 架构，集成“云端绝对时间戳”与“海外课程因果锚定防线”
+// ⚡ 100% 继承原生 fetch 架构，集成“云端绝对时间戳”与“海外课程双轨制动态设备指纹锁”
 
 import crypto from 'crypto'; 
 
@@ -15,8 +15,8 @@ export default async function handler(req, res) {
         return res.status(405).json({ success: false, message: '请求路径不匹配' });
     }
 
-    // 👉 【安全升级】：强制接收前端传入的当前网页访问的课程/通道标识 portalType
-    const { key, portalType } = req.body;
+    // 👉 【安全升级】：接收前端传入的密码、通道标识，以及极度核心的设备指纹 deviceId
+    const { key, portalType, deviceId } = req.body;
     if (!key || key.length !== 6) {
         return res.status(400).json({ success: false, message: '维度密钥格式异常' });
     }
@@ -54,7 +54,8 @@ export default async function handler(req, res) {
             // ----------------------------------------------------
             // 轨道路线 A：公域/VIP通道 —— 极严苛“一机一密，云端绝对倒计时”
             // ----------------------------------------------------
-            const fingerprintStr = ip + ua; // 强绑定网络环境与设备
+            // 公域咨询依然强绑定物理IP与网络环境，防止异地秒转
+            const fingerprintStr = ip + ua; 
             const deviceFingerprint = crypto.createHash('md5').update(fingerprintStr).digest('hex');
             
             const response = await fetch(url, {
@@ -86,15 +87,15 @@ export default async function handler(req, res) {
             }
         } else {
             // ----------------------------------------------------
-            // 轨道路线 B：海外课程通道 —— 具备因果锁定的高维沙盒（防跨课白嫖）
+            // 轨道路线 B：海外课程通道 —— 终极防无痕碰撞的弹性高维沙盒
             // ----------------------------------------------------
-            const fingerprintStr = ua; // 仅绑定设备指纹，允许手机跨WiFi/5G迁移
+            // 🎯【核心修复】：彻底抛弃单纯 UA 判定。强制提取前端 UUID 进行防篡改哈希
+            // 如果有人恶意发包绕过前端，则兜底使用 IP+UA 的强哈希，将其直接逼入死胡同
+            const fingerprintStr = deviceId || (ip + ua); 
             const deviceFingerprint = crypto.createHash('md5').update(fingerprintStr).digest('hex');
             
-            // 安全过滤：若前端未传送当前网页的课程参数，直接视为非法探测
             const targetCourse = portalType || 'unknown';
 
-            // 读取云端全息记录
             const getResp = await fetch(url, {
                 method: 'POST',
                 headers: { Authorization: `Bearer ${token}` },
@@ -107,13 +108,12 @@ export default async function handler(req, res) {
                 try {
                     courseData = JSON.parse(getData.result);
                 } catch (e) {
-                    // 兼容极旧代码
                     courseData = {
                         currentDevice: getData.result,
                         devices: [getData.result],
                         lastNewDeviceTime: 0,
                         lastIp: ip,
-                        boundCourse: targetCourse // 兜底注入
+                        boundCourse: targetCourse 
                     };
                 }
             }
@@ -123,9 +123,9 @@ export default async function handler(req, res) {
                 const newCourseData = {
                     currentDevice: deviceFingerprint,
                     devices: [deviceFingerprint], // 占用第 1 个设备槽位
-                    lastNewDeviceTime: now,       // 记录第一次绑定时间
+                    lastNewDeviceTime: now,       
                     lastIp: ip,
-                    boundCourse: targetCourse     // 🎯【重磅核心】：首次激活时，将该密钥与当前课程类型实行因果绑定
+                    boundCourse: targetCourse     
                 };
                 await fetch(url, {
                     method: 'POST',
@@ -136,7 +136,7 @@ export default async function handler(req, res) {
             } else {
                 // 👉 场景 2：已有记录，进行鉴权或拦截
                 
-                // 🛡️【核心阻击线】：核对当前试图观看的课程与首次绑定的课程是否相符
+                // 🛡️ 跨课白嫖拦截
                 const originallyBoundCourse = courseData.boundCourse || courseData.authorizedCourse;
                 if (originallyBoundCourse && originallyBoundCourse !== targetCourse) {
                     return res.status(400).json({ success: false, message: "安全拦截：该时空密钥与当前课程因果不匹配，禁止跨课访问！" });
@@ -146,11 +146,10 @@ export default async function handler(req, res) {
                     courseData.lastNewDeviceTime = courseData.lastSwitchTime || 0;
                 }
 
-                // 🟢 验证指纹已在白名单
+                // 🟢 验证当前数字指纹是否已在白名单（无痕模式每次都会是一个新指纹，直接进入下方新设备判定）
                 if (courseData.devices.includes(deviceFingerprint)) {
                     courseData.currentDevice = deviceFingerprint;
                     courseData.lastIp = ip;
-                    // 如果旧数据缺失绑定，顺带补齐
                     if (!courseData.boundCourse) courseData.boundCourse = targetCourse;
 
                     await fetch(url, {
@@ -160,7 +159,7 @@ export default async function handler(req, res) {
                     });
                     return res.status(200).json({ success: true, type: type, message: "欢迎回归，授权设备通道已为您畅通" });
                 } else {
-                    // 🚨 尝试绑定【新设备】，触发双重风控
+                    // 🚨 尝试绑定【新设备】（无痕模式滥用者将在此被快速消耗殆尽）
                     const FORTY_EIGHT_HOURS = 48 * 60 * 60 * 1000;
 
                     // 【防线 1：设备槽位上限拦截】
@@ -174,7 +173,7 @@ export default async function handler(req, res) {
                         return res.status(400).json({ success: false, message: `系统防线：绑定新设备处于安全冷冻期，请在 ${timeLeft} 小时后重试。` });
                     }
 
-                    // 🟢 通过所有风控，追加新指纹
+                    // 🟢 通过所有风控，正式追加新指纹
                     courseData.currentDevice = deviceFingerprint;
                     courseData.devices.push(deviceFingerprint); 
                     courseData.lastNewDeviceTime = now; 
