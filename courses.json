@@ -26,28 +26,92 @@
     "title_zh": "秘传小六壬",
     "title_en": "Secret Xiao Liu Ren (The Art of Instant Intuitive Divination)",
     "videoUrl": "",
-    "episodes": [],
+    "episodes": [
+      { 
+        "id": 1, 
+        "title": "Secret Xiao Liu Ren One / 秘传小六壬之一", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/0c1b9d47-0abd-42aa-97b2-4b0c407734e1/playlist.m3u8" 
+      },
+      { 
+        "id": 2, 
+        "title": "Secret Xiao Liu Ren Two / 秘传小六壬之二", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频B的ID/playlist.m3u8" 
+      },
+      { 
+        "id": 3, 
+        "title": "Secret Xiao Liu Ren Three / 秘传小六壬之三", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频C的ID/playlist.m3u8" 
+      }
+    ],
     "lemonUrl": "https://heluo.store"
   },
   "course_szbzpp": {
     "title_zh": "四柱八字排盘",
     "title_en": "Four Pillars of Destiny (Decoding Your Life Blueprint)",
     "videoUrl": "",
-    "episodes": [],
+    "episodes": [
+      { 
+        "id": 1, 
+        "title": "Four Pillars of Destiny One / 四柱八字排盘之一", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/0c1b9d47-0abd-42aa-97b2-4b0c407734e1/playlist.m3u8" 
+      },
+      { 
+        "id": 2, 
+        "title": "Four Pillars of Destiny Two / 四柱八字排盘之二", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频B的ID/playlist.m3u8" 
+      },
+      { 
+        "id": 3, 
+        "title": "Four Pillars of Destiny Three / 四柱八字排盘之三", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频C的ID/playlist.m3u8" 
+      }
+    ],
     "lemonUrl": "https://heluo.store"
   },
   "course_szsd": {
     "title_zh": "三掌神断",
     "title_en": "Three-Palm Mastery (Rapid Predictive Techniques)",
     "videoUrl": "",
-    "episodes": [],
+    "episodes":  [
+      { 
+        "id": 1, 
+        "title": "Three-Palm Mastery One / 三掌神断之一", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/0c1b9d47-0abd-42aa-97b2-4b0c407734e1/playlist.m3u8" 
+      },
+      { 
+        "id": 2, 
+        "title": "Three-Palm Mastery Two / 三掌神断之二", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频B的ID/playlist.m3u8" 
+      },
+      { 
+        "id": 3, 
+        "title": "Three-Palm Mastery Three / 三掌神断之三", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频C的ID/playlist.m3u8" 
+      }
+    ],
     "lemonUrl": "https://heluo.store"
   },
   "course_zzfs": {
     "title_zh": "住宅风水",
     "title_en": "Residential Spatial Harmony (Architectural & Environmental Strategy)",
     "videoUrl": "",
-    "episodes": [],
+    "episodes": [
+      { 
+        "id": 1, 
+        "title": "Residential Spatial Harmony One / 住宅风水之一", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/0c1b9d47-0abd-42aa-97b2-4b0c407734e1/playlist.m3u8" 
+      },
+      { 
+        "id": 2, 
+        "title": "Residential Spatial Harmony Two / 住宅风水之二", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频B的ID/playlist.m3u8" 
+      },
+      { 
+        "id": 3, 
+        "title": "Residential Spatial Harmony Three / 住宅风水之三", 
+        "url": "https://vz-2ad7d82f-ba8.b-cdn.net/视频C的ID/playlist.m3u8" 
+      }
+    ],
     "lemonUrl": "https://heluo.store"
   }
 }
