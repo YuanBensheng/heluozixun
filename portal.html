@@ -880,17 +880,29 @@ async function verifyAndRouting(inputPassword) {
     const btn1 = document.querySelector('#layer-pay-399 .btn'); const btn2 = document.getElementById('active-ai-btn'); const btn3 = document.querySelector('#layer-course-auth .btn');
     if(btn1) btn1.disabled = true; if(btn2) btn2.disabled = true; if(btn3) btn3.disabled = true;
 
-    let cloudResult = null;
+        let cloudResult = null;
     try {
+        // ==========================================
+        // 🚀 核心防线升级：生成/提取本地绝对唯一的设备物理指纹
+        // ==========================================
+        let currentDeviceId = localStorage.getItem('holo_device_id');
+        if (!currentDeviceId) {
+            // 如果是无痕模式或新设备，强制生成全新的绝对指纹
+            currentDeviceId = 'DEV-' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+            localStorage.setItem('holo_device_id', currentDeviceId);
+        }
+
         const cloudResponse = await fetch('/api/verify-key', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-        key: inputPassword, 
-        portalType: window.PORTAL_TYPE || new URLSearchParams(window.location.search).get('type') 
-    })
-})
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                key: inputPassword, 
+                portalType: window.PORTAL_TYPE || new URLSearchParams(window.location.search).get('type'),
+                deviceId: currentDeviceId // 👈 将绝不重复的数字烙印同步上报云端
+            })
+        });
         cloudResult = await cloudResponse.json();
+
         if (!cloudResponse.ok || !cloudResult.success) {
             showCustomAlert(
                 isOverseas ? "❌ ALIGNMENT FAILED / 对齐失败" : "❌ 对齐失败", 
