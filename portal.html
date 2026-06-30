@@ -883,9 +883,13 @@ async function verifyAndRouting(inputPassword) {
     let cloudResult = null;
     try {
         const cloudResponse = await fetch('/api/verify-key', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ key: pwd })
-        });
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+        key: inputPassword, 
+        portalType: window.PORTAL_TYPE || new URLSearchParams(window.location.search).get('type') 
+    })
+})
         cloudResult = await cloudResponse.json();
         if (!cloudResponse.ok || !cloudResult.success) {
             showCustomAlert(
