@@ -691,7 +691,7 @@
                     let subEn = "";
                     
                     // 智能正则匹配：自动提取主英文与括号内的副英文
-                    const match = courseData.title_en.match(/^(.*?)\s*(\(.*?\))$/);
+                    const match = courseData.title_en.match(/^(.*?)\s*\((.*?)\)$/);
                     if (match) {
                         mainEn = match[1].trim();
                         subEn = match[2].trim();
