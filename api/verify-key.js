@@ -1,5 +1,5 @@
 // api/verify-key.js
-// ⚡ 100% 继承原生 fetch 架构，集成“云端绝对时间戳”与“高维免内耗风控系统”
+// ⚡ 100% 继承原生 fetch 架构，集成“云端绝对时间戳”与“海外课程因果锚定防线”
 
 import crypto from 'crypto'; 
 
@@ -15,7 +15,8 @@ export default async function handler(req, res) {
         return res.status(405).json({ success: false, message: '请求路径不匹配' });
     }
 
-    const { key } = req.body;
+    // 👉 【安全升级】：强制接收前端传入的当前网页访问的课程/通道标识 portalType
+    const { key, portalType } = req.body;
     if (!key || key.length !== 6) {
         return res.status(400).json({ success: false, message: '维度密钥格式异常' });
     }
@@ -64,14 +65,12 @@ export default async function handler(req, res) {
             const data = await response.json();
 
             if (data.result === "OK") {
-                // 首次激活，下发满额时间
                 return res.status(200).json({ success: true, type: type, message: "因果锁定成功，密钥全网熔断生效", remainingSeconds: 1800 });
             } else {
                 const getResp = await fetch(url, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(["GET", redisKey]) });
                 const getData = await getResp.json();
                 
                 if (getData.result === deviceFingerprint) {
-                    // 👉 【核心修复】：查重指纹通过后，向云端索取“真实剩余时间”
                     const ttlResp = await fetch(url, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(["TTL", redisKey]) });
                     const ttlData = await ttlResp.json();
                     const ttl = parseInt(ttlData.result, 10);
@@ -87,11 +86,14 @@ export default async function handler(req, res) {
             }
         } else {
             // ----------------------------------------------------
-            // 轨道路线 B：海外课程通道 —— 免内耗高维沙盒（彻底根除 Safari Bug）
+            // 轨道路线 B：海外课程通道 —— 具备因果锁定的高维沙盒（防跨课白嫖）
             // ----------------------------------------------------
             const fingerprintStr = ua; // 仅绑定设备指纹，允许手机跨WiFi/5G迁移
             const deviceFingerprint = crypto.createHash('md5').update(fingerprintStr).digest('hex');
             
+            // 安全过滤：若前端未传送当前网页的课程参数，直接视为非法探测
+            const targetCourse = portalType || 'unknown';
+
             // 读取云端全息记录
             const getResp = await fetch(url, {
                 method: 'POST',
@@ -105,12 +107,13 @@ export default async function handler(req, res) {
                 try {
                     courseData = JSON.parse(getData.result);
                 } catch (e) {
-                    // 兼容旧代码，平滑升级
+                    // 兼容极旧代码
                     courseData = {
                         currentDevice: getData.result,
                         devices: [getData.result],
-                        lastNewDeviceTime: 0, // 修改为准确的表意字段
-                        lastIp: ip
+                        lastNewDeviceTime: 0,
+                        lastIp: ip,
+                        boundCourse: targetCourse // 兜底注入
                     };
                 }
             }
@@ -121,7 +124,8 @@ export default async function handler(req, res) {
                     currentDevice: deviceFingerprint,
                     devices: [deviceFingerprint], // 占用第 1 个设备槽位
                     lastNewDeviceTime: now,       // 记录第一次绑定时间
-                    lastIp: ip
+                    lastIp: ip,
+                    boundCourse: targetCourse     // 🎯【重磅核心】：首次激活时，将该密钥与当前课程类型实行因果绑定
                 };
                 await fetch(url, {
                     method: 'POST',
@@ -131,40 +135,51 @@ export default async function handler(req, res) {
                 return res.status(200).json({ success: true, type: type, message: "课程鉴权成功，设备已首发绑定（有效期一年）" });
             } else {
                 // 👉 场景 2：已有记录，进行鉴权或拦截
-                if (courseData.lastNewDeviceTime === undefined) {
-                    courseData.lastNewDeviceTime = courseData.lastSwitchTime || 0; // 平滑兼容旧数据
+                
+                // 🛡️【核心阻击线】：核对当前试图观看的课程与首次绑定的课程是否相符
+                const originallyBoundCourse = courseData.boundCourse || courseData.authorizedCourse;
+                if (originallyBoundCourse && originallyBoundCourse !== targetCourse) {
+                    return res.status(400).json({ success: false, message: "安全拦截：该时空密钥与当前课程因果不匹配，禁止跨课访问！" });
                 }
 
-                // 🟢 【重大修复】：只要指纹在白名单里，随意切换，绝不触发48小时冷冻！
+                if (courseData.lastNewDeviceTime === undefined) {
+                    courseData.lastNewDeviceTime = courseData.lastSwitchTime || 0;
+                }
+
+                // 🟢 验证指纹已在白名单
                 if (courseData.devices.includes(deviceFingerprint)) {
                     courseData.currentDevice = deviceFingerprint;
                     courseData.lastIp = ip;
+                    // 如果旧数据缺失绑定，顺带补齐
+                    if (!courseData.boundCourse) courseData.boundCourse = targetCourse;
+
                     await fetch(url, {
                         method: 'POST',
                         headers: { Authorization: `Bearer ${token}` },
-                        body: JSON.stringify(["SET", redisKey, JSON.stringify(courseData), "KEEPTTL"]) // 保持原有过期时间
+                        body: JSON.stringify(["SET", redisKey, JSON.stringify(courseData), "KEEPTTL"])
                     });
                     return res.status(200).json({ success: true, type: type, message: "欢迎回归，授权设备通道已为您畅通" });
                 } else {
-                    // 🚨 尝试绑定【新设备】，触发风控防线
+                    // 🚨 尝试绑定【新设备】，触发双重风控
                     const FORTY_EIGHT_HOURS = 48 * 60 * 60 * 1000;
 
-                    // 【防线 1：设备槽位上限拦截】—— 终生不得超过 3 台独立设备
+                    // 【防线 1：设备槽位上限拦截】
                     if (courseData.devices.length >= 3) {
                         return res.status(400).json({ success: false, message: "安全拦截：该密钥绑定的设备总数已达上限（3台），禁止越权分享。" });
                     }
 
-                    // 【防线 2：48小时绝对冷冻期】—— 只有绑定新设备才考核！打碎二次售卖。
+                    // 【防线 2：48小时绝对冷冻期】
                     if (now - courseData.lastNewDeviceTime < FORTY_EIGHT_HOURS) {
                         const timeLeft = Math.ceil((FORTY_EIGHT_HOURS - (now - courseData.lastNewDeviceTime)) / 3600000);
                         return res.status(400).json({ success: false, message: `系统防线：绑定新设备处于安全冷冻期，请在 ${timeLeft} 小时后重试。` });
                     }
 
-                    // 🟢 通过所有风控考核，写入新设备
+                    // 🟢 通过所有风控，追加新指纹
                     courseData.currentDevice = deviceFingerprint;
-                    courseData.devices.push(deviceFingerprint); // 占用新槽位
-                    courseData.lastNewDeviceTime = now; // 刷新冷冻期起点
+                    courseData.devices.push(deviceFingerprint); 
+                    courseData.lastNewDeviceTime = now; 
                     courseData.lastIp = ip; 
+                    if (!courseData.boundCourse) courseData.boundCourse = targetCourse;
 
                     await fetch(url, {
                         method: 'POST',
