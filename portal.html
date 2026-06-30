@@ -178,7 +178,7 @@
         video:-moz-full-screen { object-fit: contain !important; width: 100% !important; height: 100% !important; }
 
         /* =========================================
-   海外课程专属全息播放舱 
+   海外课程专属全息播放舱 (布局优化版)
    ========================================= */
         .course-dashboard { width: 100% !important; max-width: 100% !important; padding: 0 10px; box-sizing: border-box; }
         #layer-course-dashboard .video-container, 
@@ -190,12 +190,21 @@
         .video-playlist { width: 100%; background: rgba(2, 12, 36, 0.7); border-radius: 8px; padding: 20px; box-sizing: border-box; border: 1px solid rgba(16, 185, 129, 0.25); animation: holo-smooth-breath 6s infinite ease-in-out; }
         #lemon-store-link { display: inline-block; margin-top: 20px; width: 100%; text-align: center; padding: 12px 0; }
         .playlist-title { color: #7ebdae; font-size: 16px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid rgba(126, 189, 174, 0.1); padding-bottom: 10px; }
-        .episode-list { list-style: none; padding: 0; margin: 0; }
-        .episode-item { padding: 12px 10px; color: #e5e7eb; cursor: pointer; border-bottom: 1px solid rgba(126, 189, 174, 0.05); transition: all 0.2s; display: flex; align-items: center; gap: 10px; font-size: 14px; }
-        .episode-item:hover { background: rgba(126,189,174,0.1); }
-        .episode-item.active { color: #10b981; border-left: 3px solid #10b981; background: rgba(16,185,129,0.05); font-weight: bold; }
-        .ep-num { background: #1a2a40; color: #7ebdae; padding: 3px 6px; border-radius: 4px; font-size: 12px; }
-        .episode-item.active .ep-num { background: #10b981; color: #010614; }
+        
+        /* ⬇️ 全新极简高级呼吸感目录 ⬇️ */
+        .episode-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .episode-item { padding: 16px 14px; color: #e5e7eb; cursor: pointer; border: 1px solid rgba(126, 189, 174, 0.08); border-radius: 8px; background: rgba(1, 5, 18, 0.4); transition: all 0.3s ease; display: flex; align-items: flex-start; gap: 16px; font-size: 14px; box-sizing: border-box; }
+        .episode-item:hover { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); }
+        .episode-item.active { border-color: #00ffcc; background: linear-gradient(90deg, rgba(0, 255, 204, 0.1) 0%, rgba(1, 5, 18, 0) 100%); box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); }
+        .ep-num-box { font-size: 32px; font-weight: 900; color: rgba(16, 185, 129, 0.15); line-height: 0.8; font-family: 'Arial Black', Impact, sans-serif; margin-top: 4px; transition: all 0.3s; font-style: italic; }
+        .episode-item:hover .ep-num-box { color: rgba(16, 185, 129, 0.4); }
+        .episode-item.active .ep-num-box { color: #00ffcc; text-shadow: 0 0 15px rgba(0, 255, 204, 0.5); }
+        .ep-text-box { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .ep-en { font-size: 11px; color: #527a6e; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4; word-break: break-word; }
+        .episode-item.active .ep-en { color: #7ebdae; }
+        .ep-zh { font-size: 15px; color: #a7ccc3; font-weight: 500; letter-spacing: 0.5px; line-height: 1.4; }
+        .episode-item.active .ep-zh { color: #ffffff; font-weight: bold; text-shadow: 0 0 8px rgba(0, 255, 204, 0.4); }
+
         @media (max-width: 768px) {
             .dashboard-body { flex-direction: column; }
             .video-main-screen, .video-playlist { flex: none; width: 100%; max-height: none;}
@@ -265,7 +274,12 @@
 
 
     <div id="layer-course-auth" class="layer">
-        <h2>EXCLUSIVE MASTERCLASS · PRIVATE ACCESS<br><span style="font-size: 14px; opacity: 0.7; letter-spacing: 2px; margin-top: 4px; display: block; text-shadow: none;">高维课程 · 闭门交付</span></h2>
+        <h2 style="font-size: 22px; line-height: 1.4; text-shadow: none;">
+            <span style="display: block; letter-spacing: 1px; color: #00ffcc; text-shadow: 0 0 15px rgba(0,255,204,0.5);">EXCLUSIVE MASTERCLASS</span>
+            <span style="display: block; font-size: 15px; color: #10b981; letter-spacing: 3px; margin-top: 6px;">PRIVATE ACCESS</span>
+            <span style="font-size: 14px; opacity: 0.8; letter-spacing: 4px; margin-top: 14px; display: block; color: #7ebdae;">高维课程 · 闭门交付</span>
+        </h2>
+        
         <div class="holo-card-panel">
             <div class="article-title">AUTHENTICATION / 身份鉴权</div>
             <p class="article-main-text" style="margin-top: 15px; font-size: 15px; color: #7ebdae; line-height: 1.6;">All courses are equipped with dynamic tracing and HLS military-grade encryption. Please immerse yourself in a quiet, independent space.<br><span style="display: block; margin-top: 4px; font-size: 13px; color: #406056;">课程全系搭载动态溯源与 HLS 军工级防盗加密，请在安静、独立的空间内沉浸观看。</span></p>
@@ -671,11 +685,13 @@
             const courseData = data[courseKey];
 
             if (courseData) {
+                // 🎯 第二处修正：主播放页标题逆转逻辑
                 const titleElement = document.getElementById(targetElementId);
                 if (titleElement) {
-                    titleElement.innerHTML = `${courseData.title_en}<br><span style="display: block; font-size: 16px; color: #94a3b8; font-weight: normal; margin-top: 8px; letter-spacing: 1px;">【${courseData.title_zh}】</span>`;
+                    titleElement.innerHTML = `<span style="display: block; font-size: 24px; color: #00ffcc; font-weight: bold; letter-spacing: 3px; text-shadow: 0 0 15px rgba(0,255,204,0.3);">${courseData.title_zh}</span><span style="display: block; font-size: 12px; color: #527a6e; font-weight: normal; margin-top: 8px; letter-spacing: 2px; text-transform: uppercase;">${courseData.title_en}</span>`;
                 }
 
+                // 🎯 第三处修正：目录全息重构（增加斜杠智能分割算法）
                 const playlistContainer = document.getElementById('course-episode-list');
                 if (playlistContainer && courseData.episodes && Array.isArray(courseData.episodes)) {
                     playlistContainer.innerHTML = '';
@@ -685,7 +701,27 @@
                         li.setAttribute('data-src', ep.url);
                         
                         const epNum = String(index + 1).padStart(2, '0');
-                        li.innerHTML = `<span class="ep-num">${epNum}</span> ${ep.title}`;
+                        
+                        // 智能解析中英文
+                        let rawTitle = ep.title || "";
+                        let enTitle = "";
+                        let zhTitle = "";
+                        if (rawTitle.includes('/')) {
+                            let parts = rawTitle.split('/');
+                            enTitle = parts[0].trim();
+                            zhTitle = parts.slice(1).join('/').trim();
+                        } else {
+                            zhTitle = rawTitle;
+                            enTitle = "EPISODE " + epNum;
+                        }
+
+                        li.innerHTML = `
+                            <div class="ep-num-box">${epNum}</div>
+                            <div class="ep-text-box">
+                                <div class="ep-en">${enTitle}</div>
+                                <div class="ep-zh">${zhTitle}</div>
+                            </div>
+                        `;
                         
                         li.addEventListener('click', function() {
                             document.querySelectorAll('.episode-item').forEach(e => e.classList.remove('active'));
