@@ -123,7 +123,7 @@ export default async function handler(req, res) {
                 const newCourseData = {
                     currentDevice: deviceFingerprint,
                     devices: [deviceFingerprint], // 占用第 1 个设备槽位
-                    lastNewDeviceTime: now,       
+                    lastNewDeviceTime: 0,       
                     lastIp: ip,
                     boundCourse: targetCourse     
                 };
