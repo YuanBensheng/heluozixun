@@ -55,7 +55,7 @@
         
         .en-subtitle { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; line-height: 1.3; }
 
-        /* 服务卡片 - 🎯 核心重构：中间分割线绝对垂直对齐架构 */
+        /* 服务卡片 - 中间分割线绝对垂直对齐架构 */
         .services-grid { 
             width: 100%; 
             display: grid; 
@@ -69,7 +69,7 @@
             border-radius: 8px; 
             padding: 30px; 
             display: flex; 
-            align-items: flex-start; /* 保持顶部对齐 */
+            align-items: flex-start; 
             transition: all 0.3s ease; 
             gap: 30px; 
         }
@@ -78,12 +78,17 @@
         .service-left { 
             display: flex; 
             flex-direction: column; 
-            flex: 0 0 240px; /* 🎯 核心修正：锁定绝对宽度，确保两张卡片的分割线在垂直方向上绝对对齐，永不错位 */
+            flex: 0 0 240px; 
             border-right: 1px solid rgba(126, 189, 174, 0.15); 
             padding-right: 30px; 
         }
+        
+        /* 🎯 新增：用于包裹中英文标题，方便响应式控制 */
+        .service-title-wrap { margin-bottom: 15px; }
+
         .service-name { font-size: 1.3rem; color: var(--text-neon-cyan); margin-bottom: 2px; font-weight: 500; letter-spacing: 1px; white-space: nowrap; }
-        .service-name-en { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; margin-bottom: 15px; }
+        .service-name-en { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
+        
         .service-price { display: flex; flex-direction: column; }
         .price-zh { font-size: 1.15rem; color: var(--text-primary-cyan); font-family: monospace; white-space: nowrap; line-height: 1.2; }
         .price-en { font-size: 0.75rem; color: var(--text-bamboo-green); margin-top: 4px; white-space: nowrap; }
@@ -105,8 +110,6 @@
         .contact-title { color: var(--text-neon-cyan); font-weight: 400; letter-spacing: 1px; margin-bottom: 4px; }
         .contact-btn { display: inline-block; background: transparent; color: var(--text-neon-cyan); border: 1px solid var(--text-bamboo-green); padding: 15px 40px; font-size: 1rem; text-decoration: none; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; margin-top: 15px; margin-bottom: 15px; white-space: nowrap; }
         .contact-btn:hover { background: rgba(126, 189, 174, 0.1); box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
-        
-        /* 👑 新增：立即沟通下方的风控免责/闭环提示小字样式 */
         .contact-tip-zh { color: var(--text-bamboo-green); font-size: 0.85rem; margin-top: 5px; margin-bottom: 2px; opacity: 0.85; }
         .contact-tip-en { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: none; letter-spacing: 0.5px; opacity: 0.65; line-height: 1.3; }
 
@@ -125,14 +128,7 @@
         .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; color: var(--text-bamboo-green); font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
         .close-btn:hover { color: var(--text-neon-cyan); }
         
-        /* 👑 弹窗标题与副标题深度微调：实现完美中轴线绝对居中 */
-        .modal-title { 
-            color: var(--text-neon-cyan); 
-            margin-bottom: 2px; 
-            font-weight: 400; 
-            text-align: center;       /* 核心修复：强制中文主标题居中 */
-        }
-
+        .modal-title { color: var(--text-neon-cyan); margin-bottom: 2px; font-weight: 400; text-align: center; }
         .modal-desc { color: var(--text-primary-cyan); font-size: 0.85rem; margin-top: 15px; margin-bottom: 4px; }
         
         /* 表单样式 */
@@ -155,17 +151,34 @@
         }
         
         @media (max-width: 650px) {
-            /* 手机端响应式进化：卡片变为上下折叠结构，此时不需要纵向对齐，分割线转化为横向分割线 */
-            .service-card { flex-direction: column; align-items: flex-start; padding: 25px 20px; gap: 20px; }
-            .service-left { width: 100%; flex: none; border-right: none; border-bottom: 1px solid rgba(126, 189, 174, 0.15); padding-right: 0; padding-bottom: 20px; }
+            /* 👑 手机端响应式极致进化：解决左重右轻 */
+            .service-card { flex-direction: column; align-items: stretch; padding: 25px 20px; gap: 20px; }
+            
+            /* 将原本纯竖向排布的头部区域，改为“名称居左、价格居右”的横向排布，瞬间拉平视觉重心 */
+            .service-left { 
+                width: 100%; 
+                flex: none; 
+                flex-direction: row; 
+                justify-content: space-between; 
+                align-items: center; 
+                border-right: none; 
+                border-bottom: 1px solid rgba(126, 189, 174, 0.15); 
+                padding-right: 0; 
+                padding-bottom: 20px; 
+                gap: 15px;
+            }
+            
+            /* 清除标题下边距，让左右居中对齐更完美 */
+            .service-title-wrap { margin-bottom: 0; }
+            
+            /* 强制价格文字右对齐，填补右侧空缺 */
+            .service-price { align-items: flex-end; text-align: right; flex-shrink: 0; }
+            
+            /* 手机端稍微缩小价格字号，避免拥挤 */
+            .price-zh { font-size: 1.1rem; } 
         }
 
-        /* 专属解除提交按钮的宽度封印 */
-        #submit-btn {
-            white-space: normal !important; /* 允许文字优雅折行 */
-            line-height: 1.4;               /* 拉开多行文字的呼吸间距 */
-            padding: 12px 20px;             /* 稍微调整内边距，防挤压 */
-        }
+        #submit-btn { white-space: normal !important; line-height: 1.4; padding: 12px 20px; }
 
     </style>
 </head>
@@ -182,8 +195,10 @@
         <section class="services-grid">
             <div class="service-card">
                 <div class="service-left">
-                    <div class="service-name">高维咨询</div>
-                    <div class="service-name-en">High-Dimensional Consulting</div>
+                    <div class="service-title-wrap">
+                        <div class="service-name">高维咨询</div>
+                        <div class="service-name-en">High-Dimensional Consulting</div>
+                    </div>
                     <div class="service-price">
                         <div class="price-zh">¥ 3,000 / 次起</div>
                         <div class="price-en">From $480 / Session</div>
@@ -200,8 +215,10 @@
 
             <div class="service-card">
                 <div class="service-left">
-                    <div class="service-name">专项课程</div>
-                    <div class="service-name-en">Specialized Courses</div>
+                    <div class="service-title-wrap">
+                        <div class="service-name">专项课程</div>
+                        <div class="service-name-en">Specialized Courses</div>
+                    </div>
                     <div class="service-price">
                         <div class="price-zh">¥ 680 / 门起</div>
                         <div class="price-en">From $98 / Course</div>
