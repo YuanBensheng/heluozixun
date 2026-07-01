@@ -49,44 +49,17 @@
 
         /* 头部信息 */
         .hero-section { text-align: center; margin-bottom: 60px; }
-        
-        /* 👑 升级版：国际范单行矩阵大标题 */
-        .brand-title-inline { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 18px; 
-            margin-bottom: 12px; 
-        }
-        .title-zh { 
-            font-size: 2.4rem; 
-            color: var(--text-neon-cyan); 
-            letter-spacing: 4px; 
-            font-weight: 300; 
-            text-shadow: 0 0 20px rgba(0, 255, 204, 0.2); 
-        }
-        .title-divider { 
-            font-size: 1.8rem; 
-            color: var(--border-dark-green); 
-            font-weight: 200; 
-            opacity: 0.8;
-        }
-        .title-en { 
-            font-size: 1.25rem; 
-            color: var(--text-bamboo-green); 
-            letter-spacing: 3px; 
-            font-weight: 300; 
-            margin-top: 6px; /* 视觉对齐中文的重心 */
-        }
-
+        .brand-title { font-size: 2.5rem; color: var(--text-neon-cyan); letter-spacing: 4px; font-weight: 300; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
+        .brand-subtitle { font-size: 1.1rem; color: var(--text-bamboo-green); letter-spacing: 3px; text-transform: uppercase; }
         .brand-desc { margin-top: 20px; font-size: 0.95rem; color: var(--text-primary-cyan); opacity: 0.9; max-width: 600px; margin-left: auto; margin-right: auto; margin-bottom: 2px; }
+        
         .en-subtitle { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; line-height: 1.3; }
 
-        /* 服务卡片 - 纵向单行布局 */
+        /* 服务卡片 - 🎯 核心重构：取消并排两宫格，强制实现大气的单项单独成行 */
         .services-grid { 
             width: 100%; 
             display: grid; 
-            grid-template-columns: 1fr; 
+            grid-template-columns: 1fr; /* 电脑端与手机端全量拉平，均为一行一项 */
             gap: 20px; 
             margin-bottom: 50px; 
         }
@@ -105,7 +78,7 @@
         .contact-btn { display: inline-block; background: transparent; color: var(--text-neon-cyan); border: 1px solid var(--text-bamboo-green); padding: 15px 40px; font-size: 1rem; text-decoration: none; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; margin-top: 15px; margin-bottom: 15px; white-space: nowrap; }
         .contact-btn:hover { background: rgba(126, 189, 174, 0.1); box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
         
-        /* 风控免责提示小字样式 */
+        /* 👑 新增：立即沟通下方的风控免责/闭环提示小字样式 */
         .contact-tip-zh { color: var(--text-bamboo-green); font-size: 0.85rem; margin-top: 5px; margin-bottom: 2px; opacity: 0.85; }
         .contact-tip-en { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: none; letter-spacing: 0.5px; opacity: 0.65; line-height: 1.3; }
 
@@ -124,8 +97,14 @@
         .close-btn { position: absolute; top: 15px; right: 20px; background: none; border: none; color: var(--text-bamboo-green); font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
         .close-btn:hover { color: var(--text-neon-cyan); }
         
-        /* 弹窗标题与副标题深度微调 */
-        .modal-title { color: var(--text-neon-cyan); margin-bottom: 2px; font-weight: 400; text-align: center; }
+        /* 👑 弹窗标题与副标题深度微调：实现完美中轴线绝对居中 */
+        .modal-title { 
+            color: var(--text-neon-cyan); 
+            margin-bottom: 2px; 
+            font-weight: 400; 
+            text-align: center;       /* 核心修复：强制中文主标题居中 */
+        }
+
         .modal-desc { color: var(--text-primary-cyan); font-size: 0.85rem; margin-top: 15px; margin-bottom: 4px; }
         
         /* 表单样式 */
@@ -140,27 +119,17 @@
         .policy-text p { margin-bottom: 5px; }
         .policy-text .en-para { font-size: 0.75rem; color: var(--text-bamboo-green); margin-bottom: 15px; display: block; line-height: 1.4; opacity: 0.8; }
 
-        /* 📱 手机端智能折叠：低于 650px 自动切回上下排版标题 */
-        @media (max-width: 650px) {
-            .brand-title-inline { flex-direction: column; gap: 2px; }
-            .title-divider { display: none; }
-            .title-zh { font-size: 2.2rem; }
-            .title-en { font-size: 1rem; margin-top: 0; }
-        }
-
-        /* 手机端常规响应式 */
         @media (max-width: 750px) {
             .contact-section { padding: 30px 20px; }
             .footer-links { flex-direction: row !important; flex-wrap: wrap; gap: 12px; justify-content: center; }
             .footer-links a { font-size: 0.75rem; }
             .modal-content { padding: 30px 20px; }
         }
-
         /* 专属解除提交按钮的宽度封印 */
         #submit-btn {
-            white-space: normal !important; 
-            line-height: 1.4;               
-            padding: 12px 20px;             
+            white-space: normal !important; /* 允许文字优雅折行 */
+            line-height: 1.4;               /* 拉开多行文字的呼吸间距 */
+            padding: 12px 20px;             /* 稍微调整内边距，防挤压 */
         }
 
     </style>
@@ -169,12 +138,8 @@
 
     <main class="main-container">
         <header class="hero-section">
-            <div class="brand-title-inline">
-                <span class="title-zh">河洛能量时空</span>
-                <span class="title-divider">|</span>
-                <span class="title-en">HELUO ENERGY STUDIO</span>
-            </div>
-            
+            <h1 class="brand-title">河洛能量时空</h1>
+            <div class="brand-subtitle">HeLuo Energy Studio</div>
             <p class="brand-desc">解密东方哲学智慧，构建时空能量矩阵。</p>
             <div class="en-subtitle">Decoding Eastern Philosophical wisdom, constructing space-time energy matrices.</div>
         </header>
@@ -323,7 +288,7 @@
     </div>
 
     <script>
-        // 高效的全局弹窗控制逻辑
+        // 高效的全局弹窗控制逻辑 (无需每个按钮写一堆代码)
         const modals = {
             contact: document.getElementById('contact-modal'),
             refund: document.getElementById('modal-refund'),
@@ -351,7 +316,7 @@
             }
         };
 
-        // 表单提交流程
+        // 表单提交流程 (保持原样不动)
         const form = document.getElementById('public-contact-form');
         const statusDiv = document.getElementById('submit-status');
         const submitBtn = document.getElementById('submit-btn');
@@ -360,6 +325,7 @@
             e.preventDefault();
             submitBtn.disabled = true;
             
+            // 修正点：使用 innerHTML 将中英文强行拆分为上下两行，英文使用竹青色并缩小字号
             submitBtn.innerHTML = '正在加密传输...<br><span style="font-size: 0.75rem; color: var(--text-bamboo-green); letter-spacing: 0; font-weight: normal;">Encrypting & Transmitting...</span>';
             
             statusDiv.innerHTML = '';
@@ -392,6 +358,7 @@
                 statusDiv.innerHTML = '系统能量波动，提交失败，请稍后重试。<br><span style="font-size: 0.75rem; color: #ff9999; display: block; margin-top: 4px;">System energy fluctuation. Submission failed, please try again later.</span>';
             } finally {
                 submitBtn.disabled = false;
+                // 恢复默认按钮状态
                 submitBtn.innerHTML = '提交意向 (Submit)';
             }
         });
