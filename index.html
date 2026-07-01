@@ -55,7 +55,7 @@
         
         .en-subtitle { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; line-height: 1.3; }
 
-        /* 服务卡片 - 🎯 核心重构：左栏名称价格三行矩阵，右栏风控合规交付物说明 */
+        /* 服务卡片 - 🎯 核心重构：中间分割线绝对垂直对齐架构 */
         .services-grid { 
             width: 100%; 
             display: grid; 
@@ -69,7 +69,7 @@
             border-radius: 8px; 
             padding: 30px; 
             display: flex; 
-            align-items: center; 
+            align-items: flex-start; /* 保持顶部对齐 */
             transition: all 0.3s ease; 
             gap: 30px; 
         }
@@ -78,8 +78,7 @@
         .service-left { 
             display: flex; 
             flex-direction: column; 
-            flex-shrink: 0; 
-            min-width: 180px; 
+            flex: 0 0 240px; /* 🎯 核心修正：锁定绝对宽度，确保两张卡片的分割线在垂直方向上绝对对齐，永不错位 */
             border-right: 1px solid rgba(126, 189, 174, 0.15); 
             padding-right: 30px; 
         }
@@ -89,7 +88,13 @@
         .price-zh { font-size: 1.15rem; color: var(--text-primary-cyan); font-family: monospace; white-space: nowrap; line-height: 1.2; }
         .price-en { font-size: 0.75rem; color: var(--text-bamboo-green); margin-top: 4px; white-space: nowrap; }
 
-        .service-right { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .service-right { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; 
+            padding-top: 2px; 
+        }
         .service-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
         .service-features li { font-size: 0.9rem; color: var(--text-primary-cyan); position: relative; padding-left: 18px; line-height: 1.3; }
         .service-features li::before { content: '✦'; position: absolute; left: 0; top: 2px; color: var(--text-bamboo-green); font-size: 0.75rem; }
@@ -150,9 +155,9 @@
         }
         
         @media (max-width: 650px) {
-            /* 手机端卡片折叠：左侧上下结构，右侧紧跟 */
+            /* 手机端响应式进化：卡片变为上下折叠结构，此时不需要纵向对齐，分割线转化为横向分割线 */
             .service-card { flex-direction: column; align-items: flex-start; padding: 25px 20px; gap: 20px; }
-            .service-left { width: 100%; border-right: none; border-bottom: 1px solid rgba(126, 189, 174, 0.15); padding-right: 0; padding-bottom: 20px; }
+            .service-left { width: 100%; flex: none; border-right: none; border-bottom: 1px solid rgba(126, 189, 174, 0.15); padding-right: 0; padding-bottom: 20px; }
         }
 
         /* 专属解除提交按钮的宽度封印 */
@@ -332,7 +337,7 @@
     </div>
 
     <script>
-        // 高效的全局弹窗控制逻辑 (无需每个按钮写一堆代码)
+        // 全局弹窗控制逻辑
         const modals = {
             contact: document.getElementById('contact-modal'),
             refund: document.getElementById('modal-refund'),
@@ -360,7 +365,7 @@
             }
         };
 
-        // 表单提交流程 (保持原样不动)
+        // 表单提交流程
         const form = document.getElementById('public-contact-form');
         const statusDiv = document.getElementById('submit-status');
         const submitBtn = document.getElementById('submit-btn');
@@ -369,7 +374,6 @@
             e.preventDefault();
             submitBtn.disabled = true;
             
-            // 修正点：使用 innerHTML 将中英文强行拆分为上下两行，英文使用竹青色并缩小字号
             submitBtn.innerHTML = '正在加密传输...<br><span style="font-size: 0.75rem; color: var(--text-bamboo-green); letter-spacing: 0; font-weight: normal;">Encrypting & Transmitting...</span>';
             
             statusDiv.innerHTML = '';
@@ -402,7 +406,6 @@
                 statusDiv.innerHTML = '系统能量波动，提交失败，请稍后重试。<br><span style="font-size: 0.75rem; color: #ff9999; display: block; margin-top: 4px;">System energy fluctuation. Submission failed, please try again later.</span>';
             } finally {
                 submitBtn.disabled = false;
-                // 恢复默认按钮状态
                 submitBtn.innerHTML = '提交意向 (Submit)';
             }
         });
