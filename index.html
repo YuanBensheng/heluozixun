@@ -55,15 +55,31 @@
         
         .en-subtitle { font-size: 0.75rem; color: var(--text-bamboo-green); text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; line-height: 1.3; }
 
-        /* 服务卡片 - 🎯 核心重构：取消并排两宫格，强制实现大气的单项单独成行 */
+                /* 修正后的产品卡片容器：强制防止溢出 */
         .services-grid { 
             width: 100%; 
+            max-width: 800px; /* 限制最大宽度，与主容器对齐 */
             display: grid; 
-            grid-template-columns: 1fr; /* 电脑端与手机端全量拉平，均为一行一项 */
+            grid-template-columns: 1fr; 
             gap: 20px; 
-            margin-bottom: 50px; 
+            margin-bottom: 50px;
+            padding: 0 10px;  /* 增加内边距防止贴边 */
+            box-sizing: border-box; /* 关键：确保 padding 不增加宽度 */
         }
-        .service-card { background: var(--panel-deep-blue); border: 1px solid var(--border-dark-green); border-radius: 8px; padding: 25px 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; }
+
+        .service-card { 
+            background: var(--panel-deep-blue); 
+            border: 1px solid var(--border-dark-green); 
+            border-radius: 8px; 
+            padding: 25px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            transition: all 0.3s ease; 
+            width: 100%; /* 确保卡片不会超出父容器 */
+            box-sizing: border-box; /* 关键：防止 padding 撑破容器 */
+        }
+
         .service-card:hover { border-color: var(--text-bamboo-green); box-shadow: 0 0 15px rgba(126, 189, 174, 0.1); }
         .service-info { display: flex; flex-direction: column; flex: 1 1 auto; padding-right: 15px; min-width: 0; }
         .service-name { font-size: 1.1rem; color: var(--text-neon-cyan); margin-bottom: 2px; white-space: nowrap; }
