@@ -106,7 +106,7 @@
         .pay-toggle-btn { background: #010614; border: 1px solid #0d211c; color: #527a6e; padding: 6px 18px; font-size: 13px; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; box-sizing: border-box; }
         .pay-toggle-btn.active-wx { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #10b981; font-weight: bold; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
         .pay-toggle-btn.active-ali { background: rgba(0, 163, 238, 0.15); border-color: #00a3ee; color: #00a3ee; font-weight: bold; box-shadow: 0 0 10px rgba(0, 163, 238, 0.3); }
-        .pay-desc-text { font-size: 14px; color: #7ebdae; line-height: 1.8; text-align: justify; text-align-last: left; display: flex; flex-direction: column; justify-content: center; flex: 1; }
+        .pay-desc-text { font-size: 16px; color: #7ebdae; line-height: 1.9; text-align: justify; text-align-last: left; display: flex; flex-direction: column; justify-content: center; flex: 1; }
         .video-wrapper-inner { width: 100%; aspect-ratio: 16/9; background: #000000; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0, 255, 204, 0.2); margin-bottom: 15px; position: relative; }
         .video-wrapper-inner video { width: 100%; height: 100%; object-fit: cover; pointer-events: auto; }
         .auth-section { padding: 10px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -257,7 +257,7 @@
                         <div class="pay-toggle-btn" onclick="document.getElementById('qr-img-399').src='./images/alipay-pay.png'; this.classList.add('active-ali'); this.previousElementSibling.classList.remove('active-wx');">支付宝</div>
                     </div>
                 </div>
-                <div class="article-main-text">
+                <div class="pay-desc-text">
                     1. 请长按上方二维码「存储到手机」，随后打开微信/支付宝「扫一扫」支付399元，观摩体现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。只判断，不纠缠。<br><br>
                     2. 付款后获取「时空密钥」，在下方输入激活，即刻开启高维通道，系统同步启动 30 分钟倒计时。
                 </div>
