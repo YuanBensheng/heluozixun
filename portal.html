@@ -211,35 +211,6 @@
             .dashboard-header { flex-direction: column; gap: 15px; align-items: flex-start; }
             .return-store-btn { width: 100%; text-align: center; box-sizing: border-box;}
         }
-        /* 1. 缩小二维码外层容器，有效降低左侧整体高度 */
-.qrcode-box {
-    max-width: 140px !important;  /* 将二维码最大宽度收紧，高度会等比例自动缩小 */
-    margin: 0 auto !important;
-}
-
-/* 2. 微调下方支付按钮组，使其与缩小后的二维码更紧凑协调 */
-.pay-toggle-group {
-    margin-top: 10px !important;  /* 收紧二维码和按钮之间的间距 */
-    gap: 10px !important;
-}
-.pay-toggle-btn {
-    padding: 5px 12px !important; /* 按钮稍微缩巧一点，避免头重脚轻 */
-    font-size: 12px !important;
-}
-
-/* 3. 统一右侧说明文案，与“认知过滤”板块正文规格完全对齐 */
-.pay-desc-text {
-    font-size: 16px !important;   /* 降低字号，与上方正文完全一致 */
-    line-height: 1.9 !important;  /* 保持舒适的呼吸行高 */
-    color: #7ebdae !important;    
-    text-align: left !important;  
-    margin-bottom: 0 !important;
-}
-/* 4. 强制左右两部分“绝对垂直居中”，彻底消灭单侧漏空 */
-.flex-pay-container {
-    display: flex !important;
-    align-items: center !important; /* 核心指令：让左右两边的中轴线绝对对齐 */
-}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -286,7 +257,7 @@
                         <div class="pay-toggle-btn" onclick="document.getElementById('qr-img-399').src='./images/alipay-pay.png'; this.classList.add('active-ali'); this.previousElementSibling.classList.remove('active-wx');">支付宝</div>
                     </div>
                 </div>
-                <div class="pay-desc-text">
+                <div class="article-main-text">
                     1. 请长按上方二维码「存储到手机」，随后打开微信/支付宝「扫一扫」支付399元，观摩体现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。只判断，不纠缠。<br><br>
                     2. 付款后获取「时空密钥」，在下方输入激活，即刻开启高维通道，系统同步启动 30 分钟倒计时。
                 </div>
