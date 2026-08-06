@@ -780,10 +780,18 @@ function smartLoadVideo(url, videoElement) {
         const ua = navigator.userAgent.toLowerCase();
         const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
-        if (window.heluoHlsInstance) { window.heluoHlsInstance.destroy(); window.heluoHlsInstance = null; }
-        videoElement.pause(); videoElement.removeAttribute('src'); videoElement.load();
+        // 清理旧实例，释放内存
+        if (window.heluoHlsInstance) { 
+            window.heluoHlsInstance.destroy(); 
+            window.heluoHlsInstance = null; 
+        }
+        videoElement.pause(); 
+        videoElement.removeAttribute('src'); 
+        videoElement.load();
 
         const isM3U8 = url.toLowerCase().includes('.m3u8');
+        
+        // 1. MP4 格式，直接走原生加载
         if (!isM3U8) {
             if (isMobile) { videoElement.src = url; return; }
             try {
@@ -795,28 +803,34 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
-        const isBunnyStream = url.includes('b-cdn.net') || url.includes('bunny');
-        if (isBunnyStream) {
+        // 2. M3U8 格式直连白名单：Bunny海外节点 或 腾讯云国内公域节点
+        const isDirectStream = url.includes('b-cdn.net') || url.includes('bunny') || url.includes('myqcloud.com');
+        
+        if (isDirectStream) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
                 window.heluoHlsInstance = new Hls();
                 window.heluoHlsInstance.loadSource(url);
                 window.heluoHlsInstance.attachMedia(videoElement);
             } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                // 兼容苹果 Mac/iOS 的 Safari 原生 HLS 解析
                 videoElement.src = url;
             }
             return; 
         }
 
+        // 3. 预留给未来军工级防盗代理机制 (动态 Token + Blob 重写)
         let token = '';
         try {
             const tokenResp = await fetch('/api/generate-token');
             if (tokenResp.ok) { const data = await tokenResp.json(); token = data.token; }
-        } catch (e) { console.warn('Token获取失败，使用无Token链接'); }
+        } catch (e) { console.warn('未获取到 Token，执行无 Token 降级策略'); }
 
         try {
             const m3u8Resp = await fetch(url);
-            if (!m3u8Resp.ok) throw new Error('M3U8 加载失败');
+            if (!m3u8Resp.ok) throw new Error('M3U8 清单拉取失败');
             let m3u8Content = await m3u8Resp.text();
+            
+            // 修复绝对路径
             const basePath = url.substring(0, url.lastIndexOf('/') + 1);
             m3u8Content = m3u8Content.replace(/(segment_\d+\.ts)/g, basePath + '$1');
             if (token) { m3u8Content = m3u8Content.replace(/URI="([^"]*)"/, `URI="$1?token=${token}"`); }
@@ -831,7 +845,10 @@ function smartLoadVideo(url, videoElement) {
             } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
                 videoElement.src = blobUrl;
             }
-        } catch (e) { console.error('M3U8 处理失败:', e); }
+        } catch (e) { 
+            console.error('M3U8 代理层处理崩溃，降级为直连:', e); 
+            videoElement.src = url; // 终极容错
+        }
     }, 100);
 }
 
