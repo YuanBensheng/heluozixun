@@ -778,9 +778,9 @@ let globalTimerInterval = null;
 function smartLoadVideo(url, videoElement) {
     setTimeout(async () => {
         const ua = navigator.userAgent.toLowerCase();
-        const isMobile = /iphone|ipad|ipod|android/.test(ua);
+        const isMobile = /iphone|ipad|ipod|android|macintosh/.test(ua);
 
-        // 1. 清理旧实例，释放内存，防止内存泄漏
+        // 1. 彻底清空上一场域的残余内存
         if (window.heluoHlsInstance) { 
             window.heluoHlsInstance.destroy(); 
             window.heluoHlsInstance = null; 
@@ -791,13 +791,11 @@ function smartLoadVideo(url, videoElement) {
 
         const isM3U8 = url.toLowerCase().includes('.m3u8');
         
-        // 2. MP4 格式，直接走原生加载 (兼容原有的两个视频)
+        // 2. MP4 通道保持原样（你另外两个能放的视频走这里）
         if (!isM3U8) {
             if (isMobile) { videoElement.src = url; return; }
             try {
-                // PC 端采用 Blob 缓冲加载，提升安全性
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('流提取失败');
                 const blob = await response.blob();
                 videoElement.src = URL.createObjectURL(blob);
             } catch (e) { 
@@ -806,28 +804,26 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
-        // 3. M3U8 格式 (彻底剔除已废弃的 Token 逻辑，采用原生/HLS.js直连)
-        if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-            window.heluoHlsInstance = new Hls({
-                debug: false,
-                enableWorker: true,
-                lowLatencyMode: true
-            });
+        // 3. M3U8 终极适配通道
+        // 【关键】：苹果生态 (Mac Safari / iPhone) 自带原生军工级 HLS 硬件解码，直接喂给它，彻底规避 JS 跨域劫持
+        if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+            videoElement.src = url;
+        } 
+        // 非苹果环境 (Chrome / Edge 等) 降级使用 hls.js
+        else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+            window.heluoHlsInstance = new Hls({ debug: false, lowLatencyMode: true });
             window.heluoHlsInstance.loadSource(url);
             window.heluoHlsInstance.attachMedia(videoElement);
             
-            // 错误容错捕获
+            // 极度容错：如果 JS 解析崩溃，强行尝试直连
             window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
                 if (data.fatal) {
-                    console.error('HLS 底层解析失败，尝试降级原生直连:', data);
+                    console.error('HLS 解析被阻断，尝试原生直连兜底:', data);
                     videoElement.src = url;
                 }
             });
-        } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-            // 兼容 Apple 体系 (Mac Safari / iPhone)，它们自带原生 M3U8 解码
-            videoElement.src = url;
         } else {
-            console.error("当前浏览器环境不支持 HLS 视频流");
+            console.error("当前浏览器维度过低，无法解析高维流媒体");
         }
     }, 100);
 }
