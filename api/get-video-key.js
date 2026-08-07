@@ -1,43 +1,50 @@
-export default function handler(req, res) {
-    // 1. 获取请求头特征 (Chrome 可能会吞掉 Referer，但绝对吞不掉 Origin 和 Host)
-    const origin = req.headers.origin || '';
-    const referer = req.headers.referer || '';
-    const host = req.headers.host || '';
-
-    // 2. 动态 CORS 配置：只允许你的独立站跨域拿钥匙
-    const allowedOrigins = ['https://heluo.pro', 'https://www.heluo.pro', 'http://localhost:3000'];
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    } else if (!origin && host.includes('heluo.pro')) {
-        // 针对同源直接请求，补全 CORS
-        res.setHeader('Access-Control-Allow-Origin', 'https://heluo.pro');
-    }
-    
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*'); 
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') return res.status(200).end();
 
-    // 放行预检请求
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+    const referer = req.headers.referer || '';
+    // 如果没有 Referer，直接拒绝 (拦截迅雷等下载器)
+    if (!referer.includes('heluo.pro') && !referer.includes('localhost')) {
+        return res.status(403).send('Forbidden: No Referer');
     }
 
-    // 3. 智能防盗链核验：只要满足其一，即视为安全环境
-    const isSafe = 
-        (origin && origin.includes('heluo.pro')) || 
-        (referer && referer.includes('heluo.pro')) || 
-        (host && host.includes('heluo.pro')) || 
-        (host && host.includes('localhost'));
+    const token = req.query.token;
+    if (!token) return res.status(403).send('Missing token');
 
-    if (!isSafe) {
-        // 下载工具和嗅探爬虫无法伪造完美的同源 Host 环境，将被直接拦截
-        console.warn('非法环境窃取密钥，已被拦截');
-        return res.status(403).send('Forbidden: Invalid Space-Time Origin');
-    }
-
-    // 4. 下发 AES-128 军工级解密密钥
-    const KEY = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6'; // 你视频的 16进制 密钥
+    const secret = process.env.TOKEN_SECRET || 'HeLuoSecret2026';
+    const [payloadBase64, signature] = token.split('.');
     
-    res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader('Cache-Control', 'no-store'); // 绝对禁止浏览器缓存钥匙
-    res.send(Buffer.from(KEY, 'hex'));
+    if (!payloadBase64 || !signature) return res.status(403).send('Invalid token format');
+
+    try {
+        // 校验签名
+        const encoder = new TextEncoder();
+        const keyData = encoder.encode(secret);
+        const cryptoKey = await crypto.subtle.importKey(
+            'raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+        );
+        const sigBuf = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(payloadBase64));
+        const expectedSig = Array.from(new Uint8Array(sigBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+        if (expectedSig !== signature) return res.status(403).send('Invalid token signature');
+
+        // 解码并校验是否过期
+        const jsonStr = decodeURIComponent(escape(atob(payloadBase64)));
+        const payload = JSON.parse(jsonStr);
+
+        if (!payload.exp || Date.now() > payload.exp) {
+            return res.status(403).send('Token expired');
+        }
+
+        // 下发 AES 密钥 (请确保这是你 openssl 手动加密时的那个 16进制 KEY)
+        const KEY_HEX = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6'; 
+        const keyBytes = new Uint8Array(KEY_HEX.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        
+        res.setHeader('Content-Type', 'application/octet-stream');
+        res.setHeader('Cache-Control', 'no-store');
+        res.send(keyBytes);
+    } catch (err) {
+        return res.status(403).send('Token payload error');
+    }
 }
