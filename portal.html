@@ -100,13 +100,13 @@
         .article-main-text:last-child { margin-bottom: 0; }
         .flex-pay-container { display: flex; align-items: stretch; justify-content: space-between; gap: 30px; }
         .flex-pay-container, .flex-pay-container * { -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; }
-        .qrcode-box { width: 185px; height: 185px; border: 1px solid rgba(16, 185, 129, 0.35); background: #000000; display: flex; justify-content: center; align-items: center; border-radius: 8px; flex-shrink: 0; margin: 0 auto; box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); }
+        .qrcode-box { width: 200px; height: 200px; border: 1px solid rgba(16, 185, 129, 0.35); background: #000000; display: flex; justify-content: center; align-items: center; border-radius: 8px; flex-shrink: 0; margin: 0 auto; box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); }
         .qrcode-box img { width: 92%; height: 92%; object-fit: contain; }
         .pay-toggle-group { display: flex; justify-content: center; gap: 12px; margin-top: 15px; }
         .pay-toggle-btn { background: #010614; border: 1px solid #0d211c; color: #527a6e; padding: 6px 18px; font-size: 13px; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; box-sizing: border-box; }
         .pay-toggle-btn.active-wx { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #10b981; font-weight: bold; box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
         .pay-toggle-btn.active-ali { background: rgba(0, 163, 238, 0.15); border-color: #00a3ee; color: #00a3ee; font-weight: bold; box-shadow: 0 0 10px rgba(0, 163, 238, 0.3); }
-        .pay-desc-text { font-size: 16px; color: #7ebdae; line-height: 1.9; text-align: justify; text-align-last: left; display: flex; flex-direction: column; justify-content: center; flex: 1; }
+        .pay-desc-text { font-size: 14px; color: #7ebdae; line-height: 1.8; text-align: justify; text-align-last: left; display: flex; flex-direction: column; justify-content: center; flex: 1; }
         .video-wrapper-inner { width: 100%; aspect-ratio: 16/9; background: #000000; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0, 255, 204, 0.2); margin-bottom: 15px; position: relative; }
         .video-wrapper-inner video { width: 100%; height: 100%; object-fit: cover; pointer-events: auto; }
         .auth-section { padding: 10px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -258,8 +258,8 @@
                     </div>
                 </div>
                 <div class="pay-desc-text">
-                    1. 请长按图示二维码「存储到手机」，随后打开微信/支付宝「扫一扫」支付399元，观摩展现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。只判断，不纠缠。<br><br>
-                    2. 专属「时空密钥」将在付款成功后立即发送到手机，在下方输入激活，即刻开启高维通道，系统同步启动「30 分钟」倒计时。
+                    1. 请长按上方二维码「存储到手机」，随后打开微信/支付宝「扫一扫」支付399元，观摩体现我底层架构的核心微课。对得齐，我们继续深入；对不齐，不妨各自前行。只判断，不纠缠。<br><br>
+                    2. 付款后获取「时空密钥」，在下方输入激活，即刻开启高维通道，系统同步启动 30 分钟倒计时。
                 </div>
             </div>
         </div>
@@ -780,79 +780,58 @@ function smartLoadVideo(url, videoElement) {
         const ua = navigator.userAgent.toLowerCase();
         const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
-        // 1. 清理内存，防止重叠播放导致崩溃
-        if (window.heluoHlsInstance) { 
-            window.heluoHlsInstance.destroy(); 
-            window.heluoHlsInstance = null; 
-        }
-        videoElement.pause(); 
-        videoElement.removeAttribute('src'); 
-        videoElement.load();
+        if (window.heluoHlsInstance) { window.heluoHlsInstance.destroy(); window.heluoHlsInstance = null; }
+        videoElement.pause(); videoElement.removeAttribute('src'); videoElement.load();
 
         const isM3U8 = url.toLowerCase().includes('.m3u8');
-        
-        // 2. MP4 兜底通道（保持你另外两个视频的兼容）
         if (!isM3U8) {
             if (isMobile) { videoElement.src = url; return; }
             try {
-                // MP4 同样使用 Blob 内存加载，防止直接右键另存为
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('MP4 流提取失败');
+                if (!response.ok) throw new Error('流提取失败');
                 const blob = await response.blob();
                 videoElement.src = URL.createObjectURL(blob);
-            } catch (e) { 
-                videoElement.src = url; 
-            }
+            } catch (e) { videoElement.src = url; }
             return;
         }
 
-        // 3. 【核心防盗架构】：M3U8 内存 Blob 掩码加载
-        try {
-            // (1) 请求原始 M3U8 清单
-            const m3u8Resp = await fetch(url);
-            if (!m3u8Resp.ok) throw new Error('M3U8 拦截失败，请检查腾讯云跨域(CORS)设置');
-            let m3u8Content = await m3u8Resp.text();
-            
-            // (2) 提取基础路径 (例如 https://.../output_hls/)
-            const basePath = url.substring(0, url.lastIndexOf('/') + 1);
-
-            // (3) 🚀 终极解析器：抛弃正则，逐行扫描！
-            // 只要不是注释行(#)，且不是 http 开头，就一定是切片文件，强制拼上绝对路径！
-            let lines = m3u8Content.split('\n');
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
-                // 找到 TS 切片行
-                if (line && !line.startsWith('#') && !line.startsWith('http')) {
-                    lines[i] = basePath + line;
-                }
-                // 兼容带加密 KEY 的防盗链（为未来做准备）
-                if (line.startsWith('#EXT-X-KEY')) {
-                    lines[i] = line.replace(/URI="([^"]+)"/, function(match, p1) {
-                        if (!p1.startsWith('http')) return `URI="${basePath}${p1}"`;
-                        return match;
-                    });
-                }
+        const isBunnyStream = url.includes('b-cdn.net') || url.includes('bunny');
+        if (isBunnyStream) {
+            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                window.heluoHlsInstance = new Hls();
+                window.heluoHlsInstance.loadSource(url);
+                window.heluoHlsInstance.attachMedia(videoElement);
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                videoElement.src = url;
             }
-            m3u8Content = lines.join('\n');
+            return; 
+        }
 
-            // (4) 构建内存沙盒 Blob (隐藏真实 M3U8 链接，让嗅探工具抓到的是 blob:https://...)
+        let token = '';
+        try {
+            const tokenResp = await fetch('/api/generate-token');
+            if (tokenResp.ok) { const data = await tokenResp.json(); token = data.token; }
+        } catch (e) { console.warn('Token获取失败，使用无Token链接'); }
+
+        try {
+            const m3u8Resp = await fetch(url);
+            if (!m3u8Resp.ok) throw new Error('M3U8 加载失败');
+            let m3u8Content = await m3u8Resp.text();
+            const basePath = url.substring(0, url.lastIndexOf('/') + 1);
+            m3u8Content = m3u8Content.replace(/(segment_\d+\.ts)/g, basePath + '$1');
+            if (token) { m3u8Content = m3u8Content.replace(/URI="([^"]*)"/, `URI="$1?token=${token}"`); }
+
             const blob = new Blob([m3u8Content], { type: 'application/vnd.apple.mpegurl' });
             const blobUrl = URL.createObjectURL(blob);
 
-            // (5) 交给前端解密播放
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                window.heluoHlsInstance = new Hls({ debug: false, lowLatencyMode: true });
+                window.heluoHlsInstance = new Hls();
                 window.heluoHlsInstance.loadSource(blobUrl);
                 window.heluoHlsInstance.attachMedia(videoElement);
             } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                // 苹果原生兼容
                 videoElement.src = blobUrl;
             }
-        } catch (e) { 
-            console.error('防盗链沙盒加载失败，正在尝试降级:', e); 
-            // 容错降级：如果 Fetch 失败，直接播放以保证用户体验
-            videoElement.src = url;
-        }
+        } catch (e) { console.error('M3U8 处理失败:', e); }
     }, 100);
 }
 
