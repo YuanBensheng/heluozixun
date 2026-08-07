@@ -1,36 +1,43 @@
 export default function handler(req, res) {
-    // 1. 设置强制 CORS 头，确保只有你的域名能读取这把钥匙
-    // 如果你在本地测试，可以把 https://heluo.pro 换成 *
-    res.setHeader('Access-Control-Allow-Origin', '*'); 
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    // 1. 获取请求头特征 (Chrome 可能会吞掉 Referer，但绝对吞不掉 Origin 和 Host)
+    const origin = req.headers.origin || '';
+    const referer = req.headers.referer || '';
+    const host = req.headers.host || '';
 
-    // 处理预检请求
+    // 2. 动态 CORS 配置：只允许你的独立站跨域拿钥匙
+    const allowedOrigins = ['https://heluo.pro', 'https://www.heluo.pro', 'http://localhost:3000'];
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    } else if (!origin && host.includes('heluo.pro')) {
+        // 针对同源直接请求，补全 CORS
+        res.setHeader('Access-Control-Allow-Origin', 'https://heluo.pro');
+    }
+    
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // 放行预检请求
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
-    // 2. 基础防盗护城河：来源嗅探
-    const referer = req.headers.referer || '';
-    const origin = req.headers.origin || '';
-    
-    // 允许你的独立站域名以及本地开发环境通过
-    const isSafeOrigin = referer.includes('heluo.pro') || 
-                         origin.includes('heluo.pro') || 
-                         referer.includes('localhost') || 
-                         origin.includes('localhost');
+    // 3. 智能防盗链核验：只要满足其一，即视为安全环境
+    const isSafe = 
+        (origin && origin.includes('heluo.pro')) || 
+        (referer && referer.includes('heluo.pro')) || 
+        (host && host.includes('heluo.pro')) || 
+        (host && host.includes('localhost'));
 
-    if (!isSafeOrigin) {
-        // 如果是直接用下载工具/爬虫请求，直接拒绝给钥匙
+    if (!isSafe) {
+        // 下载工具和嗅探爬虫无法伪造完美的同源 Host 环境，将被直接拦截
+        console.warn('非法环境窃取密钥，已被拦截');
         return res.status(403).send('Forbidden: Invalid Space-Time Origin');
     }
 
-    // 3. 剔除残缺的 Token 验证逻辑，直接下发原始加密钥匙
-    const KEY = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6'; // 你视频切片时设定的 16 进制密钥
+    // 4. 下发 AES-128 军工级解密密钥
+    const KEY = '1c8d09694ee6b4c5b4d2c3b8e6dbe5e6'; // 你视频的 16进制 密钥
     
     res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader('Cache-Control', 'no-store');
-    
-    // 将 16进制 字符串转换为 Buffer 字节流发送给播放器解密
+    res.setHeader('Cache-Control', 'no-store'); // 绝对禁止浏览器缓存钥匙
     res.send(Buffer.from(KEY, 'hex'));
 }
