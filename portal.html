@@ -778,9 +778,9 @@ let globalTimerInterval = null;
 function smartLoadVideo(url, videoElement) {
     setTimeout(async () => {
         const ua = navigator.userAgent.toLowerCase();
-        const isMobile = /iphone|ipad|ipod|android|macintosh/.test(ua);
+        const isMobile = /iphone|ipad|ipod|android/.test(ua);
 
-        // 1. 彻底清空上一场域的残余内存
+        // 1. 清理内存，防止重叠播放导致崩溃
         if (window.heluoHlsInstance) { 
             window.heluoHlsInstance.destroy(); 
             window.heluoHlsInstance = null; 
@@ -791,11 +791,13 @@ function smartLoadVideo(url, videoElement) {
 
         const isM3U8 = url.toLowerCase().includes('.m3u8');
         
-        // 2. MP4 通道保持原样（你另外两个能放的视频走这里）
+        // 2. MP4 兜底通道（保持你另外两个视频的兼容）
         if (!isM3U8) {
             if (isMobile) { videoElement.src = url; return; }
             try {
+                // MP4 同样使用 Blob 内存加载，防止直接右键另存为
                 const response = await fetch(url);
+                if (!response.ok) throw new Error('MP4 流提取失败');
                 const blob = await response.blob();
                 videoElement.src = URL.createObjectURL(blob);
             } catch (e) { 
@@ -804,26 +806,52 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
-        // 3. M3U8 终极适配通道
-        // 【关键】：苹果生态 (Mac Safari / iPhone) 自带原生军工级 HLS 硬件解码，直接喂给它，彻底规避 JS 跨域劫持
-        if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-            videoElement.src = url;
-        } 
-        // 非苹果环境 (Chrome / Edge 等) 降级使用 hls.js
-        else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-            window.heluoHlsInstance = new Hls({ debug: false, lowLatencyMode: true });
-            window.heluoHlsInstance.loadSource(url);
-            window.heluoHlsInstance.attachMedia(videoElement);
+        // 3. 【核心防盗架构】：M3U8 内存 Blob 掩码加载
+        try {
+            // (1) 请求原始 M3U8 清单
+            const m3u8Resp = await fetch(url);
+            if (!m3u8Resp.ok) throw new Error('M3U8 拦截失败，请检查腾讯云跨域(CORS)设置');
+            let m3u8Content = await m3u8Resp.text();
             
-            // 极度容错：如果 JS 解析崩溃，强行尝试直连
-            window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                if (data.fatal) {
-                    console.error('HLS 解析被阻断，尝试原生直连兜底:', data);
-                    videoElement.src = url;
+            // (2) 提取基础路径 (例如 https://.../output_hls/)
+            const basePath = url.substring(0, url.lastIndexOf('/') + 1);
+
+            // (3) 🚀 终极解析器：抛弃正则，逐行扫描！
+            // 只要不是注释行(#)，且不是 http 开头，就一定是切片文件，强制拼上绝对路径！
+            let lines = m3u8Content.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                // 找到 TS 切片行
+                if (line && !line.startsWith('#') && !line.startsWith('http')) {
+                    lines[i] = basePath + line;
                 }
-            });
-        } else {
-            console.error("当前浏览器维度过低，无法解析高维流媒体");
+                // 兼容带加密 KEY 的防盗链（为未来做准备）
+                if (line.startsWith('#EXT-X-KEY')) {
+                    lines[i] = line.replace(/URI="([^"]+)"/, function(match, p1) {
+                        if (!p1.startsWith('http')) return `URI="${basePath}${p1}"`;
+                        return match;
+                    });
+                }
+            }
+            m3u8Content = lines.join('\n');
+
+            // (4) 构建内存沙盒 Blob (隐藏真实 M3U8 链接，让嗅探工具抓到的是 blob:https://...)
+            const blob = new Blob([m3u8Content], { type: 'application/vnd.apple.mpegurl' });
+            const blobUrl = URL.createObjectURL(blob);
+
+            // (5) 交给前端解密播放
+            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                window.heluoHlsInstance = new Hls({ debug: false, lowLatencyMode: true });
+                window.heluoHlsInstance.loadSource(blobUrl);
+                window.heluoHlsInstance.attachMedia(videoElement);
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                // 苹果原生兼容
+                videoElement.src = blobUrl;
+            }
+        } catch (e) { 
+            console.error('防盗链沙盒加载失败，正在尝试降级:', e); 
+            // 容错降级：如果 Fetch 失败，直接播放以保证用户体验
+            videoElement.src = url;
         }
     }, 100);
 }
