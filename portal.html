@@ -791,7 +791,7 @@ function smartLoadVideo(url, videoElement) {
 
         const isM3U8 = url.toLowerCase().includes('.m3u8');
         
-        // 1. MP4 兜底通道
+        // 1. MP4 兜底通道 (E和F视频)
         if (!isM3U8) {
             if (isMobile && isApple) { videoElement.src = url; return; }
             try {
@@ -802,7 +802,7 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
-        // 2. 海外 Bunny 直连通道
+        // 2. 海外 Bunny 课程直连通道
         if (url.includes('b-cdn.net') || url.includes('bunny')) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
                 window.heluoHlsInstance = new Hls({ lowLatencyMode: true });
@@ -814,18 +814,16 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
-        // 3. 🚀 国内公域视频 (W密码)：直接呼叫高维代理网关
-        const proxyUrl = '/api/get-m3u8'; // 一切防盗逻辑都在后端代理中完成
+        // 3. 国内公域对齐视频通道 (W视频) -> 终极同源代理加载
+        const proxyUrl = '/api/get-m3u8'; 
 
         if (typeof Hls !== 'undefined' && Hls.isSupported()) {
             window.heluoHlsInstance = new Hls({ debug: false, lowLatencyMode: true });
-            window.heluoHlsInstance.loadSource(proxyUrl);
+            // 因为 proxyUrl 是同源的，Chrome 的严格 CORS 直接放行
+            window.heluoHlsInstance.loadSource(proxyUrl); 
             window.heluoHlsInstance.attachMedia(videoElement);
-            
-            window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
-                if (data.fatal) {
-                    console.error('HLS 引擎报错，正在尝试降级恢复:', data);
-                }
+            window.heluoHlsInstance.on(Hls.Events.ERROR, function(e, data) {
+                if (data.fatal) console.error("HLS引擎报错:", data);
             });
         } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
             // Apple Safari 原生硬件解码，完美兼容代理地址
