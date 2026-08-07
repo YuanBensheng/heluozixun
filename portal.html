@@ -778,9 +778,11 @@ let globalTimerInterval = null;
 function smartLoadVideo(url, videoElement) {
     setTimeout(async () => {
         const ua = navigator.userAgent.toLowerCase();
+        // 智能嗅探环境
         const isMobile = /iphone|ipad|ipod|android/.test(ua);
         const isApple = /iphone|ipad|ipod|macintosh/.test(ua);
 
+        // 1. 彻底清空残余内存，防止重叠崩溃
         if (window.heluoHlsInstance) { 
             window.heluoHlsInstance.destroy(); 
             window.heluoHlsInstance = null; 
@@ -791,18 +793,25 @@ function smartLoadVideo(url, videoElement) {
 
         const isM3U8 = url.toLowerCase().includes('.m3u8');
         
-        // 1. MP4 兜底通道 (E和F视频)
+        // ==========================================
+        // 通道 1：MP4 兜底通道 (保留你另外两个视频的 Blob 掩码防盗)
+        // ==========================================
         if (!isM3U8) {
-            if (isMobile && isApple) { videoElement.src = url; return; }
+            if (isMobile && isApple) { videoElement.src = url; return; } // iOS 直接放行
             try {
                 const response = await fetch(url);
+                if (!response.ok) throw new Error('流提取失败');
                 const blob = await response.blob();
                 videoElement.src = URL.createObjectURL(blob);
-            } catch (e) { videoElement.src = url; }
+            } catch (e) { 
+                videoElement.src = url; 
+            }
             return;
         }
 
-        // 2. 海外 Bunny 课程直连通道
+        // ==========================================
+        // 通道 2：海外 Bunny 课程专属通道 (本身自带云端 Token 防盗，直通)
+        // ==========================================
         if (url.includes('b-cdn.net') || url.includes('bunny')) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
                 window.heluoHlsInstance = new Hls({ lowLatencyMode: true });
@@ -814,20 +823,68 @@ function smartLoadVideo(url, videoElement) {
             return;
         }
 
-        // 3. 国内公域对齐视频通道 (W视频) -> 终极同源代理加载
-        const proxyUrl = '/api/get-m3u8'; 
+        // ==========================================
+        // 通道 3：腾讯云公域 M3U8 (W视频) 终极重写防盗逻辑
+        // ==========================================
+        
+        // 策略 A：如果是 Apple 设备，原生播放器无法消化 Blob M3U8，直接交付原生引擎（苹果端极难抓取）
+        if (isApple && videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+            videoElement.src = url;
+            return;
+        }
 
+        // 策略 B：针对 Android / PC Chrome 的防嗅探重压区，启用强化版 Blob 内存掩码
         if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-            window.heluoHlsInstance = new Hls({ debug: false, lowLatencyMode: true });
-            // 因为 proxyUrl 是同源的，Chrome 的严格 CORS 直接放行
-            window.heluoHlsInstance.loadSource(proxyUrl); 
-            window.heluoHlsInstance.attachMedia(videoElement);
-            window.heluoHlsInstance.on(Hls.Events.ERROR, function(e, data) {
-                if (data.fatal) console.error("HLS引擎报错:", data);
-            });
-        } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-            // Apple Safari 原生硬件解码，完美兼容代理地址
-            videoElement.src = proxyUrl;
+            try {
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error('CORS 拦截，无法获取公域清单');
+                let m3u8Text = await resp.text();
+                
+                // 提取真实目录路径，例如 https://xxx.cos.../output_hls/
+                const basePath = url.substring(0, url.lastIndexOf('/') + 1);
+                
+                // 🚀 核心重写：抛弃脆弱正则，逐行无死角扫描注入绝对路径
+                let lines = m3u8Text.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i].trim();
+                    // 只要是非注释、非绝对地址的有效行，一律加上基础路径前缀
+                    if (line && !line.startsWith('#') && !line.startsWith('http')) {
+                        lines[i] = basePath + line;
+                    }
+                    // 兼容带加密密钥(#EXT-X-KEY)的行
+                    if (line.startsWith('#EXT-X-KEY')) {
+                        lines[i] = line.replace(/URI="([^"]+)"/, function(match, p1) {
+                            if (!p1.startsWith('http')) return `URI="${basePath}${p1}"`;
+                            return match;
+                        });
+                    }
+                }
+                m3u8Text = lines.join('\n');
+
+                // 铸造内存沙盒 Blob
+                const blob = new Blob([m3u8Text], { type: 'application/vnd.apple.mpegurl' });
+                const blobUrl = URL.createObjectURL(blob);
+
+                window.heluoHlsInstance = new Hls({ debug: false, lowLatencyMode: true });
+                window.heluoHlsInstance.loadSource(blobUrl);
+                window.heluoHlsInstance.attachMedia(videoElement);
+                
+                // 极度容错：如果 Blob 模式下解析失败，自动降级为直连，死保能播放
+                window.heluoHlsInstance.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        console.warn('防盗掩码解析受阻，执行战术降级直连');
+                        videoElement.src = url;
+                    }
+                });
+            } catch (e) {
+                console.warn('提取流清单失败，可能是 CORS 未放行，降级加载', e);
+                window.heluoHlsInstance = new Hls();
+                window.heluoHlsInstance.loadSource(url);
+                window.heluoHlsInstance.attachMedia(videoElement);
+            }
+        } else {
+            // 终极兜底
+            videoElement.src = url;
         }
     }, 100);
 }
